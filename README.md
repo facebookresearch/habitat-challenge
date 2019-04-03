@@ -95,7 +95,7 @@ Participate in the contest by registering on the [eval-ai contest](https://evala
 
 ### Online submission
 
-Follow instructions in the `submit` tab of [evalai contest](https://evalai-staging.cloudcv.org/web/challenges/challenge-page/104/overview) to submit your docker image.
+Follow instructions in the `submit` tab of [evalai contest](https://evalai-staging.cloudcv.org/web/challenges/challenge-page/104/overview) to submit your docker image. Note: Your agent will be evaluated on 1000 episodes and will have a total available time of 30mins to finish. Your submissions will be evaluated on AWS EC2 p2.xlarge instance which has a Tesla K80 GPU (12 GB Memory), 4 CPU cores and 61 GB RAM. 
 
 ### Starter code and Training
 
