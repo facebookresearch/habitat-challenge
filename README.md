@@ -39,7 +39,7 @@ Participate in the contest by registering on the [EvalAI challenge page](https:/
 
     ```bash
     git clone https://github.com/facebookresearch/habitat-challenge.git
-    cd habitat-challenge-staging
+    cd habitat-challenge
     ```
    Implement your own agent or try one of ours. We provide an example hand-coded agent in `myagent/agent_forwardonly.py`, below is the code for agent:
 
