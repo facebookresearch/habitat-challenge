@@ -106,10 +106,9 @@ Participate in the contest by registering on the [EvalAI challenge page](https:/
     ```
     If the above command runs successfully you will get an output similar to:
     ```
-    2019-03-17 22:35:10,692 initializing sim Sim-v0
-    2019-03-17 22:35:11,844 initializing task Nav-v0
-    2019-03-17 22:35:30,979 Time taken for evaluation of agent: 19.135s
-    2019-03-17 22:35:30,980 spl: 0.0
+    2019-04-04 21:23:51,798 initializing sim Sim-v0
+    2019-04-04 21:23:52,820 initializing task Nav-v0
+    2019-04-04 21:24:14,508 spl: 0.16539757116003695
     ```
     Note: this same command will be run to evaluate your agent for the leaderboard. **Please submit your docker for remote evaluation (below) only if it runs successfully on your local setup.**  
     To evaluate on RGB modality run:
