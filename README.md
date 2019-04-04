@@ -151,6 +151,17 @@ Note: Your agent will be evaluated on 1000 episodes and will have a total availa
 
 1. Once you have trained your agents you can follow the submission instructions above to test them locally as well as submit them for online evaluation.
 
+1. We also provide trained RGB, RGBD, Blind PPO models. Code for the models is present inside the `habitat-challenge/baselines` folder. To use them:
+    1. Download pre-trained pytorch models from [link](https://dl.fbaipublicfiles.com/habitat/data/baselines/v1/habitat_baselines_v1.zip) and unzip into `habitat-challenge/models`.
+    1. Add loading of the baselines folder and models folder to Dockerfile:
+    ```bash
+    ADD baselines /baselines
+    ADD models /models
+    ```
+    1. Modify `submission.sh` appropriately:
+    `python baselines/agents/ppo_agents.py --input_type {blind, depth, rgb, rgbd} --model_path baselines/{blind, depth, rgb, rgbd}.pth`
+    1. Build docker and run local evaluation: `docker build -t my_submission .; ./test_locally_{rgb, rgbd}.sh --docker-name my_submission`
+
 ## Acknowledgments
 
 The Habitat challenge would not have been possible without the infrastructure and support of [EvalAI](https://evalai.cloudcv.org/) team and the data of [Gibson](http://gibsonenv.stanford.edu/) team. We are especially grateful to Rishabh Jain, Deshraj Yadav, Fei Xia and Amir Zamir.
