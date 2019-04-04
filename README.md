@@ -31,14 +31,14 @@ An episode is deemed successful if on calling the STOP action, the agent is with
 
 ## Participation Guidelines
 
-Participate in the contest by registering on the [eval-ai contest](https://evalai-staging.cloudcv.org/web/challenges/challenge-page/104/overview) and creating a team. Participants will upload docker containers with their agents that would then evaluated on a live AWS GPU-enabled instance. Before pushing the submissions for evaluation it is advised that participants test the submission docker locally. After testing the docker submission locally participants can submit the docker container for remote evaluation. Instructions for training, local evaluation and online submission are explained below.
+Participate in the contest by registering on the [EvalAI challenge page](https://evalai.cloudcv.org/web/challenges/challenge-page/254) and creating a team. Participants will upload docker containers with their agents that evaluated on a AWS GPU-enabled instance. Before pushing the submissions for remote evaluation, participants should test the submission docker locally to make sure it is working. Instructions for training, local evaluation, and online submission are provided below.
 
 ### Local Evaluation
 
-1. Clone the [challenge repository](https://github.com/abhiskk/habitat-challenge-staging):  
+1. Clone the challenge repository:  
 
     ```bash
-    git clone https://github.com/abhiskk/habitat-challenge-staging.git
+    git clone https://github.com/facebookresearch/habitat-challenge.git
     cd habitat-challenge-staging
     ```
    Implement your own agent or try one of ours. We provide an example hand-coded agent in `myagent/agent_forwardonly.py`, below is the code for agent:
@@ -95,7 +95,7 @@ Participate in the contest by registering on the [eval-ai contest](https://evala
 
 ### Online submission
 
-Follow instructions in the `submit` tab of [evalai contest](https://evalai-staging.cloudcv.org/web/challenges/challenge-page/104/overview) to submit your docker image. Note: Your agent will be evaluated on 1000 episodes and will have a total available time of 30mins to finish. Your submissions will be evaluated on AWS EC2 p2.xlarge instance which has a Tesla K80 GPU (12 GB Memory), 4 CPU cores and 61 GB RAM. 
+Follow instructions in the `submit` tab of the [EvalAI challenge page](https://evalai.cloudcv.org/web/challenges/challenge-page/254) to submit your docker image. Note: Your agent will be evaluated on 1000 episodes and will have a total available time of 30mins to finish. Your submissions will be evaluated on AWS EC2 p2.xlarge instance which has a Tesla K80 GPU (12 GB Memory), 4 CPU cores, and 61 GB RAM. 
 
 ### Starter code and Training
 
@@ -120,4 +120,3 @@ The Habitat challenge would not have been possible without the infrastructure an
 ## References
 
 [1] F. Xia,  A. R. Zamir,  Z. He,  A. Sax,  J. Malik,  and S. Savarese,  "Gibson env: Real-world perception for embodied agents," in CVPR, 2018
-
