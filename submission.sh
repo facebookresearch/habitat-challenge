@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-python myagent/forwardonly_agent.py
+python myagent/agent.py --agent-class GoalFollower
