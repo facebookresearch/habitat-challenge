@@ -78,7 +78,7 @@ Participate in the contest by registering on the [EvalAI challenge page](https:/
     ```
     Build your docker container: `docker build -t my_submission .` (Note: you will need `sudo` priviliges to run this command)
     
-1. Download Gibson scenes used for Habitat Challenge. Accept terms [here](https://docs.google.com/forms/d/e/1FAIpQLSen7LZXKVl_HuiePaFzG_0Boo6V3J5lJgzt3oPeSfPr4HTIEA/viewform) and select the download corresponding to “Habit    at Challenge Data for Gibson (1.4 GB)“. Place this data in: `habitat-challenge-staging/habitat-challenge-data/gibson`
+1. Download Gibson scenes used for Habitat Challenge. Accept terms [here](https://docs.google.com/forms/d/e/1FAIpQLSen7LZXKVl_HuiePaFzG_0Boo6V3J5lJgzt3oPeSfPr4HTIEA/viewform) and select the download corresponding to “Habit    at Challenge Data for Gibson (1.4 GB)“. Place this data in: `habitat-challenge/habitat-challenge-data/gibson`
 
 1. Evaluate your docker container locally:
     ```bash
