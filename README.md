@@ -100,7 +100,11 @@ Follow instructions in the `submit` tab of the [EvalAI challenge page](https://e
 ```bash
 # Installing EvalAI Command Line Interface
 pip install evalai
+
+# Set EvalAI account token
 evalai set_token <your EvalAI participant token>
+
+# Push docker image to EvalAI docker registry
 evalai push my_submission:latest --phase habitat19-rgb-val
 ```
 
