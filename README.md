@@ -80,9 +80,9 @@ Participate in the contest by registering on the [EvalAI challenge page](https:/
     
 1. Download Gibson scenes used for Habitat Challenge. Accept terms [here](https://docs.google.com/forms/d/e/1FAIpQLSen7LZXKVl_HuiePaFzG_0Boo6V3J5lJgzt3oPeSfPr4HTIEA/viewform) and select the download corresponding to “Habit    at Challenge Data for Gibson (1.4 GB)“. Place this data in: `habitat-challenge/habitat-challenge-data/gibson`
 
-1. Evaluate your docker container locally:
+1. Evaluate your docker container locally on RGB-D modalities:
     ```bash
-    ./test_locally.sh --docker-name my_submission
+    ./test_locally_rgbd.sh --docker-name my_submission
     ```
     If the above command runs successfully you will get an output similar to:
     ```
@@ -91,7 +91,11 @@ Participate in the contest by registering on the [EvalAI challenge page](https:/
     2019-03-17 22:35:30,979 Time taken for evaluation of agent: 19.135s
     2019-03-17 22:35:30,980 spl: 0.0
     ```
-    Note: this same command will be run to evaluate your agent for the leaderboard. **Please submit your docker for remote evaluation (below) only if it runs successfully on your local setup.**
+    Note: this same command will be run to evaluate your agent for the leaderboard. **Please submit your docker for remote evaluation (below) only if it runs successfully on your local setup.**  
+    To evaluate on RGB modality run:
+    ```bash
+    ./test_locally_rgb.sh --docker-name my_submission
+    ```
 
 ### Online submission
 
