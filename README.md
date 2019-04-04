@@ -41,26 +41,46 @@ Participate in the contest by registering on the [EvalAI challenge page](https:/
     git clone https://github.com/facebookresearch/habitat-challenge.git
     cd habitat-challenge
     ```
-   Implement your own agent or try one of ours. We provide an example hand-coded agent in `myagent/agent_forwardonly.py`, below is the code for agent:
-
+   Implement your own agent or try one of ours. We provide an example hand-coded agent in `myagent/agent.py`, below is the code for agent:
     ```python
-    class ForwardOnlyAgent(habitat.Agent):
-        def reset(self):
-            pass
-       
-        def act(self, observations):
-            action = SIM_NAME_TO_ACTION[SimulatorActions.FORWARD.value]
-            return action
+    import argparse
+    from baselines.agents.simple_agents import get_agent_cls
+    import habitat
     
     def main():
-        agent = ForwardOnlyAgent()
+        parser = argparse.ArgumentParser()
+        parser.add_argument("--agent-class", type=str, default="GoalFollower")
+        args = parser.parse_args()
+    
+        agent = get_agent_cls(args.agent_class)(
+            habitat.get_config()
+        )
         challenge = habitat.Challenge()
         challenge.submit(agent)
-   
+    
+    
     if __name__ == "__main__":
         main()
+        ```
+    
+        ```python
+        class ForwardOnlyAgent(habitat.Agent):
+            def reset(self):
+                pass
+           
+            def act(self, observations):
+                action = SIM_NAME_TO_ACTION[SimulatorActions.FORWARD.value]
+                return action
+        
+        def main():
+            agent = ForwardOnlyAgent()
+            challenge = habitat.Challenge()
+            challenge.submit(agent)
+       
+        if __name__ == "__main__":
+            main()
     ```
-    [Optional] Modify submission.sh file if your agent needs any custom modifications (e.g. command-line arguments). Otherwise, nothing to do. Default submission.sh is simply a call to myagent/agent_forwardonly.py.
+    [Optional] Modify submission.sh file if your agent needs any custom modifications (e.g. command-line arguments). Otherwise, nothing to do. Default submission.sh is simply a call to `GoalFollower` agent in myagent/agent.py.
                 
 
 1. Install [nvidia-docker](https://github.com/NVIDIA/nvidia-docker) Note: only supports Linux; no Windows or MacOS.
