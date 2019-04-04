@@ -95,7 +95,22 @@ Participate in the contest by registering on the [EvalAI challenge page](https:/
 
 ### Online submission
 
-Follow instructions in the `submit` tab of the [EvalAI challenge page](https://evalai.cloudcv.org/web/challenges/challenge-page/254) to submit your docker image. Note: Your agent will be evaluated on 1000 episodes and will have a total available time of 30mins to finish. Your submissions will be evaluated on AWS EC2 p2.xlarge instance which has a Tesla K80 GPU (12 GB Memory), 4 CPU cores, and 61 GB RAM. 
+Follow instructions in the `submit` tab of the [EvalAI challenge page](https://evalai.cloudcv.org/web/challenges/challenge-page/254) to submit your docker image. Pasting those instructions here for convenience: 
+
+```bash
+# Installing EvalAI Command Line Interface
+pip install evalai
+
+# Set EvalAI account token
+evalai set_token <your EvalAI participant token>
+
+# Push docker image to EvalAI docker registry
+evalai push my_submission:latest --phase habitat19-rgb-val
+```
+
+Valid challenge phases are `habitat19-{rgb, rgbd}-{val, test-std, test-ch}`. 
+
+Note: Your agent will be evaluated on 1000 episodes and will have a total available time of 30mins to finish. Your submissions will be evaluated on AWS EC2 p2.xlarge instance which has a Tesla K80 GPU (12 GB Memory), 4 CPU cores, and 61 GB RAM. 
 
 ### Starter code and Training
 
