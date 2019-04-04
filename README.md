@@ -41,27 +41,25 @@ Participate in the contest by registering on the [EvalAI challenge page](https:/
     git clone https://github.com/facebookresearch/habitat-challenge.git
     cd habitat-challenge
     ```
-   Implement your own agent or try one of ours. We provide hand-coded agents in `myagent/agent.py`, below is an example forward-only code for agent:
+    Implement your own agent or try one of ours. We provide hand-coded agents in `myagent/agent.py`, below is an example forward-only code for agent:
     ```python
-    import argparse
-        ```python
-        import habitat
-
-        class ForwardOnlyAgent(habitat.Agent):
-            def reset(self):
-                pass
-           
-            def act(self, observations):
-                action = SIM_NAME_TO_ACTION[SimulatorActions.FORWARD.value]
-                return action
-        
-        def main():
-            agent = ForwardOnlyAgent()
-            challenge = habitat.Challenge()
-            challenge.submit(agent)
+    import habitat
+    
+    class ForwardOnlyAgent(habitat.Agent):
+        def reset(self):
+            pass
        
-        if __name__ == "__main__":
-            main()
+        def act(self, observations):
+            action = SIM_NAME_TO_ACTION[SimulatorActions.FORWARD.value]
+            return action
+    
+    def main():
+        agent = ForwardOnlyAgent()
+        challenge = habitat.Challenge()
+        challenge.submit(agent)
+    
+    if __name__ == "__main__":
+        main()
     ```
     [Optional] Modify submission.sh file if your agent needs any custom modifications (e.g. command-line arguments). Otherwise, nothing to do. Default submission.sh is simply a call to `GoalFollower` agent in `myagent/agent.py`.
                 
