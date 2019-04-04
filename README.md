@@ -41,29 +41,12 @@ Participate in the contest by registering on the [EvalAI challenge page](https:/
     git clone https://github.com/facebookresearch/habitat-challenge.git
     cd habitat-challenge
     ```
-   Implement your own agent or try one of ours. We provide an example hand-coded agent in `myagent/agent.py`, below is the code for agent:
+   Implement your own agent or try one of ours. We provide hand-coded agents in `myagent/agent.py`, below is an example forward-only code for agent:
     ```python
     import argparse
-    from baselines.agents.simple_agents import get_agent_cls
-    import habitat
-    
-    def main():
-        parser = argparse.ArgumentParser()
-        parser.add_argument("--agent-class", type=str, default="GoalFollower")
-        args = parser.parse_args()
-    
-        agent = get_agent_cls(args.agent_class)(
-            habitat.get_config()
-        )
-        challenge = habitat.Challenge()
-        challenge.submit(agent)
-    
-    
-    if __name__ == "__main__":
-        main()
-        ```
-    
         ```python
+        import habitat
+
         class ForwardOnlyAgent(habitat.Agent):
             def reset(self):
                 pass
