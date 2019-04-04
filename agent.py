@@ -7,9 +7,7 @@ def main():
     parser.add_argument("--agent-class", type=str, default="GoalFollower")
     args = parser.parse_args()
 
-    agent = get_agent_cls(args.agent_class)(
-        habitat.get_config()
-    )
+    agent = get_agent_cls(args.agent_class)(success_distance=0.2)
     challenge = habitat.Challenge()
     challenge.submit(agent)
 
