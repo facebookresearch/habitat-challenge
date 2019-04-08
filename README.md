@@ -21,7 +21,7 @@ We create a set of PointGoal navigation episodes for the Gibson [1](#references)
 
 ## Evaluation
 
-After calling the STOP action, the agent is evaluated using the "Success weighted by Path Length" (SPL) metric [2]((#references).
+After calling the STOP action, the agent is evaluated using the "Success weighted by Path Length" (SPL) metric [2](#references).
 
 <p align="center">
   <img src='res/img/spl.png' />
