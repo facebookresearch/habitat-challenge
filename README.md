@@ -16,12 +16,12 @@ not just at the outset of an episode. The action space for the agent consists of
 
 ## Challenge Dataset
 
-We create a set of PointGoal navigation episodes for the Gibson [1](#references) 3D scenes as the main dataset for the challenge. Gibson was preferred over SUNCG because unlike SUNCG it contains scans of real-world indoor environments. Gibson was chosen over Matterport3D because unlike Matterport3D Gibson's raw meshes are not publicly available allowing us to sequester a test set. We use the splits provided by the Gibson dataset, retaining the train, and val sets, and separating the test set into test-standard and test-challenge. The train and val scenes are provided to participants. The test scenes are used for the official challenge evaluation and are not provided to participants. 
+We create a set of PointGoal navigation episodes for the Gibson [[1]](#references) 3D scenes as the main dataset for the challenge. Gibson was preferred over SUNCG because unlike SUNCG it contains scans of real-world indoor environments. Gibson was chosen over Matterport3D because unlike Matterport3D Gibson's raw meshes are not publicly available allowing us to sequester a test set. We use the splits provided by the Gibson dataset, retaining the train, and val sets, and separating the test set into test-standard and test-challenge. The train and val scenes are provided to participants. The test scenes are used for the official challenge evaluation and are not provided to participants. 
 
 
 ## Evaluation
 
-After calling the STOP action, the agent is evaluated using the "Success weighted by Path Length" (SPL) metric [2](#references).
+After calling the STOP action, the agent is evaluated using the "Success weighted by Path Length" (SPL) metric [[2]](#references).
 
 <p align="center">
   <img src='res/img/spl.png' />
