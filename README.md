@@ -21,7 +21,7 @@ We create a set of PointGoal navigation episodes for the Gibson [1] 3D scenes as
 
 ## Evaluation
 
-After calling the STOP action, the agent is evaluated using the "Success weighted by Path Length" (SPL) metric [1].
+After calling the STOP action, the agent is evaluated using the "Success weighted by Path Length" (SPL) metric [2].
 
 <p align="center">
   <img src='res/img/spl.png' />
@@ -154,4 +154,6 @@ The Habitat challenge would not have been possible without the infrastructure an
 
 ## References
 
-[1] F. Xia,  A. R. Zamir,  Z. He,  A. Sax,  J. Malik,  and S. Savarese,  "Gibson env: Real-world perception for embodied agents," in CVPR, 2018
+[1] [Gibson env: Real-world perception for embodied agents](https://arxiv.org/abs/1808.10654). F. Xia, A. R. Zamir, Z. He, A. Sax, J. Malik, and S. Savarese. In CVPR, 2018
+
+[2] [On evaluation of embodied navigation agents](https://arxiv.org/abs/1807.06757). Peter Anderson, Angel Chang, Devendra Singh Chaplot, Alexey Dosovitskiy, Saurabh Gupta, Vladlen Koltun, Jana Kosecka, Jitendra Malik, Roozbeh Mottaghi, Manolis Savva, Amir R. Zamir. arXiv:1807.06757, 2018. 
