@@ -148,6 +148,17 @@ Note: Your agent will be evaluated on 1000 episodes and will have a total availa
     docker build -t my_submission .; ./test_locally_{rgb, rgbd}.sh --docker-name my_submission
     ```
 
+## Citing Habitat
+Please cite the following technical report for details about 2019 challenge:
+```
+@article{habitat19arxiv,
+  title =   {Habitat: A Platform for Embodied AI Research},
+  author =  {{Manolis Savva*}, {Abhishek Kadian*}, {Oleksandr Maksymets*}, Yili Zhao, Erik Wijmans, Bhavana Jain, Julian Straub, Jia Liu, Vladlen Koltun, Jitendra Malik, Devi Parikh and Dhruv Batra},
+  journal = {arXiv preprint arXiv:1904.01201},
+  year =    {2019}
+}
+```
+
 ## Acknowledgments
 
 The Habitat challenge would not have been possible without the infrastructure and support of [EvalAI](https://evalai.cloudcv.org/) team and the data of [Gibson](http://gibsonenv.stanford.edu/) team. We are especially grateful to Rishabh Jain, Deshraj Yadav, Fei Xia and Amir Zamir.
