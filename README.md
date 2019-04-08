@@ -6,7 +6,7 @@
 
 # Habitat-Challenge
 
-This repository contains starter code for the challenge and details of task, training and evaluation. For an overview of habitat-challenge visit [aihabitat.org/challenge](https://aihabitat.org/challenge).
+This repository contains starter code for the challenge and details of task, training and evaluation. For an overview of habitat-challenge visit [aihabitat.org/challenge](https://aihabitat.org/challenge) or see our paper [[1]](#references). 
 
 ## Task
 
@@ -16,12 +16,12 @@ not just at the outset of an episode. The action space for the agent consists of
 
 ## Challenge Dataset
 
-We create a set of PointGoal navigation episodes for the Gibson [[1]](#references) 3D scenes as the main dataset for the challenge. Gibson was preferred over SUNCG because unlike SUNCG it contains scans of real-world indoor environments. Gibson was chosen over Matterport3D because unlike Matterport3D Gibson's raw meshes are not publicly available allowing us to sequester a test set. We use the splits provided by the Gibson dataset, retaining the train, and val sets, and separating the test set into test-standard and test-challenge. The train and val scenes are provided to participants. The test scenes are used for the official challenge evaluation and are not provided to participants. 
+We create a set of PointGoal navigation episodes for the Gibson [[2]](#references) 3D scenes as the main dataset for the challenge. Gibson was preferred over SUNCG because unlike SUNCG it contains scans of real-world indoor environments. Gibson was chosen over Matterport3D because unlike Matterport3D Gibson's raw meshes are not publicly available allowing us to sequester a test set. We use the splits provided by the Gibson dataset, retaining the train, and val sets, and separating the test set into test-standard and test-challenge. The train and val scenes are provided to participants. The test scenes are used for the official challenge evaluation and are not provided to participants. 
 
 
 ## Evaluation
 
-After calling the STOP action, the agent is evaluated using the "Success weighted by Path Length" (SPL) metric [[2]](#references).
+After calling the STOP action, the agent is evaluated using the "Success weighted by Path Length" (SPL) metric [[3]](#references).
 
 <p align="center">
   <img src='res/img/spl.png' />
@@ -154,6 +154,8 @@ The Habitat challenge would not have been possible without the infrastructure an
 
 ## References
 
-[1] [Gibson env: Real-world perception for embodied agents](https://arxiv.org/abs/1808.10654). F. Xia, A. R. Zamir, Z. He, A. Sax, J. Malik, and S. Savarese. In CVPR, 2018
+[1] [Habitat: A Platform for Embodied AI Research](https://arxiv.org/abs/1904.01201). Manolis Savva, Abhishek Kadian, Oleksandr Maksymets, Yili Zhao, Erik Wijmans, Bhavana Jain, Julian Straub, Jia Liu, Vladlen Koltun, Jitendra Malik, Devi Parikh, Dhruv Batra. Tech report, arXiv:1904.01201, 2019. 
 
-[2] [On evaluation of embodied navigation agents](https://arxiv.org/abs/1807.06757). Peter Anderson, Angel Chang, Devendra Singh Chaplot, Alexey Dosovitskiy, Saurabh Gupta, Vladlen Koltun, Jana Kosecka, Jitendra Malik, Roozbeh Mottaghi, Manolis Savva, Amir R. Zamir. arXiv:1807.06757, 2018. 
+[2] [Gibson env: Real-world perception for embodied agents](https://arxiv.org/abs/1808.10654). F. Xia, A. R. Zamir, Z. He, A. Sax, J. Malik, and S. Savarese. In CVPR, 2018
+
+[3] [On evaluation of embodied navigation agents](https://arxiv.org/abs/1807.06757). Peter Anderson, Angel Chang, Devendra Singh Chaplot, Alexey Dosovitskiy, Saurabh Gupta, Vladlen Koltun, Jana Kosecka, Jitendra Malik, Roozbeh Mottaghi, Manolis Savva, Amir R. Zamir. arXiv:1807.06757, 2018. 
