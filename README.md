@@ -123,7 +123,7 @@ The challenge consists of the following phases:
 1. **Test Challenge RGB phase**: consists of 1000 episodes with RGB modality. This split will be used to decide winners of RGB track. Each team is allowed total of 5 submissions until the end of challenge submission phase. Scores on this split will not be made public until the announcement of final results.
 1. **Test Challenge RGBD phase**: consists of same episodes as Test Challenge RGB phase with RGB-Depth modality. This split will be used to decide winners of RGBD track. Each team is allowed total of 5 submissions until the end of challenge submission phase. Scores on this split will not be made public until the announcement of final result.
 
-Note: Your agent will be evaluated on 1000 episodes and will have a total available time of 30mins to finish. Your submissions will be evaluated on AWS EC2 p2.xlarge instance which has a Tesla K80 GPU (12 GB Memory), 4 CPU cores, and 61 GB RAM. If you need more time/resources for evaluation of your submission please get in touch.
+Note: Your agent will be evaluated on 1000 episodes and will have a total available time of 30mins to finish. Your submissions will be evaluated on AWS EC2 p2.xlarge instance which has a Tesla K80 GPU (12 GB Memory), 4 CPU cores, and 61 GB RAM. If you need more time/resources for evaluation of your submission please get in touch. If you face any issues or have questions you can ask them on the [habitat-challenge forum](https://evalai-forum.cloudcv.org/c/habitat-challenge-2019).
 
 ### Starter code and Training
 
