@@ -41,7 +41,7 @@ Participate in the contest by registering on the [EvalAI challenge page](https:/
     git clone https://github.com/facebookresearch/habitat-challenge.git
     cd habitat-challenge
     ```
-    Implement your own agent or try one of ours. We provide hand-coded agents in `myagent/agent.py`, below is an example forward-only code for agent:
+    Implement your own agent or try one of ours. We provide hand-coded agents in `baselines/agents/simple_agents.py`, below is an example forward-only code for agent:
     ```python
     import habitat
 
@@ -74,7 +74,8 @@ Participate in the contest by registering on the [EvalAI challenge page](https:/
     # install dependencies in the habitat conda environment
     RUN /bin/bash -c ". activate habitat; pip install torch"
 
-    ADD myagent /myagent
+    ADD baselines /baselines
+    ADD agent.py /agent.py
     ADD submission.sh /submission.sh
     ```
     Build your docker container: `docker build -t my_submission .` (Note: you will need `sudo` priviliges to run this command)
