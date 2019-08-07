@@ -163,7 +163,7 @@ Please cite the following paper for details about the 2019 challenge:
 ```
 @inproceedings{habitat,
   title     =     {Habitat: A Platform for Embodied AI Research},
-  author    =     {{Manolis Savva*}, {Abhishek Kadian*}, {Oleksandr Maksymets*}, Yili Zhao, Erik Wijmans, Bhavana Jain, Julian Straub, Jia Liu, Vladlen Koltun, Jitendra Malik, Devi Parikh and Dhruv Batra},
+  author    =     {{Manolis Savva*} and {Abhishek Kadian*} and {Oleksandr Maksymets*} and Yili Zhao and Erik Wijmans and Bhavana Jain and Julian Straub and Jia Liu and Vladlen Koltun and Jitendra Malik and Devi Parikh and Dhruv Batra},
   booktitle =     {Proceedings of the IEEE/CVF International Conference on Computer Vision (ICCV)},
   year      =     {2019}
 }
