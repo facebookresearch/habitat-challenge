@@ -159,13 +159,13 @@ Note: Your agent will be evaluated on 1000 episodes and will have a total availa
     ```
 
 ## Citing Habitat
-Please cite the following technical report for details about 2019 challenge:
+Please cite the following paper for details about the 2019 challenge:
 ```
-@article{habitat19arxiv,
-  title =   {Habitat: A Platform for Embodied AI Research},
-  author =  {{Manolis Savva*}, {Abhishek Kadian*}, {Oleksandr Maksymets*}, Yili Zhao, Erik Wijmans, Bhavana Jain, Julian Straub, Jia Liu, Vladlen Koltun, Jitendra Malik, Devi Parikh and Dhruv Batra},
-  journal = {arXiv preprint arXiv:1904.01201},
-  year =    {2019}
+@inproceedings{habitat,
+  title     =     {Habitat: A Platform for Embodied AI Research},
+  author    =     {{Manolis Savva*}, {Abhishek Kadian*}, {Oleksandr Maksymets*}, Yili Zhao, Erik Wijmans, Bhavana Jain, Julian Straub, Jia Liu, Vladlen Koltun, Jitendra Malik, Devi Parikh and Dhruv Batra},
+  booktitle =     {Proceedings of the IEEE/CVF International Conference on Computer Vision (ICCV)},
+  year      =     {2019}
 }
 ```
 
@@ -175,7 +175,7 @@ The Habitat challenge would not have been possible without the infrastructure an
 
 ## References
 
-[1] [Habitat: A Platform for Embodied AI Research](https://arxiv.org/abs/1904.01201). Manolis Savva, Abhishek Kadian, Oleksandr Maksymets, Yili Zhao, Erik Wijmans, Bhavana Jain, Julian Straub, Jia Liu, Vladlen Koltun, Jitendra Malik, Devi Parikh, Dhruv Batra. Tech report, arXiv:1904.01201, 2019.
+[1] [Habitat: A Platform for Embodied AI Research](https://arxiv.org/abs/1904.01201). Manolis Savva, Abhishek Kadian, Oleksandr Maksymets, Yili Zhao, Erik Wijmans, Bhavana Jain, Julian Straub, Jia Liu, Vladlen Koltun, Jitendra Malik, Devi Parikh, Dhruv Batra. IEEE/CVF International Conference on Computer Vision (ICCV), 2019.
 
 [2] [Gibson env: Real-world perception for embodied agents](https://arxiv.org/abs/1808.10654). F. Xia, A. R. Zamir, Z. He, A. Sax, J. Malik, and S. Savarese. In CVPR, 2018
 
