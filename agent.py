@@ -1,5 +1,5 @@
 import argparse
-from baselines.agents.simple_agents import get_agent_cls
+from habitat_baselines.agents.simple_agents import get_agent_cls
 import habitat
 
 def main():
