@@ -23,7 +23,7 @@ TASK:
     TYPE: SPL
     SUCCESS_DISTANCE: 0.2
 DATASET:
+  TYPE: PointNav-v1
   SPLIT: val_mini
-  POINTNAVV1:
-    DATA_PATH: habitat-challenge-data/pointgoal_gibson.{split}.json.gz
-    SCENES_DIR: "habitat-challenge-data/scene_datasets/"
+  DATA_PATH: habitat-challenge-data/pointgoal_gibson.{split}.json.gz
+  SCENES_DIR: "habitat-challenge-data/scene_datasets/"
