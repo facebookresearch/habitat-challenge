@@ -26,3 +26,4 @@ DATASET:
   SPLIT: val_mini
   POINTNAVV1:
     DATA_PATH: habitat-challenge-data/pointgoal_gibson.{split}.json.gz
+    SCENES_DIR: "habitat-challenge-data/scene_datasets/"

@@ -54,4 +54,4 @@ DATASET:
   TYPE: ObjectNav-v1
   SPLIT: val_mini
   DATA_PATH: habitat-challenge-data/objectnav_mp3d.{split}.json.gz
-  SCENES_DIR: "data/scene_datasets/"
+  SCENES_DIR: "habitat-challenge-data/scene_datasets/"
