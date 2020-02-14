@@ -1,13 +1,18 @@
 import argparse
-from habitat_baselines.agents.simple_agents import get_agent_cls
 import habitat
+import random 
+
+NUM_ACTIONS = 6
+
+class RandomAgent(habitat.Agent):
+    def act(self, observations):
+        return random.randint(NUM_ACTIONS) 
+
+
+
 
 def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--agent-class", type=str, default="GoalFollower")
-    args = parser.parse_args()
-
-    agent = get_agent_cls(args.agent_class)(success_distance=0.2)
+    agent = RandomAgent()
     challenge = habitat.Challenge()
     challenge.submit(agent)
 

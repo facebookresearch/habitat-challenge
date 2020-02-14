@@ -25,4 +25,4 @@ TASK:
 DATASET:
   SPLIT: val_mini
   POINTNAVV1:
-    DATA_PATH: /habitat-challenge-data/gibson.{split}.json.gz
+    DATA_PATH: habitat-challenge-data/pointgoal_gibson.{split}.json.gz
