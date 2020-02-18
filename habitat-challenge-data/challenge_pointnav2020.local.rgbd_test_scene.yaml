@@ -43,5 +43,5 @@ TASK:
 DATASET:
   TYPE: PointNav-v1
   SPLIT: val_mini
-  DATA_PATH: habitat-challenge-data/pointgoal_gibson.{split}.json.gz
-  SCENES_DIR: "habitat-challenge-data/"
+  DATA_PATH:  code-upload-starters/data/datasets/pointnav/habitat-test-scenes/v1/{split}/{split}.json.gz
+  SCENES_DIR: code-upload-starters/data/scene_datasets/

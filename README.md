@@ -77,6 +77,7 @@ Participate in the contest by registering on the [EvalAI challenge page](https:/
     Build your docker container: `docker build -t my_submission .` (Note: you will need `sudo` priviliges to run this command)
 
 1. a) PoinGoal Navigation: Download Gibson scenes used for Habitat Challenge. Accept terms [here](https://docs.google.com/forms/d/e/1FAIpQLSen7LZXKVl_HuiePaFzG_0Boo6V3J5lJgzt3oPeSfPr4HTIEA/viewform) and select the download corresponding to “Habitat Challenge Data for Gibson (1.4 GB)“. Place this data in: `habitat-challenge/habitat-challenge-data/gibson`
+   
    b) ObjectGoal Navigation: Download Matterport3D scenes used for Habitat Challenge [here](https://niessner.github.io/Matterport/). Place this data in: `habitat-challenge/habitat-challenge-data/mp3d`
 
 1. Evaluate your docker container locally on RGB modality:
@@ -91,9 +92,9 @@ Participate in the contest by registering on the [EvalAI challenge page](https:/
     2020-02-14 21:23:56,339 spl: 0.0
     ```
     Note: this same command will be run to evaluate your agent for the leaderboard. **Please submit your docker for remote evaluation (below) only if it runs successfully on your local setup.**  
-    To evaluate on RGB-D modality run:
+    To evaluate an agent for PointGoal challenge track run:
     ```bash
-    ./test_locally_rgbd.sh --docker-name my_submission
+    ./test_locally_pointgoal_rgbd.sh --docker-name my_submission
     ```
 
 ### Online submission
@@ -111,7 +112,7 @@ evalai set_token <your EvalAI participant token>
 evalai push my_submission:latest --phase <phase-name>
 ```
 
-Valid challenge phases are `habitat19-{rgb, rgbd}-{minival, test-std, test-ch}`.
+Valid challenge phases are `habitat20-{pointnav, objectnav}-{minival, test-std, test-ch}`.
 
 The challenge consists of the following phases:
 
