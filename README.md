@@ -6,17 +6,53 @@
 
 # Habitat-Challenge
 
-This repository contains starter code for the challenge and details of task, training and evaluation. For an overview of habitat-challenge visit [aihabitat.org/challenge](https://aihabitat.org/challenge) or see our paper [[1]](#references).
+This repository contains starter code for the 2020 challenge, details of the tasks, and training and evaluation setups. For an overview of habitat-challenge visit aihabitat.org/challenge.
 
-## Task
+This year, we are hosting challenges on two embodied navigation tasks: 
+PointNav (‘Go 5m north, 3m west relative to start’)
+ObjectNav (‘find a chair’). 
 
-The objective of the agent is to navigate successfully to a target location specified by agent-relative Euclidean coordinates
-(e.g. "Go 5m north, 3m west relative to current location"). Importantly, updated goal-specification (relative coordinates) is provided at all times (as the episode progresses) and
-not just at the outset of an episode. The action space for the agent consists of turn-left, turn-right, move forward and STOP actions. The turn actions produce a turn of 10 degrees and move forward action produces a linear displacement of 0.25m. The STOP action is used by the agent to indicate completion of an episode. We use an idealized embodied agent with a cylindrical body with diameter 0.2m and height 1.5m. The challenge consists of two tracks, RGB (only RGB input) and RGBD (RGB and Depth inputs).
+Task #1: PointNav focuses on realism and sim2real predictivity (the ability to predict the performance of a nav-model on a real robot from its performance in simulation). 
+
+Task #2: ObjectNav focuses on egocentric object/scene recognition and a commonsense understanding of object semantics (where is a fireplace typically located in a house?). 
+
+
+## Task 1: PointNav 
+In PointNav, an agent is spawned at a random starting position and orientation in an unseen environment and and asked to navigate to target coordinates specified relative to the agent’s start location (‘Go 5m north, 3m west relative to start’). No ground-truth map is available and the agent must only use its sensory input (an RGB-D camera) to navigate. 
+
+We use Gibson 3D scenes [2] for the challenge. We use the splits provided by the Gibson dataset, retaining the train, and val sets, and separating the test set into test-standard and test-challenge. The train and val scenes are provided to participants. The test scenes are used for the official challenge evaluation and are not provided to participants.
+
+After calling the STOP action, the agent is evaluated using the "Success weighted by Path Length" (SPL) metric [3]. An episode is deemed successful if on calling the STOP action, the agent is within 0.36m of the goal position. The evaluation will be carried out in completely new houses which are not present in training and validation splits.
+
+### New in 2020
+The main emphasis in 2020 is on increased realism and on sim2real predictivity (the ability to predict performance on a real robot from its performance in simulation). 
+
+Specifically, we introduce the following changes inspired by our experiments and findings in \cite{kadian_sim2real}: 
+
+1. **No GPS+Compass sensor**: In 2019, the relative coordinates specifying the goal were continuously updated during agent movement -- essentially simulating an agent with perfect localization and heading estimation (e.g. an agent with an idealized GPS+Compass). However, high-precision localization in indoor environments can not be assumed in realistic settings -- GPS has low precision indoors, (visual) odometry may be noisy, SLAM-based localization can fail, etc. Hence, in 2020's challenge the agent does NOT have a GPS+Compass sensor and must navigate solely using an egocentric RGB-D camera. This change elevates the need to perform RGBD-based online localization. 
+
+1. **Noisy Actuation and Sensing**: In 2019, the agent actions were deterministic -- i.e. when the agent executes **turn-left 30 degrees**, it turns **exactly** 30 degrees, and forward 0.25 m moves the agent **exactly** 0.25 m forward (modulo collisions). However, no robot moves deterministically -- actuation error, surface properties such as friction, and a myriad of other sources of error introduce significant drift over a long trajectory. To model this, we introduce a noise model acquired by benchmarking a real robotic platform \cite{pyrobot2019}. \figref{fig:noisy-actions} shows  
+trajectory rollouts sampled from this noise model (in a Gibson\cite{xia2018gibson} home).  As shown, identical action sequences can lead to vastly different final locations. We also added RGB and Depth sensor noises. 
+
+1. **Collision Dynamics and ‘Sliding'**: In 2019, when the agent takes an action that results in a collision, the agent **slides** along the obstacle as opposed to stopping. This behavior is prevalent in video game engines as it allows for smooth human control; it is also enabled by default in MINOS, Deepmind Lab, AI2 THOR, and Gibson v1. We have found that this behavior enables `cheating' by learned agents -- the agents exploit this sliding mechanism to take an effective path that appears to travel **through non-navigable regions** of the environment (like walls). Such policies fail disastrously in the real world where the robot bump sensors  force a stop on contact with obstacles. To rectify this issue, we modify Habitat-Sim to disable sliding on collisions. 
+
+1. **Multiple cosmetic/minor changes**: Change in robot embodiment/size, camera resolution, height and orientation, etc -- to match LoCoBot. 
+
+
+## Task 2: ObjectNav
+
+In ObjectNav, an agent is initialized at a random starting position and orientation in an unseen environment and asked to find an instance of an object category (‘find a chair’) by navigating to  it. A map of the environment is not provided and the agent must only use its sensory input to navigate. 
+
+The agent is equipped with an RGB-D camera and a (noiseless) GPS+Compass sensor. GPS+Compass sensor provides the agent’s current location and orientation information relative to the start of the episode. We attempt to match the camera specification (field of view, resolution) in simulation to the Azure Kinect camera, but this task does not involve any sensing noise. 
+
+We use 90 of the Matterport3D scenes (MP3D)~\cite{matterport} with the standard splits of train/val/test as prescribed by Anderson \etal \cite{anderson2018evaluation}. MP3D contains 40 annotated categories. We hand-select a subset of 21 by excluding categories that are not visually well defined like doorways or windows and architectural elements like walls, floors, and ceilings. 
+
+We follow a similar evaluation protocol as prescribed/used by \cite{anderson2018evaluation, habitat19iccv, habitat_challenge} -- measuring **success** (did the agent navigate to the goal object?) and **efficiency** (how efficient was the path it took compared to an optimal path?). 
+
 
 ## Challenge Dataset
 
-We create a set of PointGoal navigation episodes for the Gibson [[2]](#references) 3D scenes as the main dataset for the challenge. Gibson was chosen over Matterport3D because unlike Matterport3D Gibson's raw meshes are not publicly available allowing us to sequester a test set. We use the splits provided by the Gibson dataset, retaining the train, and val sets, and separating the test set into test-standard and test-challenge. The train and val scenes are provided to participants. The test scenes are used for the official challenge evaluation and are not provided to participants.
+We create a set of PointGoal navigation episodes for the Gibson [[2]](#references) 3D scenes and a set of ObjectGoal navigation episodes for Matterport3D. We use the splits provided by the Gibson and Matterport3D dataset, retaining the train, and val sets, and separating the test set into test-standard and test-challenge. The train and val scenes are provided to participants. The test scenes are used for the official challenge evaluation and are not provided to participants.
 
 
 ## Evaluation
@@ -27,7 +63,7 @@ After calling the STOP action, the agent is evaluated using the "Success weighte
   <img src='res/img/spl.png' />
 </p>
 
-An episode is deemed successful if on calling the STOP action, the agent is within 0.2m of the goal position. The evaluation will be carried out in completely new houses which are not present in training and validation splits.
+An episode is deemed successful if on calling the STOP action, the agent is within 0.36m of the Point goal position or with 1.0m Euclidean distance from an Object goal from target category that the object can be visible. The evaluation will be carried out in completely new houses which are not present in training and validation splits.
 
 ## Participation Guidelines
 
@@ -116,46 +152,12 @@ Valid challenge phases are `habitat20-{pointnav, objectnav}-{minival, test-std, 
 
 The challenge consists of the following phases:
 
-1. **Minival RGB phase**: consists of 30 episodes with RGB modality. This split is same as the one used in `./test_locally_rgb.sh`. The purpose of this phase is sanity checking -- to confirm that our remote evaluation reports the same result as the one you're seeing locally. Each team is allowed maximum of 30 submission per day for this phase, but please use them judiciously. We will block and disqualify teams that spam our servers. 
-1. **Minival RGBD phase**: consists of same episodes as Minival RGB phase with RGB-Depth modality. This split is same as the one used in `./test_locally_rgbd.sh`.
-1. **Test Standard RGB phase**: consists of 1000 episodes with RGB modality. Each team is allowed maximum of 10 submission per day for this phase, but again, please use them judiciously. Don't overfit to the test set. The purpose of this phase is to serve as a public leaderboard establishing the state of the art. 
-1. **Test Standard RGBD phase**: consists of same episodes as Test Standard RGB phase with RGB-Depth modality. Each team is allowed maximum of 10 submission per day for this phase.
-1. **Test Challenge RGB phase**: consists of 1000 episodes with RGB modality. This split will be used to decide challenge winners on the RGB track. Each team is allowed total of 5 submissions until the end of challenge submission phase. Results on this split will not be made public until the announcement of final results at the [Habitat workshop at CVPR](https://aihabitat.org/workshop/). 
-1. **Test Challenge RGBD phase**: consists of same episodes as Test Challenge RGB phase with RGB-Depth modality. This split will be used to decide challenge winners on the RGBD track. Each team is allowed total of 5 submissions until the end of challenge submission phase. Results on this split will not be made public until the announcement of final results at the [Habitat workshop at CVPR](https://aihabitat.org/workshop/). 
+1. **Minival phase**: consists of 30 episodes with RGBD modality. This split is same as the one used in `./test_locally_{pointgoal, objectnav}_rgbd.sh`. The purpose of this phase is sanity checking -- to confirm that our remote evaluation reports the same result as the one you're seeing locally. Each team is allowed maximum of 30 submission per day for this phase, but please use them judiciously. We will block and disqualify teams that spam our servers. 
+1. **Test Standard phase**: consists of episodes with RGBD modality. Each team is allowed maximum of 10 submission per day for this phase, but again, please use them judiciously. Don't overfit to the test set. The purpose of this phase is to serve as a public leaderboard establishing the state of the art. 
+1. **Test Challenge phase**: consists of episodes with RGBD modality. This split will be used to decide challenge winners on the RGB track. Each team is allowed total of 5 submissions until the end of challenge submission phase. Results on this split will not be made public until the announcement of final results at the [Embodied AI workshop at CVPR](https://embodied-ai.org/). 
 
-Note: Your agent will be evaluated on 1000 episodes and will have a total available time of 30mins to finish. Your submissions will be evaluated on AWS EC2 p2.xlarge instance which has a Tesla K80 GPU (12 GB Memory), 4 CPU cores, and 61 GB RAM. If you need more time/resources for evaluation of your submission please get in touch. If you face any issues or have questions you can ask them on the [habitat-challenge forum](https://evalai-forum.cloudcv.org/c/habitat-challenge-2019).
+Note: Your agent will be evaluated on 1000-2000 episodes and will have a total available time of 30 mins to finish. Your submissions will be evaluated on AWS EC2 p2.xlarge instance which has a Tesla K80 GPU (12 GB Memory), 4 CPU cores, and 61 GB RAM. If you need more time/resources for evaluation of your submission please get in touch. If you face any issues or have questions you can ask them on the [habitat-challenge forum](https://evalai-forum.cloudcv.org/c/habitat-challenge-2020).
 
-### Starter code and Training
-
-1. Install the [Habitat-Sim](https://github.com/facebookresearch/habitat-sim/) and [Habitat-API](https://github.com/facebookresearch/habitat-api/) packages.
-
-1. Download the Gibson dataset following the instructions [here](https://github.com/StanfordVL/GibsonEnv#database). After downloading extract the dataset to folder `habitat-api/data/scene_datasets/gibson/` folder (this folder should contain the `.glb` files from gibson). Note that the `habitat-api` folder is the [habitat-api](https://github.com/facebookresearch/habitat-api/) repository folder.
-
-1. Download the dataset for Gibson pointnav from [link](https://dl.fbaipublicfiles.com/habitat/data/datasets/pointnav/gibson/v1/pointnav_gibson_v1.zip) and place it in the folder `habitat-api/data/datasets/pointnav/gibson`. If placed correctly, you should have the train and val splits at `habitat-api/data/datasets/pointnav/gibson/v1/train/` and `habitat-api/data/datasets/pointnav/gibson/v1/val/` respectively. Place Gibson scenes downloaded in step-4 of local-evaluation under the `habitat-api/data/scene_datasets` folder.
-
-1. An example PPO baseline for the Pointnav task is present at [`habitat-api/baselines`](https://github.com/facebookresearch/habitat-api/tree/master/baselines). To start training on the Gibson dataset using this implementation follow instructions in the [baselines README](https://github.com/fairinternal/habitat-api/tree/master/baselines#baselines). Set `--task-config` to `tasks/pointnav_gibson.yaml` to train on Gibson data. This is a good starting point for participants to start building their own models. The PPO implementation contains initialization and interaction with the environment as well as tracking of training statistics. Participants can borrow the basic blocks from this implementation to start building their own models.
-
-1. To evaluate a trained PPO model on Gibson val split run `evaluate_ppo.py` using instructions in the README at [`habitat-api/baselines`](https://github.com/facebookresearch/habitat-api/tree/master/baselines) with `--task-config` set to `tasks/pointnav_gibson.yaml`. The evaluation script will report SPL metric.
-
-1. You can also use the general benchmarking script present at [`benchmark.py`](https://github.com/facebookresearch/habitat-api/blob/master/examples/benchmark.py). Set `--task-config` to `tasks/pointnav_gibson.yaml`  and inside the file [`tasks/pointnav_gibson.yaml`](https://github.com/facebookresearch/habitat-api/blob/master/configs/tasks/pointnav_gibson.yaml) set the `SPLIT` to `val`.
-
-1. Once you have trained your agents you can follow the submission instructions above to test them locally as well as submit them for online evaluation.
-
-1. We also provide trained RGB, RGBD, Blind PPO models. Code for the models is present inside the `habitat-challenge/baselines` folder. To use them:
-    1. Download pre-trained pytorch models from [link](https://dl.fbaipublicfiles.com/habitat/data/baselines/v1/habitat_baselines_v1.zip) and unzip into `habitat-challenge/models`.
-    1. Add loading of the baselines folder and models folder to Dockerfile:
-    ```dockerfile
-    ADD baselines /baselines
-    ADD models /models
-    ```
-    1. Modify `submission.sh` appropriately:
-    ```bash
-    python baselines/agents/ppo_agents.py --input_type {blind, depth, rgb, rgbd} --model_path baselines/{blind, depth, rgb, rgbd}.pth`
-    ```
-    1. Build docker and run local evaluation:
-    ```bash
-    docker build -t my_submission .; ./test_locally_{rgb, rgbd}.sh --docker-name my_submission
-    ```
 
 ## Citing Habitat
 Please cite the following paper for details about the 2019 challenge:
@@ -171,7 +173,7 @@ Please cite the following paper for details about the 2019 challenge:
 
 ## Acknowledgments
 
-The Habitat challenge would not have been possible without the infrastructure and support of [EvalAI](https://evalai.cloudcv.org/) team and the data of [Gibson](http://gibsonenv.stanford.edu/) team. We are especially grateful to Rishabh Jain, Deshraj Yadav, Fei Xia and Amir Zamir.
+The Habitat challenge would not have been possible without the infrastructure and support of [EvalAI](https://evalai.cloudcv.org/) team and the data of [Gibson](http://gibsonenv.stanford.edu/) team.
 
 ## References
 
