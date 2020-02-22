@@ -6,64 +6,58 @@
 
 # Habitat-Challenge
 
-This repository contains starter code for the 2020 challenge, details of the tasks, and training and evaluation setups. For an overview of habitat-challenge visit aihabitat.org/challenge.
+This repository contains starter code for the 2020 challenge, details of the tasks, and training and evaluation setups. For an overview of habitat-challenge visit [aihabitat.org/challenge](aihabitat.org/challenge).
 
 This year, we are hosting challenges on two embodied navigation tasks: 
-PointNav (‘Go 5m north, 3m west relative to start’)
-ObjectNav (‘find a chair’). 
+1. PointNav (*‘Go 5m north, 3m west relative to start’*)
+1. ObjectNav (*‘find a chair’*). 
 
-Task #1: PointNav focuses on realism and sim2real predictivity (the ability to predict the performance of a nav-model on a real robot from its performance in simulation). 
+Task #1: PointNav focuses on realism and *sim2real predictivity* (the ability to predict the performance of a nav-model on a real robot from its performance in simulation). 
 
 Task #2: ObjectNav focuses on egocentric object/scene recognition and a commonsense understanding of object semantics (where is a fireplace typically located in a house?). 
 
 
 ## Task 1: PointNav 
-In PointNav, an agent is spawned at a random starting position and orientation in an unseen environment and and asked to navigate to target coordinates specified relative to the agent’s start location (‘Go 5m north, 3m west relative to start’). No ground-truth map is available and the agent must only use its sensory input (an RGB-D camera) to navigate. 
+In PointNav, an agent is spawned at a random starting position and orientation in an unseen environment and and asked to navigate to target coordinates specified relative to the agent’s start location (*‘Go 5m north, 3m west relative to start’*). No ground-truth map is available and the agent must only use its sensory input (an RGB-D camera) to navigate. 
 
-We use Gibson 3D scenes [2] for the challenge. We use the splits provided by the Gibson dataset, retaining the train, and val sets, and separating the test set into test-standard and test-challenge. The train and val scenes are provided to participants. The test scenes are used for the official challenge evaluation and are not provided to participants.
+### Dataset
+We use Gibson 3D scenes [2] for the challenge. As in the 2019 Habitat challenge, we use the splits provided by the Gibson dataset, retaining the train and val sets, and separating the test set into test-standard and test-challenge. The train and val scenes are provided to participants. The test scenes are used for the official challenge evaluation and are not provided to participants. Note: The agent size has changed from 2019, thus the navigation episodes have changed (a wider agent in 2020 rendered many of 2019 episodes unnavigable). 
 
-After calling the STOP action, the agent is evaluated using the "Success weighted by Path Length" (SPL) metric [3]. An episode is deemed successful if on calling the STOP action, the agent is within 0.36m of the goal position. The evaluation will be carried out in completely new houses which are not present in training and validation splits.
+### Evaluation
+After calling the STOP action, the agent is evaluated using the 'Success weighted by Path Length' (SPL) metric [3]. An episode is deemed successful if on calling the STOP action, the agent is within 0.36m (2x agent-radius) of the goal position. 
 
 ### New in 2020
 The main emphasis in 2020 is on increased realism and on sim2real predictivity (the ability to predict performance on a real robot from its performance in simulation). 
 
-Specifically, we introduce the following changes inspired by our experiments and findings in \cite{kadian_sim2real}: 
+Specifically, we introduce the following changes inspired by our experiments and findings in [4]: 
 
-1. **No GPS+Compass sensor**: In 2019, the relative coordinates specifying the goal were continuously updated during agent movement -- essentially simulating an agent with perfect localization and heading estimation (e.g. an agent with an idealized GPS+Compass). However, high-precision localization in indoor environments can not be assumed in realistic settings -- GPS has low precision indoors, (visual) odometry may be noisy, SLAM-based localization can fail, etc. Hence, in 2020's challenge the agent does NOT have a GPS+Compass sensor and must navigate solely using an egocentric RGB-D camera. This change elevates the need to perform RGBD-based online localization. 
+1. **No GPS+Compass sensor**: In 2019, the relative coordinates specifying the goal were continuously updated during agent movement -- essentially simulating an agent with perfect localization and heading estimation (*e.g.* an agent with an idealized GPS+Compass). However, high-precision localization in indoor environments can not be assumed in realistic settings -- GPS has low precision indoors, (visual) odometry may be noisy, SLAM-based localization can fail, etc. Hence, in 2020's challenge the agent does NOT have a GPS+Compass sensor and must navigate solely using an egocentric RGB-D camera. This change elevates the need to perform RGBD-based online localization. 
 
-1. **Noisy Actuation and Sensing**: In 2019, the agent actions were deterministic -- i.e. when the agent executes **turn-left 30 degrees**, it turns **exactly** 30 degrees, and forward 0.25 m moves the agent **exactly** 0.25 m forward (modulo collisions). However, no robot moves deterministically -- actuation error, surface properties such as friction, and a myriad of other sources of error introduce significant drift over a long trajectory. To model this, we introduce a noise model acquired by benchmarking a real robotic platform \cite{pyrobot2019}. \figref{fig:noisy-actions} shows  
-trajectory rollouts sampled from this noise model (in a Gibson\cite{xia2018gibson} home).  As shown, identical action sequences can lead to vastly different final locations. We also added RGB and Depth sensor noises. 
+1. **Noisy Actuation and Sensing**: In 2019, the agent actions were deterministic -- i.e. when the agent executes **turn-left 30 degrees**, it turns **exactly** 30 degrees, and forward 0.25 m moves the agent **exactly** 0.25 m forward (modulo collisions). However, no robot moves deterministically -- actuation error, surface properties such as friction, and a myriad of other sources of error introduce significant drift over a long trajectory. To model this, we introduce a noise model acquired by benchmarking the [Locobot](http://www.locobot.org/) robot by the [PyRobot](https://www.pyrobot.org/) team. \figref{fig:noisy-actions} shows  
+trajectory rollouts sampled from this noise model (in a Gibson [2] home).  As shown, identical action sequences can lead to vastly different final locations. We also added RGB and Depth sensor noises. 
 
-1. **Collision Dynamics and ‘Sliding'**: In 2019, when the agent takes an action that results in a collision, the agent **slides** along the obstacle as opposed to stopping. This behavior is prevalent in video game engines as it allows for smooth human control; it is also enabled by default in MINOS, Deepmind Lab, AI2 THOR, and Gibson v1. We have found that this behavior enables `cheating' by learned agents -- the agents exploit this sliding mechanism to take an effective path that appears to travel **through non-navigable regions** of the environment (like walls). Such policies fail disastrously in the real world where the robot bump sensors  force a stop on contact with obstacles. To rectify this issue, we modify Habitat-Sim to disable sliding on collisions. 
+1. **Collision Dynamics and ‘Sliding'**: In 2019, when the agent takes an action that results in a collision, the agent **slides** along the obstacle as opposed to stopping. This behavior is prevalent in video game engines as it allows for smooth human control; it is also enabled by default in MINOS, Deepmind Lab, AI2 THOR, and Gibson v1. We have found that this behavior enables 'cheating' by learned agents -- the agents exploit this sliding mechanism to take an effective path that appears to travel **through non-navigable regions** of the environment (like walls). Such policies fail disastrously in the real world where the robot bump sensors  force a stop on contact with obstacles. To rectify this issue, we modify [Habitat-Sim to disable sliding on collisions](https://github.com/facebookresearch/habitat-sim/pull/439). 
 
 1. **Multiple cosmetic/minor changes**: Change in robot embodiment/size, camera resolution, height and orientation, etc -- to match LoCoBot. 
 
 
 ## Task 2: ObjectNav
 
-In ObjectNav, an agent is initialized at a random starting position and orientation in an unseen environment and asked to find an instance of an object category (‘find a chair’) by navigating to  it. A map of the environment is not provided and the agent must only use its sensory input to navigate. 
+In ObjectNav, an agent is initialized at a random starting position and orientation in an unseen environment and asked to find an instance of an object category (*‘find a chair’*) by navigating to  it. A map of the environment is not provided and the agent must only use its sensory input to navigate. 
 
-The agent is equipped with an RGB-D camera and a (noiseless) GPS+Compass sensor. GPS+Compass sensor provides the agent’s current location and orientation information relative to the start of the episode. We attempt to match the camera specification (field of view, resolution) in simulation to the Azure Kinect camera, but this task does not involve any sensing noise. 
+The agent is equipped with an RGB-D camera and a (noiseless) GPS+Compass sensor. GPS+Compass sensor provides the agent’s current location and orientation information relative to the start of the episode. We attempt to match the camera specification (field of view, resolution) in simulation to the Azure Kinect camera, but this task does not involve any injected sensing noise. 
 
-We use 90 of the Matterport3D scenes (MP3D)~\cite{matterport} with the standard splits of train/val/test as prescribed by Anderson \etal \cite{anderson2018evaluation}. MP3D contains 40 annotated categories. We hand-select a subset of 21 by excluding categories that are not visually well defined like doorways or windows and architectural elements like walls, floors, and ceilings. 
+### Dataset
+We use 90 of the [Matterport3D scenes (MP3D)](https://niessner.github.io/Matterport/) with the standard splits of train/val/test as prescribed by Anderson *et al.* [3]. MP3D contains 40 annotated categories. We hand-select a subset of 21 by excluding categories that are not visually well defined (like doorways or windows) and architectural elements (like walls, floors, and ceilings). 
 
-We follow a similar evaluation protocol as prescribed/used by \cite{anderson2018evaluation, habitat19iccv, habitat_challenge} -- measuring **success** (did the agent navigate to the goal object?) and **efficiency** (how efficient was the path it took compared to an optimal path?). 
+### Evaluation
+We generalize the PointNav evaluation protocol used by [1,3] to ObjectNav. At a high-level, we measure performance along the same two axes:  
+- **Success**: Did the agent navigate to an instance of the goal object? (Notice: *any* instance, regardless of distance from starting location.)
+- **Efficiency**: How efficient was the agent's path compared to an optimal path? (Notice: optimal path = shortest path from the agent's starting position to the *closest* instance of the target object category.)
 
+Concretely, an episode is deemed successful if on calling the STOP action, the agent is within 1.0m Euclidean distance from any instance of the target object category AND the object *can be viewed by an oracle* from that stopping position by turning the agent or looking up/down. Notice: we do NOT require the agent to be actually viewing the object at the stopping location, simply that the such oracle-visibility is possible without moving. Why? Because we want participants to focus on *navigation* not object framing. In the larger goal of Embodied AI, the agent is navigating to an object instance in order to interact with is (say point at or manipulate an object). Oracle-visibility is our proxy for *'the agent is close enough to interact with the object'*. 
 
-## Challenge Dataset
-
-We create a set of PointGoal navigation episodes for the Gibson [[2]](#references) 3D scenes and a set of ObjectGoal navigation episodes for Matterport3D. We use the splits provided by the Gibson and Matterport3D dataset, retaining the train, and val sets, and separating the test set into test-standard and test-challenge. The train and val scenes are provided to participants. The test scenes are used for the official challenge evaluation and are not provided to participants.
-
-
-## Evaluation
-
-After calling the STOP action, the agent is evaluated using the "Success weighted by Path Length" (SPL) metric [[3]](#references).
-
-<p align="center">
-  <img src='res/img/spl.png' />
-</p>
-
-An episode is deemed successful if on calling the STOP action, the agent is within 0.36m of the Point goal position or with 1.0m Euclidean distance from an Object goal from target category that the object can be visible. The evaluation will be carried out in completely new houses which are not present in training and validation splits.
+ObjectNav-SPL is defined analogous to PointNav-SPL. The only key difference is that the shortest path is computed to the object instance closest to the agent start location. Thus, if an agent spawns very close to *'chair1'* but stops at a distant *'chair2'*, it will be achieve 100% success (because it found a *'chair'*) but a fairly low SPL (because the agent path is much longer compared to the oracle path). 
 
 ## Participation Guidelines
 
@@ -177,8 +171,10 @@ The Habitat challenge would not have been possible without the infrastructure an
 
 ## References
 
-[1] [Habitat: A Platform for Embodied AI Research](https://arxiv.org/abs/1904.01201). Manolis Savva, Abhishek Kadian, Oleksandr Maksymets, Yili Zhao, Erik Wijmans, Bhavana Jain, Julian Straub, Jia Liu, Vladlen Koltun, Jitendra Malik, Devi Parikh, Dhruv Batra. IEEE/CVF International Conference on Computer Vision (ICCV), 2019.
+[1] [Habitat: A Platform for Embodied AI Research](https://arxiv.org/abs/1904.01201). Manolis Savva\*, Abhishek Kadian\*, Oleksandr Maksymets\*, Yili Zhao, Erik Wijmans, Bhavana Jain, Julian Straub, Jia Liu, Vladlen Koltun, Jitendra Malik, Devi Parikh, Dhruv Batra. IEEE/CVF International Conference on Computer Vision (ICCV), 2019.
 
 [2] [Gibson env: Real-world perception for embodied agents](https://arxiv.org/abs/1808.10654). F. Xia, A. R. Zamir, Z. He, A. Sax, J. Malik, and S. Savarese. In CVPR, 2018
 
 [3] [On evaluation of embodied navigation agents](https://arxiv.org/abs/1807.06757). Peter Anderson, Angel Chang, Devendra Singh Chaplot, Alexey Dosovitskiy, Saurabh Gupta, Vladlen Koltun, Jana Kosecka, Jitendra Malik, Roozbeh Mottaghi, Manolis Savva, Amir R. Zamir. arXiv:1807.06757, 2018.
+
+[4] [Are We Making Real Progress in Simulated Environments? Measuring the Sim2Real Gap in Embodied Visual Navigation](https://abhiskk.github.io/sim2real). Abhishek Kadian\*, Joanne Truong\*, Aaron Gokaslan, Alexander Clegg, Erik Wijmans, Stefan Lee, Manolis Savva, Sonia Chernova, Dhruv Batra. arXiv:1912.06321, 2019.
