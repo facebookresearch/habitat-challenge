@@ -71,30 +71,27 @@ Participate in the contest by registering on the [EvalAI challenge page](https:/
     git clone https://github.com/facebookresearch/habitat-challenge.git
     cd habitat-challenge
     ```
-    Implement your own agent or try one of ours. We provide hand-coded agents in `baselines/agents/simple_agents.py`, below is an example forward-only code for agent:
+
+1. Implement your own agent or try one of ours. We provide hand-coded agents in `baselines/agents/simple_agents.py`; below is a code-snippet for an agent that takes random actions:
     ```python
     import habitat
 
-    class ForwardOnlyAgent(habitat.Agent):
+    class RandomAgent(habitat.Agent):
         def reset(self):
             pass
 
         def act(self, observations):
-            action = SIM_NAME_TO_ACTION[SimulatorActions.FORWARD.value]
-            return action
+            return {"action": numpy.random.choice(task_config.TASK.POSSIBLE_ACTIONS)}
 
     def main():
-        agent = ForwardOnlyAgent()
+        agent = RandomAgent(task_config=config)
         challenge = habitat.Challenge()
         challenge.submit(agent)
-
-    if __name__ == "__main__":
-        main()
     ```
-    [Optional] Modify submission.sh file if your agent needs any custom modifications (e.g. command-line arguments). Otherwise, nothing to do. Default submission.sh is simply a call to `GoalFollower` agent in `myagent/agent.py`.
+    [Optional] Modify submission.sh file if your agent needs any custom modifications (e.g. command-line arguments). Otherwise, nothing to do. Default submission.sh is simply a call to `RandomAgent` agent in `agent.py`. 
 
 
-1. Install [nvidia-docker](https://github.com/NVIDIA/nvidia-docker) Note: only supports Linux; no Windows or MacOS.
+1. Install [nvidia-docker](https://github.com/NVIDIA/nvidia-docker). Note: only supports Linux; no Windows or MacOS.
 
 1. Modify the provided Dockerfile if you need custom modifications. Let's say your code needs `pytorch`, these dependencies should be pip installed inside a conda environment called `habitat` that is shipped with our habitat-challenge docker, as shown below:
 
@@ -104,11 +101,11 @@ Participate in the contest by registering on the [EvalAI challenge page](https:/
     ADD agent.py /agent.py
     ADD submission.sh /submission.sh
     ```
-    Build your docker container: `docker build -t my_submission .` (Note: you will need `sudo` priviliges to run this command)
+    Build your docker container: `docker build . -t my_submission` where `my_submission` is the docker image name you want to use. (Note: you may need `sudo` priviliges to run this command.)
 
-1. a) PoinGoal Navigation: Download Gibson scenes used for Habitat Challenge. Accept terms [here](https://docs.google.com/forms/d/e/1FAIpQLSen7LZXKVl_HuiePaFzG_0Boo6V3J5lJgzt3oPeSfPr4HTIEA/viewform) and select the download corresponding to “Habitat Challenge Data for Gibson (1.4 GB)“. Place this data in: `habitat-challenge/habitat-challenge-data/gibson`
+1. a) PoinNav: Download Gibson scenes used for Habitat Challenge. Accept terms [here](https://docs.google.com/forms/d/e/1FAIpQLSen7LZXKVl_HuiePaFzG_0Boo6V3J5lJgzt3oPeSfPr4HTIEA/viewform) and select the download corresponding to “Habitat Challenge Data for Gibson (1.5 GB)“. Place this data in: `habitat-challenge/habitat-challenge-data/gibson`
    
-   b) ObjectGoal Navigation: Download Matterport3D scenes used for Habitat Challenge [here](https://niessner.github.io/Matterport/). Place this data in: `habitat-challenge/habitat-challenge-data/mp3d`
+   b) ObjectNav: Download Matterport3D scenes used for Habitat Challenge [here](https://niessner.github.io/Matterport/). Place this data in: `habitat-challenge/habitat-challenge-data/mp3d`
 
 1. Evaluate your docker container locally on RGB modality:
     ```bash
@@ -129,7 +126,7 @@ Participate in the contest by registering on the [EvalAI challenge page](https:/
 
 ### Online submission
 
-Follow instructions in the `submit` tab of the [EvalAI challenge page](https://evalai.cloudcv.org/web/challenges/challenge-page/254) to submit your docker image. Note that you will need a version of EvalAI `>= 1.2.3`. Pasting those instructions here for convenience:
+Follow instructions in the `submit` tab of the EvalAI challenge page (coming soon) to submit your docker image. Note that you will need a version of EvalAI `>= 1.2.3`. Pasting those instructions here for convenience:
 
 ```bash
 # Installing EvalAI Command Line Interface
@@ -150,17 +147,17 @@ The challenge consists of the following phases:
 1. **Test Standard phase**: consists of episodes with RGBD modality. Each team is allowed maximum of 10 submission per day for this phase, but again, please use them judiciously. Don't overfit to the test set. The purpose of this phase is to serve as a public leaderboard establishing the state of the art. 
 1. **Test Challenge phase**: consists of episodes with RGBD modality. This split will be used to decide challenge winners on the RGB track. Each team is allowed total of 5 submissions until the end of challenge submission phase. Results on this split will not be made public until the announcement of final results at the [Embodied AI workshop at CVPR](https://embodied-ai.org/). 
 
-Note: Your agent will be evaluated on 1000-2000 episodes and will have a total available time of 30 mins to finish. Your submissions will be evaluated on AWS EC2 p2.xlarge instance which has a Tesla K80 GPU (12 GB Memory), 4 CPU cores, and 61 GB RAM. If you need more time/resources for evaluation of your submission please get in touch. If you face any issues or have questions you can ask them on the [habitat-challenge forum](https://evalai-forum.cloudcv.org/c/habitat-challenge-2020).
+Note: Your agent will be evaluated on 1000-2000 episodes and will have a total available time of 30 mins to finish. Your submissions will be evaluated on AWS EC2 p2.xlarge instance which has a Tesla K80 GPU (12 GB Memory), 4 CPU cores, and 61 GB RAM. If you need more time/resources for evaluation of your submission please get in touch. If you face any issues or have questions you can ask them on the habitat-challenge forum (coming soon).
 
 
-## Citing Habitat
-Please cite the following paper for details about the 2019 challenge:
+## Citing Habitat Challenge 2020
+Please cite the following paper for details about the 2020 PointNav challenge:
 
 ```
-@inproceedings{habitat19iccv,
-  title     =     {Habitat: {A} {P}latform for {E}mbodied {AI} {R}esearch},
-  author    =     {Manolis Savva and Abhishek Kadian and Oleksandr Maksymets and Yili Zhao and Erik Wijmans and Bhavana Jain and Julian Straub and Jia Liu and Vladlen Koltun and Jitendra Malik and Devi Parikh and Dhruv Batra},
-  booktitle =     {Proceedings of the IEEE/CVF International Conference on Computer Vision (ICCV)},
+@inproceedings{habitat2020sim2real,
+  title     =     {Are We Making Real Progress in Simulated Environments? Measuring the Sim2Real Gap in Embodied Visual Navigation},
+  author    =     {Abhishek Kadian, Joanne Truong, Aaron Gokaslan, Alexander Clegg, Erik Wijmans, Stefan Lee, Manolis Savva, Sonia Chernova, Dhruv Batra},
+  booktitle =     {arXiv:1912.06321},
   year      =     {2019}
 }
 ```
