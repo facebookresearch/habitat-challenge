@@ -43,7 +43,7 @@ Specifically, we introduce the following changes inspired by our experiments and
 
 1. **Noisy Actuation and Sensing**: In 2019, the agent actions were deterministic -- i.e. when the agent executes **turn-left 30 degrees**, it turns **exactly** 30 degrees, and forward 0.25 m moves the agent **exactly** 0.25 m forward (modulo collisions). However, no robot moves deterministically -- actuation error, surface properties such as friction, and a myriad of other sources of error introduce significant drift over a long trajectory. To model this, we introduce a noise model acquired by benchmarking the [Locobot](http://www.locobot.org/) robot by the [PyRobot](https://www.pyrobot.org/) team. We also added RGB and Depth sensor noises.
 <figure>
-  <img src="res/img/pyrobot-noise-rollout.png" style="width:1%"/>
+  <img src="res/img/pyrobot-noise-rollout.png" height="100"/>
   <figcaption>Effect of actuation noise. The black line is the trajectory of an action sequence with perfect actuation (no noise). In red are multiple rollouts of this action sequence sampled from the actuation noise model. As we can see, identical action sequences can lead to vastly different final locations. </figcaption>
 </figure>
 
