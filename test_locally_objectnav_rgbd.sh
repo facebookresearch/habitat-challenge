@@ -23,5 +23,5 @@ docker run -v $(pwd)/habitat-challenge-data:/habitat-challenge-data \
     --runtime=nvidia \
     ${DOCKER_NAME} \
     /bin/bash -c \
-    ". activate habitat; export CHALLENGE_CONFIG_FILE=/habitat-challenge-data/challenge_pointnav.local.rgb.yaml; bash submission.sh"
+    ". activate habitat; export CHALLENGE_CONFIG_FILE=/habitat-challenge-data/challenge_objectnav2020.local.rgbd.yaml; bash submission.sh"
 
