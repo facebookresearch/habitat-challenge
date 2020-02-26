@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-python agent.py --agent-class GoalFollower
+python agent.py --agent-class RandomAgent
