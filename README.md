@@ -123,8 +123,12 @@ Note: only supports Linux; no Windows or MacOS.
    
    b) ObjectNav: Download Matterport3D scenes used for Habitat Challenge [here](https://niessner.github.io/Matterport/). Place this data in: `habitat-challenge/habitat-challenge-data/mp3d`
 
-1. Evaluate your docker container locally on RGB modality:
+1. Evaluate your docker container locally:
     ```bash
+    # Testing PointNav
+    ./test_locally_pointnav_rgbd.sh --docker-name my_submission
+    
+    # Testing ObjectNav
     ./test_locally_objectnav_rgbd.sh --docker-name my_submission
     ```
     If the above command runs successfully you will get an output similar to:
@@ -137,7 +141,7 @@ Note: only supports Linux; no Windows or MacOS.
     Note: this same command will be run to evaluate your agent for the leaderboard. **Please submit your docker for remote evaluation (below) only if it runs successfully on your local setup.**  
     To evaluate an agent for PointGoal challenge track run:
     ```bash
-    ./test_locally_pointgoal_rgbd.sh --docker-name my_submission
+    ./test_locally_pointnav_rgbd.sh --docker-name my_submission
     ```
 
 ### Online submission
