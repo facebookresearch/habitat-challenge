@@ -139,10 +139,6 @@ Note: only supports Linux; no Windows or MacOS.
     2020-02-14 21:23:56,339 spl: 0.0
     ```
     Note: this same command will be run to evaluate your agent for the leaderboard. **Please submit your docker for remote evaluation (below) only if it runs successfully on your local setup.**  
-    To evaluate an agent for PointGoal challenge track run:
-    ```bash
-    ./test_locally_pointnav_rgbd.sh --docker-name my_submission
-    ```
 
 ### Online submission
 
@@ -163,7 +159,7 @@ Valid challenge phases are `habitat20-{pointnav, objectnav}-{minival, test-std, 
 
 The challenge consists of the following phases:
 
-1. **Minival phase**: consists of 30 episodes with RGBD modality. This split is same as the one used in `./test_locally_{pointgoal, objectnav}_rgbd.sh`. The purpose of this phase is sanity checking -- to confirm that our remote evaluation reports the same result as the one you're seeing locally. Each team is allowed maximum of 30 submission per day for this phase, but please use them judiciously. We will block and disqualify teams that spam our servers. 
+1. **Minival phase**: consists of 30 episodes with RGBD modality. This split is same as the one used in `./test_locally_{pointnav, objectnav}_rgbd.sh`. The purpose of this phase is sanity checking -- to confirm that our remote evaluation reports the same result as the one you're seeing locally. Each team is allowed maximum of 30 submission per day for this phase, but please use them judiciously. We will block and disqualify teams that spam our servers. 
 1. **Test Standard phase**: consists of episodes with RGBD modality. Each team is allowed maximum of 10 submission per day for this phase, but again, please use them judiciously. Don't overfit to the test set. The purpose of this phase is to serve as a public leaderboard establishing the state of the art. 
 1. **Test Challenge phase**: consists of episodes with RGBD modality. This split will be used to decide challenge winners on the RGB track. Each team is allowed total of 5 submissions until the end of challenge submission phase. Results on this split will not be made public until the announcement of final results at the [Embodied AI workshop at CVPR](https://embodied-ai.org/). 
 
