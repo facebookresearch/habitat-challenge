@@ -25,9 +25,13 @@ SIMULATOR:
     MAX_DEPTH: 10.0
     POSITION: [0, 0.88, 0]
     NOISE_MODEL: "RedwoodDepthNoiseModel"
+
+  ACTION_SPACE_CONFIG: 'pyrobotnoisy'
   NOISE_MODEL:
+    ROBOT: "LoCoBot"
     CONTROLLER: 'Proportional'
     NOISE_MULTIPLIER: 0.5
+
 TASK:
   TYPE: Nav-v0
   SUCCESS_DISTANCE: 0.36
