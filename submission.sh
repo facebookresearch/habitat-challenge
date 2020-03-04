@@ -1,3 +1,4 @@
 #!/usr/bin/env bash
 
-python agent.py --agent-class RandomAgent
+python agent.py --evaluation $AGENT_EVALUATION_TYPE
+
