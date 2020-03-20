@@ -117,7 +117,7 @@ Note: only supports Linux; no Windows or MacOS.
     ADD agent.py /agent.py
     ADD submission.sh /submission.sh
     ```
-    Build your docker container: `docker build . -t my_submission` where `my_submission` is the docker image name you want to use. (Note: you may need `sudo` priviliges to run this command.)
+    Build your docker container: `docker build . --file Pointnav.Dockerfile  -t pointnav_submission` or using `docker build . --file Objectnav.Dockerfile  -t objectnav_submission`. (Note: you may need `sudo` priviliges to run this command.)
 
 1. a) PoinNav: Download Gibson scenes used for Habitat Challenge. Accept terms [here](https://docs.google.com/forms/d/e/1FAIpQLSen7LZXKVl_HuiePaFzG_0Boo6V3J5lJgzt3oPeSfPr4HTIEA/viewform) and select the download corresponding to “Habitat Challenge Data for Gibson (1.5 GB)“. Place this data in: `habitat-challenge/habitat-challenge-data/data/scene_datasets/gibson`
    
@@ -126,10 +126,10 @@ Note: only supports Linux; no Windows or MacOS.
 1. Evaluate your docker container locally:
     ```bash
     # Testing PointNav
-    ./test_locally_pointnav_rgbd.sh --docker-name my_submission
+    ./test_locally_pointnav_rgbd.sh --docker-name pointnav_submission
     
     # Testing ObjectNav
-    ./test_locally_objectnav_rgbd.sh --docker-name my_submission
+    ./test_locally_objectnav_rgbd.sh --docker-name objectnav_submission
     ```
     If the above command runs successfully you will get an output similar to:
     ```
@@ -152,7 +152,11 @@ pip install "evalai>=1.2.3"
 evalai set_token <your EvalAI participant token>
 
 # Push docker image to EvalAI docker registry
-evalai push my_submission:latest --phase <phase-name>
+# Pointnav
+evalai push pointnav_submission:latest --phase <phase-name>
+
+# Objectnav
+evalai push objectnav_submission:latest --phase <phase-name>
 ```
 
 Valid challenge phases are `habitat20-{pointnav, objectnav}-{minival, test-std, test-ch}`.

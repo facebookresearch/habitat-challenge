@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-DOCKER_NAME="my_submission"
+DOCKER_NAME="pointnav_submission"
 
 while [[ $# -gt 0 ]]
 do
