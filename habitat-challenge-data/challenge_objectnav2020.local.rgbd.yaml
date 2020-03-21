@@ -36,16 +36,15 @@ TASK:
   SENSORS: ['OBJECTGOAL_SENSOR', 'COMPASS_SENSOR', 'GPS_SENSOR']
   GOAL_SENSOR_UUID: objectgoal
 
-  MEASUREMENTS: ['DISTANCE_TO_GOAL', 'SPL']
-  SPL:
-    TYPE: SPL
-    DISTANCE_TO: VIEW_POINTS
-    SUCCESS_DISTANCE: 0.1
+  MEASUREMENTS: ['DISTANCE_TO_GOAL', 'SUCCESS', 'SPL']
+
   DISTANCE_TO_GOAL:
     DISTANCE_TO: VIEW_POINTS
+  SUCCESS:
+    SUCCESS_DISTANCE: 0.1
 
 DATASET:
   TYPE: ObjectNav-v1
   SPLIT: val_mini
-  DATA_PATH: habitat-challenge-data/objectnav_mp3d.{split}.json.gz
+  DATA_PATH: habitat-challenge-data/objectgoal_mp3d/{split}/{split}.json.gz
   SCENES_DIR: "habitat-challenge-data/data/scene_datasets/"
