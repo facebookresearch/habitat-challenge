@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-DOCKER_NAME="my_submission"
+DOCKER_NAME="pointnav_submission"
 
 while [[ $# -gt 0 ]]
 do
@@ -21,7 +21,7 @@ done
 
 docker run -v $(pwd)/habitat-challenge-data:/habitat-challenge-data \
     --runtime=nvidia \
-    ${DOCKER_NAME} \
-    /bin/bash -c \
-    ". activate habitat; export CHALLENGE_CONFIG_FILE=/habitat-challenge-data/challenge_pointnav2020.local.rgbd.yaml; bash submission.sh"
+    -e "AGENT_EVALUATION_TYPE=local" \
+    -e "TRACK_CONFIG_FILE=/challenge_pointnav2020.local.rgbd.yaml" \
+    ${DOCKER_NAME}\
 
