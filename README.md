@@ -73,7 +73,7 @@ ObjectNav-SPL is defined analogous to PointNav-SPL. The only key difference is t
 
 ## Participation Guidelines
 
-Participate in the contest by registering on the [EvalAI challenge page](https://evalai.cloudcv.org/web/challenges/challenge-page/254) and creating a team. Participants will upload docker containers with their agents that evaluated on a AWS GPU-enabled instance. Before pushing the submissions for remote evaluation, participants should test the submission docker locally to make sure it is working. Instructions for training, local evaluation, and online submission are provided below.
+Participate in the contest by registering on the [EvalAI challenge page](https://evalai.cloudcv.org/web/challenges/challenge-page/255) and creating a team. Participants will upload docker containers with their agents that evaluated on a AWS GPU-enabled instance. Before pushing the submissions for remote evaluation, participants should test the submission docker locally to make sure it is working. Instructions for training, local evaluation, and online submission are provided below.
 
 ### Local Evaluation
 
@@ -84,7 +84,7 @@ Participate in the contest by registering on the [EvalAI challenge page](https:/
     cd habitat-challenge
     ```
 
-1. Implement your own agent or try one of ours. We provide hand-coded agents in `baselines/agents/simple_agents.py`; below is a code-snippet for an agent that takes random actions:
+1. Implement your own agent or try one of ours. We provide an agent in `agent.py` that takes random actions:
     ```python
     import habitat
 
