@@ -6,7 +6,9 @@
 
 # Habitat-Challenge
 
-This repository contains starter code for the 2020 challenge, details of the tasks, and training and evaluation setups. For an overview of habitat-challenge visit [aihabitat.org/challenge](https://aihabitat.org/challenge/).
+This repository contains starter code for the 2020 challenge, details of the tasks, and training and evaluation setups. For an overview of habitat-challenge visit [aihabitat.org/challenge](https://aihabitat.org/challenge/). 
+
+If you are looking for our 2019 starter code, it's available in the [`challenge-2019 branch`](https://github.com/facebookresearch/habitat-challenge/tree/challenge-2019).
 
 This year, we are hosting challenges on two embodied navigation tasks: 
 1. PointNav (*‘Go 5m north, 3m west relative to start’*)
