@@ -4,7 +4,7 @@
 
 --------------------------------------------------------------------------------
 
-# Habitat-Challenge 2019
+# Habitat Challenge 2019
 
 This repository contains starter code for the challenge and details of task, training and evaluation. For an overview of habitat-challenge visit [aihabitat.org/challenge](https://aihabitat.org/challenge) or see our paper [[1]](#references).
 
