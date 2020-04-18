@@ -33,7 +33,7 @@ def get_defaut_config():
     c.TORCH_GPU_ID = 0
     return c
 
-class PPOAgent(Agent):
+class DDPPOAgent(Agent):
     def __init__(self, config: Config):
         spaces = {
             "pointgoal": Box(
@@ -77,7 +77,7 @@ class PPOAgent(Agent):
             action_space=action_spaces,
             hidden_size=self.hidden_size,
             goal_sensor_uuid=config.TASK_CONFIG.TASK.GOAL_SENSOR_UUID,
-            normalize_visual_inputs=True,
+            normalize_visual_inputs="rgb" if config.INPUT_TYPE in ["rgb", "rgbd"] else False,
         )
         self.actor_critic.to(self.device)
 
@@ -149,7 +149,7 @@ def main():
     config.RANDOM_SEED = 7
     config.freeze()
 
-    agent = PPOAgent(config)
+    agent = DDPPOAgent(config)
     challenge = habitat.Challenge()
     challenge.submit(agent)
 
