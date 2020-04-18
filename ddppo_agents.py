@@ -16,7 +16,8 @@ import PIL
 from gym.spaces import Discrete, Dict, Box
 
 import habitat
-from habitat.config.default import get_config
+#from habitat.config.default import get_config
+from habitat_baselines.config.default import get_config
 from habitat_baselines.rl.ppo import Policy, PointNavBaselinePolicy
 from habitat_baselines.rl.ddppo.policy.resnet_policy import  PointNavResNetPolicy
 from habitat_baselines.common.utils import batch_obs
@@ -27,7 +28,6 @@ def get_defaut_config():
     c = Config()
     c.INPUT_TYPE = "blind"
     c.MODEL_PATH = "data/checkpoints/blind.pth"
-    c.RESOLUTION = 256
     c.RL.PPO.hidden_size = 512
     c.RANDOM_SEED = 7
     c.TORCH_GPU_ID = 0
@@ -43,13 +43,13 @@ class PPOAgent(Agent):
                 dtype=np.float32,
             )
         }
-        space_resolution = config.RESOLUTION
 
         if config.INPUT_TYPE in ["depth", "rgbd"]:
             spaces["depth"] = Box(
                 low=0,
                 high=1,
-                shape=(space_resolution, space_resolution, 1),
+                shape=(config.TASK_CONFIG.SIMULATOR.DEPTH_SENSOR.HEIGHT, 
+                        config.TASK_CONFIG.SIMULATOR.DEPTH_SENSOR.WIDTH, 1),
                 dtype=np.float32,
             )
 
@@ -57,7 +57,8 @@ class PPOAgent(Agent):
             spaces["rgb"] = Box(
                 low=0,
                 high=255,
-                shape=(space_resolution, space_resolution, 3),
+                shape=(config.TASK_CONFIG.SIMULATOR.RGB_SENSOR.HEIGHT, 
+                        config.TASK_CONFIG.SIMULATOR.RGB_SENSOR.WIDTH, 3),
                 dtype=np.uint8,
             )
         observation_spaces = Dict(spaces)
@@ -75,7 +76,7 @@ class PPOAgent(Agent):
             observation_space=observation_spaces,
             action_space=action_spaces,
             hidden_size=self.hidden_size,
-            goal_sensor_uuid=config.TASK.GOAL_SENSOR_UUID,
+            goal_sensor_uuid=config.TASK_CONFIG.TASK.GOAL_SENSOR_UUID,
             normalize_visual_inputs=True,
         )
         self.actor_critic.to(self.device)
@@ -141,7 +142,6 @@ def main():
 
     config = get_config('configs/ddppo_pointnav.yaml').clone()
     config.defrost()
-    config.RESOLUTION = 256
     config.TORCH_GPU_ID = 0
     config.INPUT_TYPE = args.input_type
     config.MODEL_PATH = args.model_path
