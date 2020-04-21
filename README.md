@@ -54,7 +54,7 @@ Specifically, we introduce the following changes inspired by our experiments and
 
 1. **Multiple cosmetic/minor changes**: Change in robot embodiment/size, camera resolution, height, and orientation, etc &mdash; to match LoCoBot. 
 
-1. **Notes about performance**: We have noticed that turning on the RGB/Depth sensor noise may lead to worse FPS performance. As such, we recommend training with these noises turned off and using them for fine tuning if necessary. This can be down by commenting out the lines that include the key "noise_model" in the config or by overriding these values from the command line.
+1. **Notes about performance**: We have noticed that turning on the RGB/Depth sensor noise may lead to reduced simulation speed. As such, we recommend initially training with these noises turned off and using them for fine tuning if necessary. This can be done by commenting out the lines that include the key "noise_model" in the config or by overriding these values from the command line.
 
 ### PointNav DDPPO Baseline
 We have added a config in configs/ddpo_pointnav.yaml that includes a baseline using DDPPO from Habitat-API. To run the code, follow the instructions found [here](https://github.com/facebookresearch/habitat-api/tree/master/habitat_baselines/rl/ddppo). Note you will have to add the following two arguments to any habitat_baselines: TASK_CONFIG.DATASET.SPLIT 'train' to ensure it loads the training split from the challenge config.
