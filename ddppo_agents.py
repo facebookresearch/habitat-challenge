@@ -9,12 +9,15 @@ import argparse
 import random
 
 import numpy as np
-import cv2
+#import cv2
 import torch
-from torchvision.transforms.functional import center_crop, resize, to_pil_image, to_tensor
+#from torchvision.transforms.functional import center_crop, resize, to_pil_image, to_tensor
 import PIL
 from gym.spaces import Discrete, Dict, Box
 
+from habitat_baselines.common.utils import (
+    ResizeCenterCropper,
+)
 import habitat
 #from habitat.config.default import get_config
 from habitat_baselines.config.default import get_config
@@ -48,7 +51,7 @@ class DDPPOAgent(Agent):
             spaces["depth"] = Box(
                 low=0,
                 high=1,
-                shape=(config.TASK_CONFIG.SIMULATOR.DEPTH_SENSOR.HEIGHT, 
+                shape=(config.TASK_CONFIG.SIMULATOR.DEPTH_SENSOR.HEIGHT,
                         config.TASK_CONFIG.SIMULATOR.DEPTH_SENSOR.WIDTH, 1),
                 dtype=np.float32,
             )
@@ -57,7 +60,7 @@ class DDPPOAgent(Agent):
             spaces["rgb"] = Box(
                 low=0,
                 high=255,
-                shape=(config.TASK_CONFIG.SIMULATOR.RGB_SENSOR.HEIGHT, 
+                shape=(config.TASK_CONFIG.SIMULATOR.RGB_SENSOR.HEIGHT,
                         config.TASK_CONFIG.SIMULATOR.RGB_SENSOR.WIDTH, 3),
                 dtype=np.uint8,
             )
@@ -137,6 +140,8 @@ def main():
         default="blind",
         choices=["blind", "rgb", "depth", "rgbd"],
     )
+    parser.add_argument("--evaluation", type=str, required=True, choices=["local", "remote"])
+    config_paths = os.environ["CHALLENGE_CONFIG_FILE"]
     parser.add_argument("--model-path", default="", type=str)
     args = parser.parse_args()
 
@@ -145,12 +150,16 @@ def main():
     config.TORCH_GPU_ID = 0
     config.INPUT_TYPE = args.input_type
     config.MODEL_PATH = args.model_path
-    
+
     config.RANDOM_SEED = 7
     config.freeze()
 
     agent = DDPPOAgent(config)
-    challenge = habitat.Challenge()
+    if args.evaluation == "local":
+        challenge = habitat.Challenge(eval_remote=False)
+    else:
+        challenge = habitat.Challenge(eval_remote=True)
+
     challenge.submit(agent)
 
 

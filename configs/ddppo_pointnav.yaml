@@ -8,7 +8,7 @@ TENSORBOARD_DIR: "tb"
 VIDEO_DIR: "video_dir"
 TEST_EPISODE_COUNT: 994
 EVAL_CKPT_PATH_DIR: "data/new_checkpoints"
-NUM_PROCESSES: 2
+NUM_PROCESSES: 4
 SENSORS: ["RGB_SENSOR" , "DEPTH_SENSOR"]
 CHECKPOINT_FOLDER: "data/new_checkpoints"
 NUM_UPDATES: 10000
@@ -38,8 +38,6 @@ RL:
     use_normalized_advantage: False
 
     hidden_size: 512
-    center_crop: 0
-    resize_shortest_edge_size: 0
 
   DDPPO:
     sync_frac: 0.6

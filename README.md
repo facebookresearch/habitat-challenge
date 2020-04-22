@@ -59,9 +59,29 @@ Specifically, we introduce the following changes inspired by our experiments and
 ### PointNav DDPPO Baseline
 We have added a config in configs/ddpo_pointnav.yaml that includes a baseline using DDPPO from Habitat-API. To run the code, follow the instructions found [here](https://github.com/facebookresearch/habitat-api/tree/master/habitat_baselines/rl/ddppo). Note you will have to add the following two arguments to any habitat_baselines: TASK_CONFIG.DATASET.SPLIT 'train' to ensure it loads the training split from the challenge config.
 
-The checkpoints can be evaluted by running the following command.
+The checkpoints can by SPL and other measurements of a ckpt file defined by the environmental variable $PATH_TO_CHECKPOINT by running the following command:
+
+    ```bash
+    python -u -m habitat_baselines.run --exp-config configs/ddppo_pointnav.yaml --run-type eval EVAL_CKPT_PATH_DIR $PATH_TO_CHECKPOINT TASK_CONFIG.DATASET.SPLIT val
+    ```
+
+The following command can be use to run the agents locally and will produce a similar to output to how the command is run within the Docker. This can be useful for debugging your code.
 
 CHALLENGE_CONFIG_FILE=configs/challenge_pointnav2020.local.rgbd.yaml python ddppo_agents.py --model-path $PATH_TO_CHECKPOINT.pth --input-type rgbd
+
+We supply the PointNav_DDPPO_Baseline Docker image. This Docker image will try to add a demo.ckpt.pth file representing a trained a DDPPO module to the Docker submission. It will run the submission.sh script and pass in the appropiate args to use the ddppo_agents.py script.
+
+To build the docker run the following command:
+
+    ```bash
+    docker build . --file Pointnav_DDPPO_Baseline.Dockerfile -t pointnav_submission
+    ```
+
+Finally, to submit the docker to EvalAI, run the following command:
+
+    ```bash
+    evalai push pointnav_submission:latest --phase habitat20-pointnav-minival
+    ```
 
 ## Task 2: ObjectNav
 
