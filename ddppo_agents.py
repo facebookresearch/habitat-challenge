@@ -7,19 +7,14 @@
 
 import argparse
 import random
+import os
 
 import numpy as np
-#import cv2
 import torch
-#from torchvision.transforms.functional import center_crop, resize, to_pil_image, to_tensor
 import PIL
 from gym.spaces import Discrete, Dict, Box
 
-from habitat_baselines.common.utils import (
-    ResizeCenterCropper,
-)
 import habitat
-#from habitat.config.default import get_config
 from habitat_baselines.config.default import get_config
 from habitat_baselines.rl.ppo import Policy, PointNavBaselinePolicy
 from habitat_baselines.rl.ddppo.policy.resnet_policy import  PointNavResNetPolicy
