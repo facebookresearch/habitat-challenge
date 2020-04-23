@@ -7,7 +7,6 @@
 
 import argparse
 import random
-import os
 
 import numpy as np
 import torch
@@ -15,6 +14,7 @@ import PIL
 from gym.spaces import Discrete, Dict, Box
 
 import habitat
+import os
 from habitat_baselines.config.default import get_config
 from habitat_baselines.rl.ppo import Policy, PointNavBaselinePolicy
 from habitat_baselines.rl.ddppo.policy.resnet_policy import  PointNavResNetPolicy
@@ -140,7 +140,7 @@ def main():
     parser.add_argument("--model-path", default="", type=str)
     args = parser.parse_args()
 
-    config = get_config('configs/ddppo_pointnav.yaml').clone()
+    config = get_config(config_paths).clone()
     config.defrost()
     config.TORCH_GPU_ID = 0
     config.INPUT_TYPE = args.input_type
