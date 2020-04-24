@@ -140,7 +140,8 @@ def main():
     parser.add_argument("--model-path", default="", type=str)
     args = parser.parse_args()
 
-    config = get_config(config_paths).clone()
+    config = get_config('configs/ddppo_pointnav.yaml', 
+                ['BASE_TASK_CONFIG_PATH', config_paths]).clone()
     config.defrost()
     config.TORCH_GPU_ID = 0
     config.INPUT_TYPE = args.input_type

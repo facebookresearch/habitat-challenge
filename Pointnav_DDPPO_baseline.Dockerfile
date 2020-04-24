@@ -4,7 +4,7 @@ RUN /bin/bash -c ". activate habitat; pip install ifcfg torch tensorboard"
 
 #Hack to update habitat_baselines
 #TODO: Remove once base image is updated.
-RUN /bin/bash -c ". activate habitat; git clone http://github.com/facebookresearch/habitat-api.git habitat-api2 && cp -r habitat-api2/habitat_baselines habitat-api/."
+RUN /bin/bash -c ". activate habitat; git clone http://github.com/facebookresearch/habitat-api.git habitat-api2 && (cd habitat-api2 && git checkout 959bd45431edd8024832a877bdc8218015d97a7e) && cp -r habitat-api2/habitat_baselines habitat-api/."
 
 ADD ddppo_agents.py agent.py
 ADD submission.sh submission.sh
