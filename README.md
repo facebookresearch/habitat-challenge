@@ -129,17 +129,17 @@ Note: only supports Linux; no Windows or MacOS.
     **Using Symlinks:**  If you used symlinks (i.e. `ln -s`) to link to an existing download of Gibson or MP3D, there is an additional step.  For  ObjectNav/MP3D (and similarly for PointNav/Gibson),
     first make sure there is only one level of symlink (instead of a symlink to a symlink link to a .... symlink) with
       ```bash
-      ln -f -s $(realpath habitat-challenge/habitat-challenge-data/data/scene_datasets/mp3d) \
-          habitat-challenge/habitat-challenge-data/data/scene_datasets/mp3d
+      ln -f -s $(realpath habitat-challenge-data/data/scene_datasets/mp3d) \
+          habitat-challenge-data/data/scene_datasets/mp3d
       ```
      
      Then modify the docker command `test_locally_objectnav_rgbd` to mount the linked to location by adding 
-     `-v $(realpath habitat-challenge/habitat-challenge-data/data/scene_datasets/mp3d)`.  The modified docker command
+     `-v $(realpath habitat-challenge-data/data/scene_datasets/mp3d)`.  The modified docker command
      would be
      ```bash
       docker run \
           -v $(pwd)/habitat-challenge-data:/habitat-challenge-data \
-          -v $(realpath habitat-challenge/habitat-challenge-data/data/scene_datasets/mp3d) \
+          -v $(realpath habitat-challenge-data/data/scene_datasets/mp3d) \
           --runtime=nvidia \
           -e "AGENT_EVALUATION_TYPE=local" \
           -e "TRACK_CONFIG_FILE=/challenge_objectnav2020.local.rgbd.yaml" \
