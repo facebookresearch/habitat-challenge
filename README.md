@@ -105,11 +105,12 @@ We have added a config in configs/ddpo_pointnav.yaml that includes a baseline us
 
         set -x
         srun python -u -m habitat_baselines.run \
-            --exp-config habitat_baselines/config/pointnav/ddppo_pointnav.yaml \
+            --exp-config configs/ddppo_pointnav.yaml \
             --run-type train \
             TASK_CONFIG.DATASET.SPLIT 'train' 
         ```
     1. **Notes about performance**: We have noticed that turning on the RGB/Depth sensor noise may lead to reduced simulation speed. As such, we recommend initially training with these noises turned off and using them for fine tuning if necessary. This can be done by commenting out the lines that include the key "NOISE_MODEL" in the config: ```habitat-challenge/configs/challenge_pointnav2020.local.rgbd.yaml```.
+    1. The preceding two scripts are based off ones found in the [habitat_baselines/ddppo](https://github.com/facebookresearch/habitat-api/tree/master/habitat_baselines/rl/ddppo).
 
 1. The checkpoint specified by ```$PATH_TO_CHECKPOINT ``` can evaluated by SPL and other measurements by running the following command:
 
@@ -132,7 +133,8 @@ We have added a config in configs/ddpo_pointnav.yaml that includes a baseline us
         ```
     1. Do not forget to add any other files you may need in the Docker, for example, we add the ```demo.ckpt.pth``` file which is the saved weights from the DDPPO example code.
     
-    1. Finally modify the submission.sh script to run the appropiate command to test your agents. The scaffold for this code can be found ```agent.py``` and the DD-PPO PointNav specific agent can be found in ```ddppo_agents.py```. In this example, we only modify the final command of the PointNav docker: by adding the following args to submission.sh ```--model-path demo.ckpt.pth --input-type rgbd```. The default submission.sh script will pass these args to the python script. You may also replace the submission.sh 
+    1. Finally modify the submission.sh script to run the appropiate command to test your agents. The scaffold for this code can be found ```agent.py``` and the DD-PPO PointNav specific agent can be found in ```ddppo_agents.py```. In this example, we only modify the final command of the PointNav docker: by adding the following args to submission.sh ```--model-path demo.ckpt.pth --input-type rgbd```. The default submission.sh script will pass these args to the python script. You may also replace the submission.sh. 
+        1. Please note that at this time, that habitat_baselines uses a slightly different config system and the configs nodes for habitat are defined under TASK_CONFIG which is loaded at runtime from BASE_TASK_CONFIG_PATH. We manually overwrite this config using the opts args in our agent.py file.
 
 1. Once your Dockerfile and other code is modified to your satisfcation, build it with the following command.
     ```bash
