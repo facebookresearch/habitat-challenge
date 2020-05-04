@@ -121,6 +121,10 @@ We have added a config in configs/ddpo_pointnav.yaml that includes a baseline us
         EVAL_CKPT_PATH_DIR $PATH_TO_CHECKPOINT \
         TASK_CONFIG.DATASET.SPLIT val
     ```
+    The weights used for our DD-PPO pointnav baseline for the Habitat-2020 challenge can be downloaded with the following command:
+    ```bash
+    wget https://dl.fbaipublicfiles.com/habitat/data/baselines/v1/ddppo_pointnav_habitat2020_challenge_baseline_v1.pth
+    ```
 1. To run the code on EvalAI, you will need to build a docker file. We modify one for the baseline located in `Pointnav_DDPPO_baseline.Docker` For the sake of completeness, we list the step by step modifications that you may have to your own Docker are listed below. If you just want to test the baseline code, feel free to skip the sction as the ```Pointnav_DDPPO_baseline.Dockerfile``` is ready to go as is.
     1. You may want to modify the PointNav.Dockerfile to include PyTorch or other libraries. To install pytorch, ifcfg and tensorboard, add the following command to the Docker file:
         ```dockerfile
