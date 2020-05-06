@@ -56,7 +56,7 @@ Specifically, we introduce the following changes inspired by our experiments and
 
 
 
-### PointNav DD-PPO Baseline Starter Code
+### PointNav DDPPO Baseline Starter Code
 We have added a config in configs/ddpo_pointnav.yaml that includes a baseline using DDPPO from Habitat-API. 
 
 1. Install the [Habitat-Sim](https://github.com/facebookresearch/habitat-sim/) and [Habitat-API](https://github.com/facebookresearch/habitat-api/) packages. Also ensure that habitat-baselines is installed when installing Habitat-API by installing it with ```python setup.py develop --all```
@@ -280,6 +280,7 @@ The challenge consists of the following phases:
 
 Note: Your agent will be evaluated on 1000-2000 episodes and will have a total available time of 24 hours to finish. Your submissions will be evaluated on AWS EC2 p2.xlarge instance which has a Tesla K80 GPU (12 GB Memory), 4 CPU cores, and 61 GB RAM. If you need more time/resources for evaluation of your submission please get in touch. If you face any issues or have questions you can ask them by opening an issue on this repository.
 
+### ObjectNav DDPPO Baseline Starter Code
 
 ## Citing Habitat Challenge 2020
 Please cite the following paper for details about the 2020 PointNav challenge:
