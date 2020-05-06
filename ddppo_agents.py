@@ -22,25 +22,36 @@ from habitat_baselines.common.utils import batch_obs
 from habitat import Config
 from habitat.core.agent import Agent
 
-def get_defaut_config():
-    c = Config()
-    c.INPUT_TYPE = "blind"
-    c.MODEL_PATH = "data/checkpoints/blind.pth"
-    c.RL.PPO.hidden_size = 512
-    c.RANDOM_SEED = 7
-    c.TORCH_GPU_ID = 0
-    return c
-
 class DDPPOAgent(Agent):
     def __init__(self, config: Config):
-        spaces = {
-            "pointgoal": Box(
-                low=np.finfo(np.float32).min,
-                high=np.finfo(np.float32).max,
-                shape=(2,),
-                dtype=np.float32,
-            )
-        }
+        if "ObjectNav" in config.TASK_CONFIG.TASK.TYPE:
+            OBJECT_CATEGORIES_NUM = 20
+            spaces = {
+                "objectgoal": Box(
+                    low=0, 
+                    high=OBJECT_CATEGORIES_NUM, 
+                    shape=(1,), 
+                    dtype=np.int64),
+                "compass": Box(
+                    low=-np.pi, 
+                    high=np.pi, 
+                    shape=(1,), 
+                    dtype=np.float),
+                "gps": Box(
+                    low=np.finfo(np.float32).min,
+                    high=np.finfo(np.float32).max,
+                    shape=(2,),
+                   dtype=np.float32,)
+            }
+        else:
+            spaces = {
+                "pointgoal": Box(
+                    low=np.finfo(np.float32).min,
+                    high=np.finfo(np.float32).max,
+                    shape=(2,),
+                    dtype=np.float32,
+                )
+            }
 
         if config.INPUT_TYPE in ["depth", "rgbd"]:
             spaces["depth"] = Box(
@@ -61,7 +72,7 @@ class DDPPOAgent(Agent):
             )
         observation_spaces = Dict(spaces)
 
-        action_spaces = Discrete(4)
+        action_space = Discrete(len(config.TASK_CONFIG.TASK.POSSIBLE_ACTIONS))
 
         self.device = torch.device("cuda:{}".format(config.TORCH_GPU_ID))
         self.hidden_size = config.RL.PPO.hidden_size
@@ -72,15 +83,15 @@ class DDPPOAgent(Agent):
 
         self.actor_critic = PointNavResNetPolicy(
             observation_space=observation_spaces,
-            action_space=action_spaces,
+            action_space=action_space,
             hidden_size=self.hidden_size,
-            goal_sensor_uuid=config.TASK_CONFIG.TASK.GOAL_SENSOR_UUID,
             normalize_visual_inputs="rgb" if config.INPUT_TYPE in ["rgb", "rgbd"] else False,
         )
         self.actor_critic.to(self.device)
 
         if config.MODEL_PATH:
             ckpt = torch.load(config.MODEL_PATH, map_location=self.device)
+            print(f"Checkpoint loaded: {config.MODEL_PATH}")
             #  Filter only actor_critic weights
             self.actor_critic.load_state_dict(
                 {
