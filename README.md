@@ -55,97 +55,6 @@ Specifically, we introduce the following changes inspired by our experiments and
 1. **Multiple cosmetic/minor changes**: Change in robot embodiment/size, camera resolution, height, and orientation, etc &mdash; to match LoCoBot. 
 
 
-
-### PointNav DD-PPO Baseline Starter Code
-We have added a config in configs/ddpo_pointnav.yaml that includes a baseline using DDPPO from Habitat-API. 
-
-1. Install the [Habitat-Sim](https://github.com/facebookresearch/habitat-sim/) and [Habitat-API](https://github.com/facebookresearch/habitat-api/) packages. Also ensure that habitat-baselines is installed when installing Habitat-API by installing it with ```python setup.py develop --all```
-
-1. Download the Gibson dataset following the instructions [here](https://github.com/StanfordVL/GibsonEnv#database). After downloading extract the dataset to folder `habitat-challenge/habitat-challenge-data/data/scene_datasets/gibson/` folder (this folder should contain the `.glb` files from gibson). Note that the `habitat-api` folder is the [habitat-api](https://github.com/facebookresearch/habitat-api/) repository folder. The data also needs to be be in the habitat-challenge-data/ in this repository.
-
-1. Download the dataset for Gibson pointnav from [link](https://dl.fbaipublicfiles.com/habitat/data/datasets/pointnav/gibson/v2/pointnav_gibson_v2.zip) and place it in the folder `habitat-challenge/habitat-challenge-data/data/datasets/pointnav/gibson`. If placed correctly, you should have the train and val splits at `habitat-challenge/habitat-challenge-data/data/datasets/pointnav/gibson/v2/train/` and `habitat-challenge/habitat-challenge-data/data/datasets/pointnav/gibson/v2/val/` respectively. Place Gibson scenes downloaded in step-4 of local-evaluation under the `habitat-challenge/habitat-challenge-data/data/scene_datasets` folder. If you have already downloaded thes files for the habitat-api repo, you may simply symlink them using `ln -s $PATH_TO_SCENE_DATASETS habitat-challenge-data/data/scene_datasets` (if on OSX or Linux).
-
-1. An example on how to train the DD-PPO can be found in [habitat-api/habitat_baselines/rl/ddppo](https://github.com/facebookresearch/habitat-api/tree/master/habitat_baselines/rl/ddppo). See the corresponding README in habitat-api for how to adjust the various hyperparameters, save locations, visual encoders and other features. 
-    
-    1. To run on a single machine use the following script:
-        ```bash
-        #/bin/bash
-
-        export GLOG_minloglevel=2
-        export MAGNUM_LOG=quiet
-
-        set -x
-        python -u -m torch.distributed.launch \
-            --use_env \
-            --nproc_per_node 1 \
-            habitat_baselines/run.py \
-            --exp-config configs/ddppo_pointnav.yaml \
-            --run-type train \
-            TASK_CONFIG.DATASET.SPLIT 'train' 
-        ```
-    1. There is also an example of running the code on a distributed a slurm cluster. While this is not necessary, if you have access to that level of compute, it can significantly speed up training. To run on multiple machines in a slurm cluster run the following script. change ```#SBATCH --nodes $NUM_OF_MACHINES``` to the number of machines and ```#SBATCH --ntasks-per-node $NUM_OF_GPUS``` and ```$SBATCH --gres $NUM_OF_GPUS``` to specify the number of GPUS to use per requested machine.
-        ```bash
-        #!/bin/bash
-        #SBATCH --job-name=ddppo
-        #SBATCH --output=logs.ddppo.out
-        #SBATCH --error=logs.ddppo.err
-        #SBATCH --gres gpu:1
-        #SBATCH --nodes 1
-        #SBATCH --cpus-per-task 10
-        #SBATCH --ntasks-per-node 1
-        #SBATCH --mem=60GB
-        #SBATCH --time=12:00
-        #SBATCH --signal=USR1@600
-        #SBATCH --partition=dev
-
-        export GLOG_minloglevel=2
-        export MAGNUM_LOG=quiet
-
-        export MASTER_ADDR=$(srun --ntasks=1 hostname 2>&1 | tail -n1)
-
-        set -x
-        srun python -u -m habitat_baselines.run \
-            --exp-config configs/ddppo_pointnav.yaml \
-            --run-type train \
-            TASK_CONFIG.DATASET.SPLIT 'train' 
-        ```
-    1. **Notes about performance**: We have noticed that turning on the RGB/Depth sensor noise may lead to reduced simulation speed. As such, we recommend initially training with these noises turned off and using them for fine tuning if necessary. This can be done by commenting out the lines that include the key "NOISE_MODEL" in the config: ```habitat-challenge/configs/challenge_pointnav2020.local.rgbd.yaml```.
-    1. The preceding two scripts are based off ones found in the [habitat_baselines/ddppo](https://github.com/facebookresearch/habitat-api/tree/master/habitat_baselines/rl/ddppo).
-
-1. The checkpoint specified by ```$PATH_TO_CHECKPOINT ``` can evaluated by SPL and other measurements by running the following command:
-
-    ```bash
-    python -u -m habitat_baselines.run \
-        --exp-config configs/ddppo_pointnav.yaml \
-        --run-type eval \
-        EVAL_CKPT_PATH_DIR $PATH_TO_CHECKPOINT \
-        TASK_CONFIG.DATASET.SPLIT val
-    ```
-    The weights used for our DD-PPO pointnav baseline for the Habitat-2020 challenge can be downloaded with the following command. The default DD-PPO baseline is trained for 120 Updates on 10 million frames with the config param: ```RL.SLACK_REWARD '-0.001'``` which reduces the slack reward to -0.001:
-    ```bash
-    wget https://dl.fbaipublicfiles.com/habitat/data/baselines/v1/ddppo_pointnav_habitat2020_challenge_baseline_v1.pth
-    ```
-1. To run the code on EvalAI, you will need to build a docker file. We modify one for the baseline located in `Pointnav_DDPPO_baseline.Docker` For the sake of completeness, we list the step by step modifications that you may have to your own Docker are listed below. If you just want to test the baseline code, feel free to skip the sction as the ```Pointnav_DDPPO_baseline.Dockerfile``` is ready to go as is.
-    1. You may want to modify the PointNav.Dockerfile to include PyTorch or other libraries. To install pytorch, ifcfg and tensorboard, add the following command to the Docker file:
-        ```dockerfile
-        RUN /bin/bash -c ". activate habitat; pip install ifcfg torch tensorboard"
-        ```
-    1. You change which ```agent.py``` and which ``submission.sh`` script is used in the Docker, modify the following lines and replace the first agent.py or submission.sh with your new files.:
-        ```dockerfile
-        ADD agent.py agent.py
-        ADD submission.sh submission.sh
-        ```
-    1. Do not forget to add any other files you may need in the Docker, for example, we add the ```demo.ckpt.pth``` file which is the saved weights from the DDPPO example code.
-    
-    1. Finally modify the submission.sh script to run the appropiate command to test your agents. The scaffold for this code can be found ```agent.py``` and the DD-PPO PointNav specific agent can be found in ```ddppo_agents.py```. In this example, we only modify the final command of the PointNav docker: by adding the following args to submission.sh ```--model-path demo.ckpt.pth --input-type rgbd```. The default submission.sh script will pass these args to the python script. You may also replace the submission.sh. 
-        1. Please note that at this time, that habitat_baselines uses a slightly different config system and the configs nodes for habitat are defined under TASK_CONFIG which is loaded at runtime from BASE_TASK_CONFIG_PATH. We manually overwrite this config using the opts args in our agent.py file.
-
-1. Once your Dockerfile and other code is modified to your satisfcation, build it with the following command.
-    ```bash
-    docker build . --file Pointnav_DDPPO_Baseline.Dockerfile -t pointnav_submission
-    ```
-1. To test locally simple run the ```test_locally_pointnav_rgbd.sh``` script. If the docker runs your code without errors, it should work on Eval-AI. The instructions for submitting the Docker to EvalAI are listed below.
-
 ## Task 2: ObjectNav
 
 In ObjectNav, an agent is initialized at a random starting position and orientation in an unseen environment and asked to find an instance of an object category (*‘find a chair’*) by navigating to  it. A map of the environment is not provided and the agent must only use its sensory input to navigate. 
@@ -284,6 +193,102 @@ The challenge consists of the following phases:
 
 Note: Your agent will be evaluated on 1000-2000 episodes and will have a total available time of 24 hours to finish. Your submissions will be evaluated on AWS EC2 p2.xlarge instance which has a Tesla K80 GPU (12 GB Memory), 4 CPU cores, and 61 GB RAM. If you need more time/resources for evaluation of your submission please get in touch. If you face any issues or have questions you can ask them by opening an issue on this repository.
 
+### PointNav/ObjectNav Baselines and DD-PPO Training Starter Code
+We have added a config in `configs/ddppo_pointnav.yaml | configs/ddppo_objectnav.yaml` that includes a baseline using DD-PPO from Habitat-API. 
+
+1. Install the [Habitat-Sim](https://github.com/facebookresearch/habitat-sim/) and [Habitat-API](https://github.com/facebookresearch/habitat-api/) packages. Also ensure that habitat-baselines is installed when installing Habitat-API by installing it with ```python setup.py develop --all```
+
+1. Download the Gibson dataset following the instructions [here](https://github.com/StanfordVL/GibsonEnv#database). After downloading extract the dataset to folder `habitat-challenge/habitat-challenge-data/data/scene_datasets/gibson/` folder (this folder should contain the `.glb` files from gibson). Note that the `habitat-api` folder is the [habitat-api](https://github.com/facebookresearch/habitat-api/) repository folder. The data also needs to be in the habitat-challenge-data/ in this repository.
+
+1. **Pointnav**: Download the dataset for Gibson PointNav from [link](https://dl.fbaipublicfiles.com/habitat/data/datasets/pointnav/gibson/v2/pointnav_gibson_v2.zip) and place it in the folder `habitat-challenge/habitat-challenge-data/data/datasets/pointnav/gibson`. If placed correctly, you should have the train and val splits at `habitat-challenge/habitat-challenge-data/data/datasets/pointnav/gibson/v2/train/` and `habitat-challenge/habitat-challenge-data/data/datasets/pointnav/gibson/v2/val/` respectively. Place Gibson scenes downloaded in step-4 of local-evaluation under the `habitat-challenge/habitat-challenge-data/data/scene_datasets` folder. If you have already downloaded thes files for the habitat-api repo, you may simply symlink them using `ln -s $PATH_TO_SCENE_DATASETS habitat-challenge-data/data/scene_datasets` (if on OSX or Linux).
+
+    **Objectnav**: Download the episodes dataset for Matterport3D ObjectNav from [link](https://dl.fbaipublicfiles.com/habitat/data/datasets/objectnav/m3d/v1/objectnav_mp3d_v1.zip) and place it in the folder `habitat-challenge/habitat-challenge-data/data/datasets/objectnav/mp3d`. If placed correctly, you should have the train and val splits at `habitat-challenge/habitat-challenge-data/data/datasets/objectnav/mp3d/v1/train/` and `habitat-challenge/habitat-challenge-data/data/datasets/objectnav/mp3d/v1/val/` respectively. Place Gibson scenes downloaded in step-4 of local-evaluation under the `habitat-challenge/habitat-challenge-data/data/scene_datasets` folder. If you have already downloaded thes files for the habitat-api repo, you may simply symlink them using `ln -s $PATH_TO_SCENE_DATASETS habitat-challenge-data/data/scene_datasets` (if on OSX or Linux).
+
+1. An example on how to train DD-PPO model can be found in [habitat-api/habitat_baselines/rl/ddppo](https://github.com/facebookresearch/habitat-api/tree/master/habitat_baselines/rl/ddppo). See the corresponding README in habitat-api for how to adjust the various hyperparameters, save locations, visual encoders and other features. 
+    
+    1. To run on a single machine use the following script from `habitat-api` directory, where `$task={pointnav, objectnav}`:
+        ```bash
+        #/bin/bash
+
+        export GLOG_minloglevel=2
+        export MAGNUM_LOG=quiet
+
+        set -x
+        python -u -m torch.distributed.launch \
+            --use_env \
+            --nproc_per_node 1 \
+            habitat_baselines/run.py \
+            --exp-config configs/ddppo_${task}.yaml \
+            --run-type train \
+            TASK_CONFIG.DATASET.SPLIT 'train' 
+        ```
+    1. There is also an example of running the code distributed on a cluster with SLURM. While this is not necessary, if you have access to a cluster, it can significantly speed up training. To run on multiple machines in a SLURM cluster run the following script: change ```#SBATCH --nodes $NUM_OF_MACHINES``` to the number of machines and ```#SBATCH --ntasks-per-node $NUM_OF_GPUS``` and ```$SBATCH --gres $NUM_OF_GPUS``` to specify the number of GPUS to use per requested machine.
+        ```bash
+        #!/bin/bash
+        #SBATCH --job-name=ddppo
+        #SBATCH --output=logs.ddppo.out
+        #SBATCH --error=logs.ddppo.err
+        #SBATCH --gres gpu:1
+        #SBATCH --nodes 1
+        #SBATCH --cpus-per-task 10
+        #SBATCH --ntasks-per-node 1
+        #SBATCH --mem=60GB
+        #SBATCH --time=12:00
+        #SBATCH --signal=USR1@600
+        #SBATCH --partition=dev
+
+        export GLOG_minloglevel=2
+        export MAGNUM_LOG=quiet
+
+        export MASTER_ADDR=$(srun --ntasks=1 hostname 2>&1 | tail -n1)
+
+        set -x
+        srun python -u -m habitat_baselines.run \
+            --exp-config configs/ddppo_${task}.yaml \
+            --run-type train \
+            TASK_CONFIG.DATASET.SPLIT 'train' 
+        ```
+    1. **Notes about performance**: We have noticed that turning on the RGB/Depth sensor noise may lead to reduced simulation speed. As such, we recommend initially training with these noises turned off and using them for fine tuning if necessary. This can be done by commenting out the lines that include the key "NOISE_MODEL" in the config: ```habitat-challenge/configs/challenge_pointnav2020.local.rgbd.yaml```.
+    1. The preceding two scripts are based off ones found in the [habitat_baselines/ddppo](https://github.com/facebookresearch/habitat-api/tree/master/habitat_baselines/rl/ddppo).
+
+1. The checkpoint specified by ```$PATH_TO_CHECKPOINT ``` can evaluated by SPL and other measurements by running the following command:
+
+    ```bash
+    python -u -m habitat_baselines.run \
+        --exp-config configs/ddppo_${task}.yaml \
+        --run-type eval \
+        EVAL_CKPT_PATH_DIR $PATH_TO_CHECKPOINT \
+        TASK_CONFIG.DATASET.SPLIT val
+    ```
+    The weights used for our DD-PPO Pointnav or Objectnav baseline for the Habitat-2020 challenge can be downloaded with the following command:
+    ```bash
+    wget https://dl.fbaipublicfiles.com/habitat/data/baselines/v1/ddppo_${task}_habitat2020_challenge_baseline_v1.pth
+    ```, where `$Task={pointnav, objectnav}.
+
+    The default *Pointnav* DD-PPO baseline is trained for 120 Updates on 10 million frames with the config param: ```RL.SLACK_REWARD '-0.001'``` which reduces the slack reward to -0.001.
+    The default *Objectnav* DD-PPO baseline is trained for 266 Updates on 209 million frames  with the provided config.
+
+1. To submit your entry via EvalAI, you will need to build a docker file. We provide Dockerfiles ready to use with the DD-PPO baselines in `${Task}_DDPPO_baseline.Dockerfile`, where `$Task={Pointnav, Objectnav}`. For the sake of completeness, we describe how you can make your own Dockerfile below. If you just want to test the baseline code, feel free to skip this bullet because  ```${Task}_DDPPO_baseline.Dockerfile``` is ready to use.
+    1. You may want to modify the `${Task}_DDPPO_baseline.Dockerfile` to include PyTorch or other libraries. To install pytorch, ifcfg and tensorboard, add the following command to the Docker file:
+        ```dockerfile
+        RUN /bin/bash -c ". activate habitat; pip install ifcfg torch tensorboard"
+        ```
+    1. You change which ```agent.py``` and which ``submission.sh`` script is used in the Docker, modify the following lines and replace the first agent.py or submission.sh with your new files.:
+        ```dockerfile
+        ADD agent.py agent.py
+        ADD submission.sh submission.sh
+        ```
+    1. Do not forget to add any other files you may need in the Docker, for example, we add the ```demo.ckpt.pth``` file which is the saved weights from the DD-PPO example code.
+    
+    1. Finally modify the submission.sh script to run the appropiate command to test your agents. The scaffold for this code can be found ```agent.py``` and the DD-PPO specific agent can be found in ```ddppo_agents.py```. In this example, we only modify the final command of the PointNav/ObjectNav docker: by adding the following args to submission.sh ```--model-path demo.ckpt.pth --input-type rgbd```. The default submission.sh script will pass these args to the python script. You may also replace the submission.sh. 
+        1. Please note that at this time, that habitat_baselines uses a slightly different config system and the configs nodes for habitat are defined under TASK_CONFIG which is loaded at runtime from BASE_TASK_CONFIG_PATH. We manually overwrite this config using the opts args in our agent.py file.
+
+1. Once your Dockerfile and other code is modified to your satisfcation, build it with the following command.
+    ```bash
+    docker build . --file ${Task}_DDPPO_baseline.Dockerfile -t ${task}_submission
+    ```
+1. To test locally simple run the ```test_locally_${task}_rgbd.sh``` script. If the docker runs your code without errors, it should work on Eval-AI. The instructions for submitting the Docker to EvalAI are listed above.
+1. Happy hacking!
 
 ## Citing Habitat Challenge 2020
 Please cite the following paper for details about the 2020 PointNav challenge:
