@@ -204,9 +204,9 @@ We have added a config in `configs/ddppo_pointnav.yaml | configs/ddppo_objectnav
 
     **Objectnav**: Download the episodes dataset for Matterport3D ObjectNav from [link](https://dl.fbaipublicfiles.com/habitat/data/datasets/objectnav/m3d/v1/objectnav_mp3d_v1.zip) and place it in the folder `habitat-challenge/habitat-challenge-data/data/datasets/objectnav/mp3d`. If placed correctly, you should have the train and val splits at `habitat-challenge/habitat-challenge-data/data/datasets/objectnav/mp3d/v1/train/` and `habitat-challenge/habitat-challenge-data/data/datasets/objectnav/mp3d/v1/val/` respectively. Place Gibson scenes downloaded in step-4 of local-evaluation under the `habitat-challenge/habitat-challenge-data/data/scene_datasets` folder. If you have already downloaded thes files for the habitat-api repo, you may simply symlink them using `ln -s $PATH_TO_SCENE_DATASETS habitat-challenge-data/data/scene_datasets` (if on OSX or Linux).
 
-1. An example on how to train with DD-PPO can be found in [habitat-api/habitat_baselines/rl/ddppo](https://github.com/facebookresearch/habitat-api/tree/master/habitat_baselines/rl/ddppo). See the corresponding README in habitat-api for how to adjust the various hyperparameters, save locations, visual encoders and other features. 
+1. An example on how to train DD-PPO model can be found in [habitat-api/habitat_baselines/rl/ddppo](https://github.com/facebookresearch/habitat-api/tree/master/habitat_baselines/rl/ddppo). See the corresponding README in habitat-api for how to adjust the various hyperparameters, save locations, visual encoders and other features. 
     
-    1. To run on a single machine use the following script from `habitat-api/habitat_baselines`, where `$task={pointnav, objectnav}`:
+    1. To run on a single machine use the following script from `habitat-api` directory, where `$task={pointnav, objectnav}`:
         ```bash
         #/bin/bash
 
@@ -255,13 +255,21 @@ We have added a config in `configs/ddppo_pointnav.yaml | configs/ddppo_objectnav
 
     ```bash
     python -u -m habitat_baselines.run \
-        --exp-config $EXP_CONFIG \
+        --exp-config configs/ddppo_${task}.yaml \
         --run-type eval \
         EVAL_CKPT_PATH_DIR $PATH_TO_CHECKPOINT \
         TASK_CONFIG.DATASET.SPLIT val
     ```
-1. To submit your entry via EvalAI, you will need to build a docker file. We provide Dockerfiles ready to use with the DD-PPO baselines in `${Task}_DDPPO_baseline.Dockerfile`, where `$Task={Pointnav, Objectnav}`. For the sake of completeness, we describe how you can make your own Dockerfile below. If you just want to test the baseline code, feel free to skip this bullet because  ```${TASK}_DDPPO_baseline.Dockerfile``` is ready to use.
-    1. You may want to modify the ${TASK}.Dockerfile to include PyTorch or other libraries. To install pytorch, ifcfg and tensorboard, add the following command to the Docker file:
+    The weights used for our DD-PPO Pointnav or Objectnav baseline for the Habitat-2020 challenge can be downloaded with the following command:
+    ```bash
+    wget https://dl.fbaipublicfiles.com/habitat/data/baselines/v1/ddppo_${task}_habitat2020_challenge_baseline_v1.pth
+    ```, where `$Task={pointnav, objectnav}.
+
+    The default *Pointnav* DD-PPO baseline is trained for 120 Updates on 10 million frames with the config param: ```RL.SLACK_REWARD '-0.001'``` which reduces the slack reward to -0.001.
+    The default *Objectnav* DD-PPO baseline is trained for 266 Updates on 209 million frames  with the provided config.
+
+1. To submit your entry via EvalAI, you will need to build a docker file. We provide Dockerfiles ready to use with the DD-PPO baselines in `${Task}_DDPPO_baseline.Dockerfile`, where `$Task={Pointnav, Objectnav}`. For the sake of completeness, we describe how you can make your own Dockerfile below. If you just want to test the baseline code, feel free to skip this bullet because  ```${Task}_DDPPO_baseline.Dockerfile``` is ready to use.
+    1. You may want to modify the `${Task}_DDPPO_baseline.Dockerfile` to include PyTorch or other libraries. To install pytorch, ifcfg and tensorboard, add the following command to the Docker file:
         ```dockerfile
         RUN /bin/bash -c ". activate habitat; pip install ifcfg torch tensorboard"
         ```
