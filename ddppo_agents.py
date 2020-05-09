@@ -121,12 +121,10 @@ class DDPPOAgent(Agent):
         )
 
     def act(self, observations):
-        batch = batch_obs([observations])
-        for sensor in batch:
-            batch[sensor] = batch[sensor].to(self.device)
+        batch = batch_obs([observations], device=self.device)
 
         with torch.no_grad():
-            _, actions, _, self.test_recurrent_hidden_states = self.actor_critic.act(
+            _, action, _, self.test_recurrent_hidden_states = self.actor_critic.act(
                 batch,
                 self.test_recurrent_hidden_states,
                 self.prev_actions,
@@ -134,9 +132,10 @@ class DDPPOAgent(Agent):
                 deterministic=False,
             )
             #  Make masks not done till reset (end of episode) will be called
-            self.not_done_masks = torch.ones(1, 1, device=self.device)
-            self.prev_actions.copy_(actions)
-        return actions[0][0].item()
+            self.not_done_masks.fill_(1.0)
+            self.prev_actions.copy_(action)
+
+        return action.item()
 
 
 def main():
