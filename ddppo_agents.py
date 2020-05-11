@@ -87,12 +87,11 @@ class DDPPOAgent(Agent):
             hidden_size=self.hidden_size,
             rnn_type=config.RL.DDPPO.rnn_type,
             num_recurrent_layers=config.RL.DDPPO.num_recurrent_layers,
-            goal_sensor_uuid="pointgoal" if "ObjectNav" not in config.TASK_CONFIG.TASK.TYPE else None,
             backbone=config.RL.DDPPO.backbone,
             normalize_visual_inputs="rgb" if config.INPUT_TYPE in ["rgb", "rgbd"] else False,
         )
         if "ObjectNav" not in config.TASK_CONFIG.TASK.TYPE:
-            policy_arguments[goal_sensor_uuid] = "pointgoal"
+            policy_arguments[goal_sensor_uuid] = config.TASK_CONFIG.TASK.GOAL_SENSOR_UUID
 
         self.actor_critic = PointNavResNetPolicy(**policy_arguments)
         self.actor_critic.to(self.device)
