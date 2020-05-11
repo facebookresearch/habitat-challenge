@@ -91,7 +91,7 @@ class DDPPOAgent(Agent):
             normalize_visual_inputs="rgb" if config.INPUT_TYPE in ["rgb", "rgbd"] else False,
         )
         if "ObjectNav" not in config.TASK_CONFIG.TASK.TYPE:
-            policy_arguments[goal_sensor_uuid] = config.TASK_CONFIG.TASK.GOAL_SENSOR_UUID
+            policy_arguments["goal_sensor_uuid"] = config.TASK_CONFIG.TASK.GOAL_SENSOR_UUID
 
         self.actor_critic = PointNavResNetPolicy(**policy_arguments)
         self.actor_critic.to(self.device)
