@@ -5,8 +5,7 @@ RUN /bin/bash -c ". activate habitat; cd habitat-sim; git checkout master; git p
 
 #TODO: Remove once base image is updated.
 RUN /bin/bash -c ". activate habitat; git clone http://github.com/facebookresearch/habitat-api.git habitat-api2; cd habitat-api2; git fetch; git checkout 814dc04715561aeeb7f3113723b66ec53188eb41; cd .."
-RUN /bin/bash -c ". activate habitat; cd habitat-api2; git status; cd .."
-RUN /bin/bash -c ". activate habitat; cp -r habitat-api2/habitat_baselines habitat-api/.; cp -r habitat-api2/habitat/tasks habitat-api/habitat/.;cp -r habitat-api2/habitat/core/embodied_task.py habitat-api/habitat/core/.; cp -r habitat-api2/habitat/core/dataset.py habitat-api/habitat/core/.; cp -r habitat-api2/habitat/sims habitat-api/habitat/.; cd habitat-api;"
+RUN /bin/bash -c ". activate habitat; cp -r habitat-api2/habitat_baselines habitat-api/.; cp -r habitat-api2/habitat/tasks habitat-api/habitat/.;cp -r habitat-api2/habitat/core/embodied_task.py habitat-api/habitat/core/.; cp -r habitat-api2/habitat/core/dataset.py habitat-api/habitat/core/.; cp -r habitat-api2/habitat/sims habitat-api/habitat/."
 
 ADD ddppo_agents.py agent.py
 ADD submission.sh submission.sh

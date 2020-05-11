@@ -6,6 +6,7 @@
 
 
 import argparse
+from collections import OrderedDict
 import random
 
 import numpy as np
@@ -80,8 +81,7 @@ class DDPPOAgent(Agent):
         random.seed(config.RANDOM_SEED)
         torch.random.manual_seed(config.RANDOM_SEED)
         torch.backends.cudnn.deterministic = True
-
-        self.actor_critic = PointNavResNetPolicy(
+        policy_arguments = OrderedDict(
             observation_space=observation_spaces,
             action_space=action_space,
             hidden_size=self.hidden_size,
@@ -91,6 +91,10 @@ class DDPPOAgent(Agent):
             backbone=config.RL.DDPPO.backbone,
             normalize_visual_inputs="rgb" if config.INPUT_TYPE in ["rgb", "rgbd"] else False,
         )
+        if "ObjectNav" not in config.TASK_CONFIG.TASK.TYPE:
+            policy_arguments[goal_sensor_uuid] = "pointgoal"
+
+        self.actor_critic = PointNavResNetPolicy(**policy_arguments)
         self.actor_critic.to(self.device)
 
         if config.MODEL_PATH:
