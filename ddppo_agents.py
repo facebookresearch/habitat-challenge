@@ -85,6 +85,10 @@ class DDPPOAgent(Agent):
             observation_space=observation_spaces,
             action_space=action_space,
             hidden_size=self.hidden_size,
+            rnn_type=config.RL.DDPPO.rnn_type,
+            num_recurrent_layers=config.RL.DDPPO.num_recurrent_layers,
+            goal_sensor_uuid="pointgoal" if "ObjectNav" not in config.TASK_CONFIG.TASK.TYPE else None,
+            backbone=config.RL.DDPPO.backbone,
             normalize_visual_inputs="rgb" if config.INPUT_TYPE in ["rgb", "rgbd"] else False,
         )
         self.actor_critic.to(self.device)
