@@ -10,6 +10,7 @@ from collections import OrderedDict
 import random
 
 import numpy as np
+import numba
 import torch
 import PIL
 from gym.spaces import Discrete, Dict, Box
@@ -22,6 +23,11 @@ from habitat_baselines.rl.ddppo.policy.resnet_policy import  PointNavResNetPolic
 from habitat_baselines.common.utils import batch_obs
 from habitat import Config
 from habitat.core.agent import Agent
+
+@numba.njit
+def _seed_numba(seed: int):
+    random.seed(seed)
+    np.random.seed(seed)
 
 class DDPPOAgent(Agent):
     def __init__(self, config: Config):
@@ -79,6 +85,8 @@ class DDPPOAgent(Agent):
         self.hidden_size = config.RL.PPO.hidden_size
 
         random.seed(config.RANDOM_SEED)
+        np.random.seed(config.RANDOM_SEED)
+        _seed_numba(config.RANDOM_SEED)
         torch.random.manual_seed(config.RANDOM_SEED)
         torch.backends.cudnn.deterministic = True
         policy_arguments = OrderedDict(
@@ -170,6 +178,7 @@ def main():
     agent = DDPPOAgent(config)
     if args.evaluation == "local":
         challenge = habitat.Challenge(eval_remote=False)
+        challenge._env.seed(config.RANDOM_SEED)
     else:
         challenge = habitat.Challenge(eval_remote=True)
 
