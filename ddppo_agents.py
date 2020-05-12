@@ -6,9 +6,11 @@
 
 
 import argparse
+from collections import OrderedDict
 import random
 
 import numpy as np
+import numba
 import torch
 import PIL
 from gym.spaces import Discrete, Dict, Box
@@ -21,6 +23,11 @@ from habitat_baselines.rl.ddppo.policy.resnet_policy import  PointNavResNetPolic
 from habitat_baselines.common.utils import batch_obs
 from habitat import Config
 from habitat.core.agent import Agent
+
+@numba.njit
+def _seed_numba(seed: int):
+    random.seed(seed)
+    np.random.seed(seed)
 
 class DDPPOAgent(Agent):
     def __init__(self, config: Config):
@@ -78,15 +85,23 @@ class DDPPOAgent(Agent):
         self.hidden_size = config.RL.PPO.hidden_size
 
         random.seed(config.RANDOM_SEED)
+        np.random.seed(config.RANDOM_SEED)
+        _seed_numba(config.RANDOM_SEED)
         torch.random.manual_seed(config.RANDOM_SEED)
         torch.backends.cudnn.deterministic = True
-
-        self.actor_critic = PointNavResNetPolicy(
+        policy_arguments = OrderedDict(
             observation_space=observation_spaces,
             action_space=action_space,
             hidden_size=self.hidden_size,
+            rnn_type=config.RL.DDPPO.rnn_type,
+            num_recurrent_layers=config.RL.DDPPO.num_recurrent_layers,
+            backbone=config.RL.DDPPO.backbone,
             normalize_visual_inputs="rgb" if config.INPUT_TYPE in ["rgb", "rgbd"] else False,
         )
+        if "ObjectNav" not in config.TASK_CONFIG.TASK.TYPE:
+            policy_arguments["goal_sensor_uuid"] = config.TASK_CONFIG.TASK.GOAL_SENSOR_UUID
+
+        self.actor_critic = PointNavResNetPolicy(**policy_arguments)
         self.actor_critic.to(self.device)
 
         if config.MODEL_PATH:
@@ -163,6 +178,7 @@ def main():
     agent = DDPPOAgent(config)
     if args.evaluation == "local":
         challenge = habitat.Challenge(eval_remote=False)
+        challenge._env.seed(config.RANDOM_SEED)
     else:
         challenge = habitat.Challenge(eval_remote=True)
 

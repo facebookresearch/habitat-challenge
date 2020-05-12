@@ -16,6 +16,7 @@ SIMULATOR:
     HEIGHT: 360
     HFOV: 70
     POSITION: [0, 0.88, 0]
+    ORIENTATION: [-0.3490659, 0, 0] # -20 degrees
     NOISE_MODEL: "GaussianNoiseModel"
     NOISE_MODEL_KWARGS:
       intensity_constant: 0.1
@@ -27,6 +28,7 @@ SIMULATOR:
     MIN_DEPTH: 0.1
     MAX_DEPTH: 10.0
     POSITION: [0, 0.88, 0]
+    ORIENTATION: [-0.3490659, 0, 0] # -20 degrees
     NOISE_MODEL: "RedwoodDepthNoiseModel"
 
   ACTION_SPACE_CONFIG: 'pyrobotnoisy'
@@ -50,5 +52,5 @@ TASK:
 DATASET:
   TYPE: PointNav-v1
   SPLIT: val_mini
-  DATA_PATH:  code-upload-starters/data/datasets/pointnav/habitat-test-scenes/v1/{split}/{split}.json.gz
-  SCENES_DIR: code-upload-starters/data/scene_datasets/
+  DATA_PATH: habitat-challenge-data/pointgoal_gibson_v2/{split}/{split}.json.gz
+  SCENES_DIR: "habitat-challenge-data/data/scene_datasets/"
