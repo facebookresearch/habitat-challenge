@@ -10,20 +10,22 @@ import os
 import random
 from collections import OrderedDict
 
-import habitat
 import numba
 import numpy as np
 import PIL
 import torch
 from gym.spaces import Box, Dict, Discrete
+
+import habitat
 from habitat import Config
 from habitat.core.agent import Agent
-
 from habitat_baselines.common.utils import batch_obs
 from habitat_baselines.config.default import get_config
-from habitat_baselines.rl.ddppo.policy.resnet_policy import \
-    PointNavResNetPolicy
 from habitat_baselines.rl.ppo import PointNavBaselinePolicy, Policy
+
+from habitat_baselines.rl.ddppo.policy.resnet_policy import (  # isort:skip noqa
+    PointNavResNetPolicy,
+)
 
 
 @numba.njit
