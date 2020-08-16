@@ -91,19 +91,26 @@ jobs:
               sudo apt-get install nvidia-docker2
               sudo pkill -SIGHUP dockerd
 
+              # EvlaAI install
+              pip install "evalai>=1.2.3"
+              # Set EvalAI account token
+              evalai set_token $EVALAI_TOKEN
+
               docker build . --file Pointnav.Dockerfile -t pointnav_submission
               # we can't test locally without val scenes yet.
               # ./test_locally_pointnav_rgbd.sh --docker-name pointnav_submission
 
-              pip install "evalai>=1.2.3"
+              # Push docker image to EvalAI docker registry
+              evalai push pointnav_submission:latest --phase habitat20-pointnav-minival
 
-              # Set EvalAI account token
-              evalai set_token $EVALAI_TOKEN
-
+              # DDPPO baseline
+              wget https://dl.fbaipublicfiles.com/habitat/data/baselines/v1/ddppo_pointnav_habitat2020_challenge_baseline_v1.pth
+              docker build . --file Pointnav_DDPPO_baseline.Dockerfile -t ddppo_pointnav_submission
+              # we can't test locally without val scenes yet.
+              # ./test_locally_pointnav_rgbd.sh --docker-name ddppo_pointnav_submission
 
               # Push docker image to EvalAI docker registry
-              # Pointnav
-              evalai push pointnav_submission:latest --phase habitat20-pointnav-minival
+              evalai push ddppo_pointnav_submission:latest --phase habitat20-pointnav-minival
 
 workflows:
   version: 2
