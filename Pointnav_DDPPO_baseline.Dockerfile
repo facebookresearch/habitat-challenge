@@ -9,6 +9,7 @@ RUN /bin/bash -c ". activate habitat; git clone http://github.com/facebookresear
 ADD ddppo_agents.py agent.py
 ADD submission.sh submission.sh
 ADD configs/challenge_pointnav2020.local.rgbd.yaml /challenge_pointnav2020.local.rgbd.yaml
+ADD configs/challenge_pointnav2020.local.rgbd_test_scene.yaml /challenge_pointnav2020.local.rgbd_test_scene.yaml
 ADD configs/ configs/
 ADD ddppo_pointnav_habitat2020_challenge_baseline_v1.pth demo.ckpt.pth
 ENV AGENT_EVALUATION_TYPE remote
