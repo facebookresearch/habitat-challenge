@@ -18,13 +18,13 @@ jobs:
           name: run black
           command: |
               black . --diff
-              black . setup.py --check
+              black . --check
       - run:
           name: run isort
           command: |
               isort --version
-              isort -rc habitat/. habitat_baselines/. examples/. test/. setup.py --diff
-              isort -rc habitat/. habitat_baselines/. examples/. test/. setup.py --check-only
+              isort -rc --diff
+              isort -rc  --check-only
 
   install_and_test_ubuntu:
     <<: *gpu
@@ -41,11 +41,6 @@ jobs:
                   curl \
                   vim \
                   ca-certificates \
-                  libjpeg-dev \
-                  libglm-dev \
-                  libegl1-mesa-dev \
-                  xorg-dev \
-                  freeglut3-dev \
                   pkg-config \
                   wget \
                   zip \
