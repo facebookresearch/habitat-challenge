@@ -23,8 +23,8 @@ jobs:
           name: run isort
           command: |
               isort --version
-              isort -rc --diff
-              isort -rc  --check-only
+              isort -rc . --diff
+              isort -rc . --check-only
 
   install_and_test_ubuntu:
     <<: *gpu

@@ -6,23 +6,24 @@
 
 
 import argparse
-from collections import OrderedDict
+import os
 import random
-
-import numpy as np
-import numba
-import torch
-import PIL
-from gym.spaces import Discrete, Dict, Box
+from collections import OrderedDict
 
 import habitat
-import os
-from habitat_baselines.config.default import get_config
-from habitat_baselines.rl.ppo import Policy, PointNavBaselinePolicy
-from habitat_baselines.rl.ddppo.policy.resnet_policy import PointNavResNetPolicy
-from habitat_baselines.common.utils import batch_obs
+import numba
+import numpy as np
+import PIL
+import torch
+from gym.spaces import Box, Dict, Discrete
 from habitat import Config
 from habitat.core.agent import Agent
+
+from habitat_baselines.common.utils import batch_obs
+from habitat_baselines.config.default import get_config
+from habitat_baselines.rl.ddppo.policy.resnet_policy import \
+    PointNavResNetPolicy
+from habitat_baselines.rl.ppo import PointNavBaselinePolicy, Policy
 
 
 @numba.njit

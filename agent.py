@@ -1,8 +1,9 @@
 import argparse
-import habitat
-import random
-import numpy
 import os
+import random
+
+import habitat
+import numpy
 
 
 class RandomAgent(habitat.Agent):
