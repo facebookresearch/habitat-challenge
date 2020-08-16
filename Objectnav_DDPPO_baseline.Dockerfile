@@ -4,8 +4,8 @@ RUN /bin/bash -c ". activate habitat; pip install ifcfg tensorboard && pip insta
 RUN /bin/bash -c ". activate habitat; cd habitat-sim; git checkout master; git pull; python setup.py install --headless"
 
 #TODO: Remove once base image is updated.
-RUN /bin/bash -c ". activate habitat; git clone http://github.com/facebookresearch/habitat-api.git habitat-api2; cd habitat-api2; git fetch; git checkout 814dc04715561aeeb7f3113723b66ec53188eb41; cd .."
-RUN /bin/bash -c ". activate habitat; cp -r habitat-api2/habitat_baselines habitat-api/.; cp -r habitat-api2/habitat/tasks habitat-api/habitat/.;cp -r habitat-api2/habitat/core/embodied_task.py habitat-api/habitat/core/.; cp -r habitat-api2/habitat/core/dataset.py habitat-api/habitat/core/.; cp -r habitat-api2/habitat/sims habitat-api/habitat/."
+RUN /bin/bash -c ". activate habitat; git clone http://github.com/facebookresearch/habitat-lab.git habitat-lab2; cd habitat-lab2; git fetch; git checkout 814dc04715561aeeb7f3113723b66ec53188eb41; cd .."
+RUN /bin/bash -c ". activate habitat; cp -r habitat-lab2/habitat_baselines habitat-lab/.; cp -r habitat-lab2/habitat/tasks habitat-lab/habitat/.;cp -r habitat-lab2/habitat/core/embodied_task.py habitat-lab/habitat/core/.; cp -r habitat-lab2/habitat/core/dataset.py habitat-lab/habitat/core/.; cp -r habitat-lab2/habitat/sims habitat-lab/habitat/."
 
 ADD ddppo_agents.py agent.py
 ADD submission.sh submission.sh

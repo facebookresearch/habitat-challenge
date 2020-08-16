@@ -4,11 +4,12 @@ RUN /bin/bash -c ". activate habitat; pip install ifcfg tensorboard && pip insta
 
 #Hack to update habitat_baselines
 #TODO: Remove once base image is updated.
-RUN /bin/bash -c ". activate habitat; git clone http://github.com/facebookresearch/habitat-api.git habitat-api2 && (cd habitat-api2 && git checkout 959bd45431edd8024832a877bdc8218015d97a7e) && cp -r habitat-api2/habitat_baselines habitat-api/."
+RUN /bin/bash -c ". activate habitat; git clone http://github.com/facebookresearch/habitat-lab.git habitat-lab2 && (cd habitat-lab2 && git checkout 959bd45431edd8024832a877bdc8218015d97a7e) && cp -r habitat-lab2/habitat_baselines habitat-lab/."
 
 ADD ddppo_agents.py agent.py
 ADD submission.sh submission.sh
 ADD configs/challenge_pointnav2020.local.rgbd.yaml /challenge_pointnav2020.local.rgbd.yaml
+ADD configs/challenge_pointnav2020.local.rgbd_test_scene.yaml /challenge_pointnav2020.local.rgbd_test_scene.yaml
 ADD configs/ configs/
 ADD ddppo_pointnav_habitat2020_challenge_baseline_v1.pth demo.ckpt.pth
 ENV AGENT_EVALUATION_TYPE remote

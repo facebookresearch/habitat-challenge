@@ -1,8 +1,10 @@
 import argparse
-import habitat
-import random
-import numpy
 import os
+import random
+
+import numpy
+
+import habitat
 
 
 class RandomAgent(habitat.Agent):
@@ -18,7 +20,9 @@ class RandomAgent(habitat.Agent):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--evaluation", type=str, required=True, choices=["local", "remote"])
+    parser.add_argument(
+        "--evaluation", type=str, required=True, choices=["local", "remote"]
+    )
     args = parser.parse_args()
 
     config_paths = os.environ["CHALLENGE_CONFIG_FILE"]
@@ -35,4 +39,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

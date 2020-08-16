@@ -1,0 +1,120 @@
+version: 2
+gpu: &gpu
+  machine:
+    image: ubuntu-1604:201903-01
+  resource_class: gpu.small
+
+jobs:
+  python_lint:
+    docker:
+      - image: circleci/python:3.6
+    steps:
+      - checkout
+      - run:
+          name: setup
+          command: |
+              sudo pip install black "isort[pyproject]" numpy --progress-bar off
+      - run:
+          name: run black
+          command: |
+              black . --diff
+              black . --check
+      - run:
+          name: run isort
+          command: |
+              isort --version
+              isort -rc . --diff
+              isort -rc . --check-only
+
+  install_and_test_ubuntu:
+    <<: *gpu
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          no_output_timeout: 20m
+          command: |
+              sudo apt-get update || true
+              sudo apt-get install -y --no-install-recommends \
+                  build-essential \
+                  git \
+                  curl \
+                  vim \
+                  ca-certificates \
+                  pkg-config \
+                  wget \
+                  zip \
+                  unzip || true
+
+      - run:
+          name: Install conda and dependencies
+          no_output_timeout: 20m
+          command: |
+              if [ ! -d ~/miniconda ]
+              then
+                curl -o ~/miniconda.sh -O  https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+                chmod +x ~/miniconda.sh
+                ~/miniconda.sh -b -p $HOME/miniconda
+                rm ~/miniconda.sh
+                export PATH=$HOME/miniconda/bin:/usr/local/cuda/bin:$PATH
+                conda create -y -n habitat python=3.6
+                . activate habitat
+              fi
+
+      - run:
+          name: Install cuda
+          no_output_timeout: 20m
+          command: |
+              wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/cuda-repo-ubuntu1604_8.0.44-1_amd64.deb
+              sudo dpkg -i cuda-repo-ubuntu1604_8.0.44-1_amd64.deb
+              sudo apt-get update || true
+              sudo apt-get --yes --force-yes install cuda
+              touch ./cuda_installed
+              nvidia-smi
+
+      - run:
+          name: Test PointNav 2020 submission
+          command: |
+              export PATH=$HOME/miniconda/bin:/usr/local/cuda/bin:$PATH
+              . activate habitat;
+              curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+              sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+              sudo apt-get update
+              sudo apt-get install -y docker-ce
+              apt-cache policy docker-ce
+
+              curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | sudo apt-key add -
+              distribution=$(. /etc/os-release;echo $ID$VERSION_ID)
+              curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list | \
+                sudo tee /etc/apt/sources.list.d/nvidia-docker.list
+              sudo apt-get update
+              sudo apt-get install nvidia-docker2
+              sudo pkill -SIGHUP dockerd
+
+              # EvlaAI install
+              pip install "evalai>=1.2.3"
+              # Set EvalAI account token
+              evalai set_token $EVALAI_TOKEN
+
+              docker build . --file Pointnav.Dockerfile -t pointnav_submission
+              # we can't test locally without val scenes yet.
+              # ./test_locally_pointnav_rgbd.sh --docker-name pointnav_submission
+
+              # Push docker image to EvalAI docker registry
+              evalai push pointnav_submission:latest --phase habitat20-pointnav-minival
+
+              # DDPPO baseline
+              wget https://dl.fbaipublicfiles.com/habitat/data/baselines/v1/ddppo_pointnav_habitat2020_challenge_baseline_v1.pth
+              docker build . --file Pointnav_DDPPO_baseline.Dockerfile -t ddppo_pointnav_submission
+              # we can't test locally without val scenes yet.
+              # ./test_locally_pointnav_rgbd.sh --docker-name ddppo_pointnav_submission
+
+              # Push docker image to EvalAI docker registry
+              evalai push ddppo_pointnav_submission:latest --phase habitat20-pointnav-minival
+
+workflows:
+  version: 2
+  install_and_test:
+    jobs:
+      - python_lint
+      - install_and_test_ubuntu
