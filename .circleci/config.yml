@@ -96,13 +96,6 @@ jobs:
               # Set EvalAI account token
               evalai set_token $EVALAI_TOKEN
 
-              docker build . --file Pointnav.Dockerfile -t pointnav_submission
-              # we can't test locally without val scenes yet.
-              # ./test_locally_pointnav_rgbd.sh --docker-name pointnav_submission
-
-              # Push docker image to EvalAI docker registry
-              evalai push pointnav_submission:latest --phase habitat20-pointnav-minival
-
               # DDPPO baseline
               wget https://dl.fbaipublicfiles.com/habitat/data/baselines/v1/ddppo_pointnav_habitat2020_challenge_baseline_v1.pth
               docker build . --file Pointnav_DDPPO_baseline.Dockerfile -t ddppo_pointnav_submission
@@ -111,6 +104,14 @@ jobs:
 
               # Push docker image to EvalAI docker registry
               evalai push ddppo_pointnav_submission:latest --phase habitat20-pointnav-minival
+
+              # Random agent baseline
+              docker build . --file Pointnav.Dockerfile -t pointnav_submission
+              # we can't test locally without val scenes yet.
+              # ./test_locally_pointnav_rgbd.sh --docker-name pointnav_submission
+
+              # Push docker image to EvalAI docker registry
+              evalai push pointnav_submission:latest --phase habitat20-pointnav-minival
 
 workflows:
   version: 2
