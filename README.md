@@ -169,7 +169,7 @@ Follow instructions in the `submit` tab of the EvalAI challenge page (coming soo
 
 ```bash
 # Installing EvalAI Command Line Interface
-pip install "evalai>=1.2.3"
+pip install "evalai>=1.3.5"
 
 # Set EvalAI account token
 evalai set_token <your EvalAI participant token>
