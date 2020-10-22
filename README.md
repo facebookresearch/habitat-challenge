@@ -165,7 +165,7 @@ Note: only supports Linux; no Windows or MacOS.
 
 ### Online submission
 
-Follow instructions in the `submit` tab of the EvalAI challenge page (coming soon) to submit your docker image. Note that you will need a version of EvalAI `>= 1.2.3`. Pasting those instructions here for convenience:
+Follow instructions in the `submit` tab of the EvalAI challenge page (coming soon) to submit your docker image. Note that you will need a version of EvalAI `>= 1.3.5`. Pasting those instructions here for convenience:
 
 ```bash
 # Installing EvalAI Command Line Interface
