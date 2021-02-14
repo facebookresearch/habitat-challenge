@@ -19,16 +19,16 @@ Task #1: PointNav focuses on realism and *sim2real predictivity* (the ability to
 Task #2: ObjectNav focuses on egocentric object/scene recognition and a commonsense understanding of object semantics (where is a fireplace typically located in a house?). 
 
 ### New in 2021
-The main emphasis in 2021 is to drive the progress for the unsolved tasks of [Habitat Challenge 2020](https://aihabitat.org/challenge/2020/). The tasks specification remained unchanged except a tilt angle of the agent’s camera for PointNav task. The agent’s camera is now tilted the way that the area in front of the agent can be observed. 
+The main emphasis in 2021 is to drive the progress for the unsolved tasks of [Habitat Challenge 2020](https://aihabitat.org/challenge/2020/). The task specifications remained unchanged except for the agent’s camera's tilt angle for the PointNav task. The agent can observe the area in front of it as the agent’s camera has now tilted.
 
-We reserve the right use additional metrics to choose the winner in case of statistically insignificant SPL results difference. 
+We reserve the right to use additional metrics to choose the winner in case of statistically insignificant SPL results difference. 
 
 
 ## Task 1: PointNav 
-In PointNav, an agent is spawned at a random starting position and orientation in an unseen environment and and asked to navigate to target coordinates specified relative to the agent’s start location (*‘Go 5m north, 3m west relative to start’*). No ground-truth map is available and the agent must only use its sensory input (an RGB-D camera) to navigate. 
+In PointNav, an agent is spawned at a random starting position and orientation in an unseen environment and asked to navigate to target coordinates specified relative to the agent’s start location (*‘Go 5m north, 3m west relative to start’*). No ground-truth map is available, and the agent must only use its sensory input (an RGB-D camera) to navigate. 
 
 ### Dataset
-We use [Gibson 3D scenes](http://gibsonenv.stanford.edu/database/) for the challenge. As in the 2019 Habitat challenge, we use the splits provided by the Gibson dataset, retaining the train and val sets, and separating the test set into test-standard and test-challenge. The train and val scenes are provided to participants. The test scenes are used for the official challenge evaluation and are not provided to participants. Note: The agent size has changed from 2019, thus the navigation episodes have changed (a wider agent in 2021 rendered many of 2019 episodes unnavigable). 
+We use [Gibson 3D scenes](http://gibsonenv.stanford.edu/database/) for the challenge. As in the 2019 Habitat challenge, we use the Gibson dataset’s splits, retaining the train and val sets, and separating the test set into test-standard and test-challenge. The train and val scenes are provided to participants. The test scenes are used for the official challenge evaluation and are not provided to participants. 
 
 ### Evaluation
 After calling the STOP action, the agent is evaluated using the ‘Success weighted by Path Length’ (SPL) metric [2]. 
@@ -55,15 +55,15 @@ We generalize the PointNav evaluation protocol used by [1,2,3] to ObjectNav. At 
 - **Success**: Did the agent navigate to an instance of the goal object? (Notice: *any* instance, regardless of distance from starting location.)
 - **Efficiency**: How efficient was the agent’s path compared to an optimal path? (Notice: optimal path = shortest path from the agent’s starting position to the *closest* instance of the target object category.)
 
-Concretely, an episode is deemed successful if on calling the STOP action, the agent is within 1.0m Euclidean distance from any instance of the target object category AND the object *can be viewed by an oracle* from that stopping position by turning the agent or looking up/down. Notice: we do NOT require the agent to be actually viewing the object at the stopping location, simply that the such oracle-visibility is possible without moving. Why? Because we want participants to focus on *navigation* not object framing. In the larger goal of Embodied AI, the agent is navigating to an object instance in order to interact with is (say point at or manipulate an object). Oracle-visibility is our proxy for *‘the agent is close enough to interact with the object’*. 
+Concretely, an episode is deemed successful if on calling the STOP action, the agent is within 1.0m Euclidean distance from any instance of the target object category AND the object *can be viewed by an oracle* from that stopping position by turning the agent or looking up/down. Notice: we do NOT require the agent to be actually viewing the object at the stopping location, simply that such oracle-visibility is possible without moving. Why? Because we want participants to focus on *navigation*, not object framing. In Embodied AI’s larger goal, the agent is navigating to an object instance to interact with it (say point at or manipulate an object). Oracle-visibility is our proxy for *‘the agent is close enough to interact with the object’*. 
 
-ObjectNav-SPL is defined analogous to PointNav-SPL. The only key difference is that the shortest path is computed to the object instance closest to the agent start location. Thus, if an agent spawns very close to *‘chair1’* but stops at a distant *‘chair2’*, it will be achieve 100% success (because it found a *‘chair’*) but a fairly low SPL (because the agent path is much longer compared to the oracle path). 
+ObjectNav-SPL is defined analogous to PointNav-SPL. The only key difference is that the shortest path is computed to the object instance closest to the agent start location. Thus, if an agent spawns very close to *‘chair1’* but stops at a distant *‘chair2’*, it will achieve 100% success (because it found a *‘chair’*) but a fairly low SPL (because the agent path is much longer compared to the oracle path). 
 
 ## Participation Guidelines
 
-Participate in the contest by registering on the [EvalAI challenge page](https://evalai.cloudcv.org/web/challenges/challenge-page/580/overview) and creating a team. Participants will upload docker containers with their agents that evaluated on a AWS GPU-enabled instance. Before pushing the submissions for remote evaluation, participants should test the submission docker locally to make sure it is working. Instructions for training, local evaluation, and online submission are provided below.
+Participate in the contest by registering on the [EvalAI challenge page](https://evalai.cloudcv.org/web/challenges/challenge-page/580/overview) and creating a team. Participants will upload docker containers with their agents that are evaluated on an AWS GPU-enabled instance. Before pushing the submissions for remote evaluation, participants should test the submission docker locally to ensure it is working. Instructions for training, local evaluation, and online submission are provided below.
 
-**[NEW]** For your convenience please check our [Habitat Challenge video tutorial](https://youtu.be/V7PXttmJ8EE?list=PLGywud_-HlCORC0c4uj97oppQrGiB6JNy) and [Colab step-by-step tutorial for this year](https://colab.research.google.com/gist/mathfac/8c9b97d7afef36e377f17d587c903ede). 
+**[NEW]** For your convenience, please check our [Habitat Challenge video tutorial](https://youtu.be/V7PXttmJ8EE?list=PLGywud_-HlCORC0c4uj97oppQrGiB6JNy) and [Colab step-by-step tutorial for this year](https://colab.research.google.com/gist/mathfac/8c9b97d7afef36e377f17d587c903ede). 
 
 ### Local Evaluation
 
@@ -115,7 +115,7 @@ Note: only supports Linux; no Windows or MacOS.
 
 
     **Using Symlinks:**  If you used symlinks (i.e. `ln -s`) to link to an existing download of Gibson or MP3D, there is an additional step.  For  ObjectNav/MP3D (and similarly for PointNav/Gibson),
-    first make sure there is only one level of symlink (instead of a symlink to a symlink link to a .... symlink) with
+    first, make sure there is only one level of symlink (instead of a symlink to a symlink link to a .... symlink) with
       ```bash
       ln -f -s $(realpath habitat-challenge-data/data/scene_datasets/mp3d) \
           habitat-challenge-data/data/scene_datasets/mp3d
@@ -174,9 +174,9 @@ Valid challenge phases are `habitat20-{pointnav, objectnav}-{minival, test-std, 
 
 The challenge consists of the following phases:
 
-1. **Minival phase**: This split is same as the one used in `./test_locally_{pointnav, objectnav}_rgbd.sh`. The purpose of this phase/split is sanity checking -- to confirm that our remote evaluation reports the same result as the one you’re seeing locally. Each team is allowed maximum of 30 submission per day for this phase, but please use them judiciously. We will block and disqualify teams that spam our servers. 
-1. **Test Standard phase**: The purpose of this phase/split is to serve as the public leaderboard establishing the state of the art; this is what should be used to report results in papers. Each team is allowed maximum of 10 submission per day for this phase, but again, please use them judiciously. Don’t overfit to the test set. 
-1. **Test Challenge phase**: This phase/split will be used to decide challenge winners. Each team is allowed total of 5 submissions until the end of challenge submission phase. The highest performing of these 5 will be automatically chosen. Results on this split will not be made public until the announcement of final results at the [Embodied AI workshop at CVPR](https://embodied-ai.org/). 
+1. **Minival phase**: This split is same as the one used in `./test_locally_{pointnav, objectnav}_rgbd.sh`. The purpose of this phase/split is sanity checking -- to confirm that our remote evaluation reports the same result as the one you’re seeing locally. Each team is allowed maximum of 100 submissions per day for this phase, but please use them judiciously. We will block and disqualify teams that spam our servers. 
+1. **Test Standard phase**: The purpose of this phase/split is to serve as the public leaderboard establishing the state of the art; this is what should be used to report results in papers. Each team is allowed maximum of 10 submissions per day for this phase, but again, please use them judiciously. Don’t overfit to the test set. 
+1. **Test Challenge phase**: This phase/split will be used to decide challenge winners. Each team is allowed a total of 5 submissions until the end of challenge submission phase. The highest performing of these 5 will be automatically chosen. Results on this split will not be made public until the announcement of final results at the [Embodied AI workshop at CVPR](https://embodied-ai.org/). 
 1. **Optional Test Challenge phase for PointNav track (Habitat to Gibson sim2real)**: Top-5 teams from the Habitat Test Standard phase will have a chance to participate in the [Gibson Sim2Real Challenge](http://svl.stanford.edu/gibson2/challenge.html>) for their Phase 2 (Real World phase) and potentially Phase 3 (Demo phase). Additional submission to the Gibson challenge will be required.
 
 Note: Your agent will be evaluated on 1000-2000 episodes and will have a total available time of 24 hours to finish. Your submissions will be evaluated on AWS EC2 p2.xlarge instance which has a Tesla K80 GPU (12 GB Memory), 4 CPU cores, and 61 GB RAM. If you need more time/resources for evaluation of your submission please get in touch. If you face any issues or have questions you can ask them by opening an issue on this repository.
