@@ -19,7 +19,7 @@ Task #1: PointNav focuses on realism and *sim2real predictivity* (the ability to
 Task #2: ObjectNav focuses on egocentric object/scene recognition and a commonsense understanding of object semantics (where is a fireplace typically located in a house?). 
 
 ### New in 2021
-The main emphasis in 2021 is to drive the progress for the unsolved tasks of [Habitat Challenge 2020](https://aihabitat.org/challenge/2020/). The tasks specification remained unchanged except a tilt angle of the agent's camera for PointNav task. The agent's camera is now tilted the way that the area behind the agent can be observed. 
+The main emphasis in 2021 is to drive the progress for the unsolved tasks of [Habitat Challenge 2020](https://aihabitat.org/challenge/2020/). The tasks specification remained unchanged except a tilt angle of the agent's camera for PointNav task. The agent's camera is now tilted the way that the area in front of the agent can be observed. 
 
 We reserve the right use additional metrics to choose the winner in case of statistically insignificant SPL results difference. 
 
