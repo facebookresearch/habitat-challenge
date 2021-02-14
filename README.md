@@ -4,11 +4,11 @@
 
 --------------------------------------------------------------------------------
 
-# Habitat Challenge 2020
+# Habitat Challenge 2021
 
-This repository contains starter code for the 2020 challenge, details of the tasks, and training and evaluation setups. For an overview of habitat-challenge visit [aihabitat.org/challenge](https://aihabitat.org/challenge/). 
+This repository contains starter code for the 2021 challenge, details of the tasks, and training and evaluation setups. For an overview of habitat-challenge visit [aihabitat.org/challenge](https://aihabitat.org/challenge/). 
 
-If you are looking for our 2019 starter code, it's available in the [`challenge-2019 branch`](https://github.com/facebookresearch/habitat-challenge/tree/challenge-2019).
+If you are looking for our 2020/2019 starter code, it's available in the [`challenge-YEAR branch`](https://github.com/facebookresearch/habitat-challenge/tree/challenge-2019).
 
 This year, we are hosting challenges on two embodied navigation tasks: 
 1. PointNav (*‘Go 5m north, 3m west relative to start’*)
@@ -18,12 +18,17 @@ Task #1: PointNav focuses on realism and *sim2real predictivity* (the ability to
 
 Task #2: ObjectNav focuses on egocentric object/scene recognition and a commonsense understanding of object semantics (where is a fireplace typically located in a house?). 
 
+### New in 2021
+The main emphasis in 2021 is to drive the progress for the unsolved tasks of [Habitat Challenge 2020](https://aihabitat.org/challenge/2020/). The tasks specification remained unchanged except a tilt angle of the agent's camera for PointNav task. The agent's camera is now tilted the way that the area behind the agent can be observed. 
+
+We reserve the right use additional metrics to choose the winner in case of statistically insignificant SPL results difference. 
+
 
 ## Task 1: PointNav 
 In PointNav, an agent is spawned at a random starting position and orientation in an unseen environment and and asked to navigate to target coordinates specified relative to the agent’s start location (*‘Go 5m north, 3m west relative to start’*). No ground-truth map is available and the agent must only use its sensory input (an RGB-D camera) to navigate. 
 
 ### Dataset
-We use [Gibson 3D scenes](http://gibsonenv.stanford.edu/database/) for the challenge. As in the 2019 Habitat challenge, we use the splits provided by the Gibson dataset, retaining the train and val sets, and separating the test set into test-standard and test-challenge. The train and val scenes are provided to participants. The test scenes are used for the official challenge evaluation and are not provided to participants. Note: The agent size has changed from 2019, thus the navigation episodes have changed (a wider agent in 2020 rendered many of 2019 episodes unnavigable). 
+We use [Gibson 3D scenes](http://gibsonenv.stanford.edu/database/) for the challenge. As in the 2019 Habitat challenge, we use the splits provided by the Gibson dataset, retaining the train and val sets, and separating the test set into test-standard and test-challenge. The train and val scenes are provided to participants. The test scenes are used for the official challenge evaluation and are not provided to participants. Note: The agent size has changed from 2019, thus the navigation episodes have changed (a wider agent in 2021 rendered many of 2019 episodes unnavigable). 
 
 ### Evaluation
 After calling the STOP action, the agent is evaluated using the 'Success weighted by Path Length' (SPL) metric [2]. 
@@ -34,25 +39,6 @@ After calling the STOP action, the agent is evaluated using the 'Success weighte
 
 
 An episode is deemed successful if on calling the STOP action, the agent is within 0.36m (2x agent-radius) of the goal position.
-
-
-### New in 2020
-The main emphasis in 2020 is on increased realism and on sim2real predictivity (the ability to predict performance on a real robot from its performance in simulation). 
-
-Specifically, we introduce the following changes inspired by our experiments and findings in [3]: 
-
-1. **No GPS+Compass sensor**: In 2019, the relative coordinates specifying the goal were continuously updated during agent movement &mdash; essentially simulating an agent with perfect localization and heading estimation (*e.g.* an agent with an idealized GPS+Compass). However, high-precision localization in indoor environments can not be assumed in realistic settings &mdash; GPS has low precision indoors, (visual) odometry may be noisy, SLAM-based localization can fail, etc. Hence, in 2020's challenge the agent does NOT have a GPS+Compass sensor and must navigate solely using an egocentric RGB-D camera. This change elevates the need to perform RGBD-based online localization. 
-
-1. **Noisy Actuation and Sensing**: In 2019, the agent actions were deterministic &mdash; *i.e.* when the agent executes *turn-left 30 degrees*, it turns *exactly* 30 degrees, and forward 0.25 m moves the agent *exactly* 0.25 m forward (modulo collisions). However, no robot moves deterministically &mdash; actuation error, surface properties such as friction, and a myriad of other sources of error introduce significant drift over a long trajectory. To model this, we introduce a noise model acquired by benchmarking the [Locobot](http://www.locobot.org/) robot by the [PyRobot](https://www.pyrobot.org/) team. We also added RGB and Depth sensor noises. 
-
-    <p align="center">
-      <img src="res/img/pyrobot-noise-rollout.png" height="200"/>
-    </p>
-    Figure shows the effect of actuation noise. The black line is the trajectory of an action sequence with perfect actuation (no noise). In red are multiple rollouts of this action sequence sampled from the actuation noise model. As we can see, identical action sequences can lead to vastly different final locations.
-
-1. **Collision Dynamics and ‘Sliding'**: In 2019, when the agent takes an action that results in a collision, the agent *slides* along the obstacle as opposed to stopping. This behavior is prevalent in video game engines as it allows for smooth human control; it is also enabled by default in MINOS, Deepmind Lab, AI2 THOR, and Gibson v1. We have found that this behavior enables 'cheating' by learned agents &mdash; the agents exploit this sliding mechanism to take an effective path that appears to travel *through non-navigable regions* of the environment (like walls). Such policies fail disastrously in the real world where the robot bump sensors  force a stop on contact with obstacles. To rectify this issue, we modify [Habitat-Sim to disable sliding on collisions](https://github.com/facebookresearch/habitat-sim/pull/439). 
-
-1. **Multiple cosmetic/minor changes**: Change in robot embodiment/size, camera resolution, height, and orientation, etc &mdash; to match LoCoBot. 
 
 
 ## Task 2: ObjectNav
@@ -76,6 +62,8 @@ ObjectNav-SPL is defined analogous to PointNav-SPL. The only key difference is t
 ## Participation Guidelines
 
 Participate in the contest by registering on the [EvalAI challenge page](https://evalai.cloudcv.org/web/challenges/challenge-page/580/overview) and creating a team. Participants will upload docker containers with their agents that evaluated on a AWS GPU-enabled instance. Before pushing the submissions for remote evaluation, participants should test the submission docker locally to make sure it is working. Instructions for training, local evaluation, and online submission are provided below.
+
+**[NEW]** For your convenience please check our [Habitat Challenge video tutorial](https://youtu.be/V7PXttmJ8EE?list=PLGywud_-HlCORC0c4uj97oppQrGiB6JNy) and [Colab step-by-step tutorial for this year](https://colab.research.google.com/gist/mathfac/8c9b97d7afef36e377f17d587c903ede). 
 
 ### Local Evaluation
 
@@ -111,7 +99,7 @@ Note: only supports Linux; no Windows or MacOS.
 1. Modify the provided Dockerfile if you need custom modifications. Let's say your code needs `pytorch`, these dependencies should be pip installed inside a conda environment called `habitat` that is shipped with our habitat-challenge docker, as shown below:
 
     ```dockerfile
-    FROM fairembodied/habitat-challenge:2020
+    FROM fairembodied/habitat-challenge:2021
 
     # install dependencies in the habitat conda environment
     RUN /bin/bash -c ". activate habitat; pip install torch"
@@ -142,7 +130,7 @@ Note: only supports Linux; no Windows or MacOS.
           -v $(realpath habitat-challenge-data/data/scene_datasets/mp3d) \
           --runtime=nvidia \
           -e "AGENT_EVALUATION_TYPE=local" \
-          -e "TRACK_CONFIG_FILE=/challenge_objectnav2020.local.rgbd.yaml" \
+          -e "TRACK_CONFIG_FILE=/challenge_objectnav2021.local.rgbd.yaml" \
           ${DOCKER_NAME}
     ```
 
@@ -158,14 +146,14 @@ Note: only supports Linux; no Windows or MacOS.
     ```
     2019-02-14 21:23:51,798 initializing sim Sim-v0
     2019-02-14 21:23:52,820 initializing task Nav-v0
-    2020-02-14 21:23:56,339 distance_to_goal: 5.205519378185272
-    2020-02-14 21:23:56,339 spl: 0.0
+    2021-02-14 21:23:56,339 distance_to_goal: 5.205519378185272
+    2021-02-14 21:23:56,339 spl: 0.0
     ```
     Note: this same command will be run to evaluate your agent for the leaderboard. **Please submit your docker for remote evaluation (below) only if it runs successfully on your local setup.**  
 
 ### Online submission
 
-Follow instructions in the `submit` tab of the EvalAI challenge page (coming soon) to submit your docker image. Note that you will need a version of EvalAI `>= 1.3.5`. Pasting those instructions here for convenience:
+Follow instructions in the `submit` tab of the EvalAI challenge page (coming soon) to submit your docker image. Note that you will need a version of EvalAI `>= 1.2.3`. Pasting those instructions here for convenience:
 
 ```bash
 # Installing EvalAI Command Line Interface
@@ -248,7 +236,7 @@ We have added a config in `configs/ddppo_pointnav.yaml | configs/ddppo_objectnav
             --run-type train \
             TASK_CONFIG.DATASET.SPLIT 'train' 
         ```
-    1. **Notes about performance**: We have noticed that turning on the RGB/Depth sensor noise may lead to reduced simulation speed. As such, we recommend initially training with these noises turned off and using them for fine tuning if necessary. This can be done by commenting out the lines that include the key "NOISE_MODEL" in the config: ```habitat-challenge/configs/challenge_pointnav2020.local.rgbd.yaml```.
+    1. **Notes about performance**: We have noticed that turning on the RGB/Depth sensor noise may lead to reduced simulation speed. As such, we recommend initially training with these noises turned off and using them for fine tuning if necessary. This can be done by commenting out the lines that include the key "NOISE_MODEL" in the config: ```habitat-challenge/configs/challenge_pointnav2021.local.rgbd.yaml```.
     1. The preceding two scripts are based off ones found in the [habitat_baselines/ddppo](https://github.com/facebookresearch/habitat-lab/tree/master/habitat_baselines/rl/ddppo).
 
 1. The checkpoint specified by ```$PATH_TO_CHECKPOINT ``` can evaluated by SPL and other measurements by running the following command:
@@ -260,9 +248,9 @@ We have added a config in `configs/ddppo_pointnav.yaml | configs/ddppo_objectnav
         EVAL_CKPT_PATH_DIR $PATH_TO_CHECKPOINT \
         TASK_CONFIG.DATASET.SPLIT val
     ```
-    The weights used for our DD-PPO Pointnav or Objectnav baseline for the Habitat-2020 challenge can be downloaded with the following command:
+    The weights used for our DD-PPO Pointnav or Objectnav baseline for the Habitat-2021 challenge can be downloaded with the following command:
     ```bash
-    wget https://dl.fbaipublicfiles.com/habitat/data/baselines/v1/ddppo_${task}_habitat2020_challenge_baseline_v1.pth
+    wget https://dl.fbaipublicfiles.com/habitat/data/baselines/v1/ddppo_${task}_habitat2021_challenge_baseline_v1.pth
     ```, where `$Task={pointnav, objectnav}.
 
     The default *Pointnav* DD-PPO baseline is trained for 120 Updates on 10 million frames with the config param: ```RL.SLACK_REWARD '-0.001'``` which reduces the slack reward to -0.001.
@@ -290,15 +278,27 @@ We have added a config in `configs/ddppo_pointnav.yaml | configs/ddppo_objectnav
 1. To test locally simple run the ```test_locally_${task}_rgbd.sh``` script. If the docker runs your code without errors, it should work on Eval-AI. The instructions for submitting the Docker to EvalAI are listed above.
 1. Happy hacking!
 
-## Citing Habitat Challenge 2020
-Please cite the following paper for details about the 2020 PointNav challenge:
-
+## Citing Habitat Challenge 2021
+Please cite [the following paper](https://arxiv.org/abs/1912.06321) for details about the 2021 PointNav challenge:
 ```
 @inproceedings{habitat2020sim2real,
-  title     =     {Are We Making Real Progress in Simulated Environments? Measuring the Sim2Real Gap in Embodied Visual Navigation},
-  author    =     {Abhishek Kadian, Joanne Truong, Aaron Gokaslan, Alexander Clegg, Erik Wijmans, Stefan Lee, Manolis Savva, Sonia Chernova, Dhruv Batra},
-  booktitle =     {arXiv:1912.06321},
-  year      =     {2019}
+  title     =     {Sim2{R}eal {P}redictivity: {D}oes {E}valuation in {S}imulation {P}redict {R}eal-{W}orld {P}erformance?},
+  author    =     {{Abhishek Kadian*} and {Joanne Truong*} and Aaron Gokaslan and Alexander Clegg and Erik Wijmans and Stefan Lee and Manolis Savva and Sonia Chernova and Dhruv Batra},
+  journal   =   {IEEE Robotics and Automation Letters},
+  year      =   {2020},
+  volume    =   {5},
+  number    =   {4},
+  pages     =   {6670-6677},
+}
+```
+
+Please cite [the following paper](https://arxiv.org/abs/2006.13171) for details about the 2021 ObjectNav challenge:
+```
+@inproceedings{batra2020objectnav,
+  title     =     {Object{N}av {R}evisited: {O}n {E}valuation of {E}mbodied {A}gents {N}avigating to {O}bjects},
+  author    =     {Dhruv Batra and Aaron Gokaslan and Aniruddha Kembhavi and Oleksandr Maksymets and Roozbeh Mottaghi and Manolis Savva and Alexander Toshev and Erik Wijmans},
+  booktitle =     {arXiv:2006.13171},
+  year      =     {2020}
 }
 ```
 
