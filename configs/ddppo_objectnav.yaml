@@ -1,4 +1,4 @@
-BASE_TASK_CONFIG_PATH: "configs/tasks/objectnav_mp3d.yaml"
+BASE_TASK_CONFIG_PATH: "configs/challenge_objectnav2021.local.rgbd.yaml"
 CMD_TRAILING_OPTS: ["TASK_CONFIG.ENVIRONMENT.ITERATOR_OPTIONS.MAX_SCENE_REPEAT_STEPS", "50000"]
 TRAINER_NAME: "ddppo"
 ENV_NAME: "NavRLEnv"
