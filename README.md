@@ -8,7 +8,7 @@
 
 This repository contains the starter code for the 2021 challenge, details of the tasks, and training and evaluation setups. For an overview of habitat-challenge, visit [aihabitat.org/challenge](https://aihabitat.org/challenge/). 
 
-If you are looking for our 2020/2019 starter code, it’s available in the [`challenge-YEAR branch`](https://github.com/facebookresearch/habitat-challenge/tree/challenge-2019).
+If you are looking for our 2020/2019 starter code, it’s available in the [`challenge-YEAR branch`](https://github.com/facebookresearch/habitat-challenge/tree/challenge-2020).
 
 This year, we are hosting challenges on two embodied navigation tasks: 
 1. PointNav (*‘Go 5m north, 3m west relative to start’*)
@@ -19,16 +19,16 @@ Task #1: PointNav focuses on realism and *sim2real predictivity* (the ability to
 Task #2: ObjectNav focuses on egocentric object/scene recognition and a commonsense understanding of object semantics (where is a fireplace typically located in a house?). 
 
 ### New in 2021
-The main emphasis in 2021 is to drive the progress for the unsolved tasks of [Habitat Challenge 2020](https://aihabitat.org/challenge/2020/). The task specifications remained unchanged except for the agent’s camera's tilt angle for the PointNav task. The agent can observe the area in front of it as the agent’s camera has now tilted.
+The results of [Habitat Challenge 2020](https://aihabitat.org/challenge/2020/) indicate that these benchmarks are far from being solved or stagnated. Thus, the task specifications remained unchanged except for the agent’s camera's tilt angle for the PointNav task. The agent can observe the area in front of it as the agent’s camera has now tilted.
 
-We reserve the right to use additional metrics to choose the winner in case of statistically insignificant SPL results difference. 
+We reserve the right to use additional metrics to choose winners in case of statistically insignificant SPL differences.
 
 
 ## Task 1: PointNav 
 In PointNav, an agent is spawned at a random starting position and orientation in an unseen environment and asked to navigate to target coordinates specified relative to the agent’s start location (*‘Go 5m north, 3m west relative to start’*). No ground-truth map is available, and the agent must only use its sensory input (an RGB-D camera) to navigate. 
 
 ### Dataset
-We use [Gibson 3D scenes](http://gibsonenv.stanford.edu/database/) for the challenge. As in the 2019 Habitat challenge, we use the Gibson dataset’s splits, retaining the train and val sets, and separating the test set into test-standard and test-challenge. The train and val scenes are provided to participants. The test scenes are used for the official challenge evaluation and are not provided to participants. 
+We use [Gibson 3D scenes](http://gibsonenv.stanford.edu/database/) for the challenge. As in the 2020 Habitat challenge, we use the Gibson dataset’s splits, retaining the train and val sets, and separating the test set into test-standard and test-challenge. The train and val scenes are provided to participants. The test scenes are used for the official challenge evaluation and are not provided to participants. 
 
 ### Evaluation
 After calling the STOP action, the agent is evaluated using the ‘Success weighted by Path Length’ (SPL) metric [2]. 
@@ -144,8 +144,8 @@ Note: only supports Linux; no Windows or MacOS.
     ```
     If the above command runs successfully you will get an output similar to:
     ```
-    2019-02-14 21:23:51,798 initializing sim Sim-v0
-    2019-02-14 21:23:52,820 initializing task Nav-v0
+    2021-02-14 21:23:51,798 initializing sim Sim-v0
+    2021-02-14 21:23:52,820 initializing task Nav-v0
     2021-02-14 21:23:56,339 distance_to_goal: 5.205519378185272
     2021-02-14 21:23:56,339 spl: 0.0
     ```
@@ -170,16 +170,15 @@ evalai push pointnav_submission:latest --phase <phase-name>
 evalai push objectnav_submission:latest --phase <phase-name>
 ```
 
-Valid challenge phases are `habitat20-{pointnav, objectnav}-{minival, test-std, test-ch}`.
+Valid challenge phases are `habitat21-{pointnav, objectnav}-{minival, test-std, test-ch}`.
 
 The challenge consists of the following phases:
 
 1. **Minival phase**: This split is same as the one used in `./test_locally_{pointnav, objectnav}_rgbd.sh`. The purpose of this phase/split is sanity checking -- to confirm that our remote evaluation reports the same result as the one you’re seeing locally. Each team is allowed maximum of 100 submissions per day for this phase, but please use them judiciously. We will block and disqualify teams that spam our servers. 
 1. **Test Standard phase**: The purpose of this phase/split is to serve as the public leaderboard establishing the state of the art; this is what should be used to report results in papers. Each team is allowed maximum of 10 submissions per day for this phase, but again, please use them judiciously. Don’t overfit to the test set. 
 1. **Test Challenge phase**: This phase/split will be used to decide challenge winners. Each team is allowed a total of 5 submissions until the end of challenge submission phase. The highest performing of these 5 will be automatically chosen. Results on this split will not be made public until the announcement of final results at the [Embodied AI workshop at CVPR](https://embodied-ai.org/). 
-1. **Optional Test Challenge phase for PointNav track (Habitat to Gibson sim2real)**: Top-5 teams from the Habitat Test Standard phase will have a chance to participate in the [Gibson Sim2Real Challenge](http://svl.stanford.edu/gibson2/challenge.html>) for their Phase 2 (Real World phase) and potentially Phase 3 (Demo phase). Additional submission to the Gibson challenge will be required.
 
-Note: Your agent will be evaluated on 1000-2000 episodes and will have a total available time of 24 hours to finish. Your submissions will be evaluated on AWS EC2 p2.xlarge instance which has a Tesla K80 GPU (12 GB Memory), 4 CPU cores, and 61 GB RAM. If you need more time/resources for evaluation of your submission please get in touch. If you face any issues or have questions you can ask them by opening an issue on this repository.
+Note: Your agent will be evaluated on 1000-2000 episodes and will have a total available time of 48 hours to finish. Your submissions will be evaluated on AWS EC2 p2.xlarge instance which has a Tesla K80 GPU (12 GB Memory), 4 CPU cores, and 61 GB RAM. If you need more time/resources for evaluation of your submission please get in touch. If you face any issues or have questions you can ask them by opening an issue on this repository.
 
 ### PointNav/ObjectNav Baselines and DD-PPO Training Starter Code
 We have added a config in `configs/ddppo_pointnav.yaml | configs/ddppo_objectnav.yaml` that includes a baseline using DD-PPO from Habitat-Lab. 
