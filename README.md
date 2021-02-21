@@ -19,7 +19,7 @@ Task #1: PointNav focuses on realism and *sim2real predictivity* (the ability to
 Task #2: ObjectNav focuses on egocentric object/scene recognition and a commonsense understanding of object semantics (where is a fireplace typically located in a house?). 
 
 ### New in 2021
-The results of [Habitat Challenge 2020](https://aihabitat.org/challenge/2020/) indicate that these benchmarks are far from being solved or stagnated. Thus, the task specifications remained unchanged except for the agent’s camera's tilt angle for the PointNav task. The agent can observe the area in front of it as the agent’s camera has now tilted.
+The results of [Habitat Challenge 2020](https://aihabitat.org/challenge/2020/#results) indicate that these benchmarks are far from being solved or stagnated. Thus, the task specifications remained unchanged except for the agent’s camera's tilt angle for the PointNav task. The agent can observe the area in front of it as the agent’s camera has now tilted.
 
 We reserve the right to use additional metrics to choose winners in case of statistically insignificant SPL differences.
 
@@ -61,7 +61,7 @@ ObjectNav-SPL is defined analogous to PointNav-SPL. The only key difference is t
 
 ## Participation Guidelines
 
-Participate in the contest by registering on the [EvalAI challenge page](https://evalai.cloudcv.org/web/challenges/challenge-page/580/overview) and creating a team. Participants will upload docker containers with their agents that are evaluated on an AWS GPU-enabled instance. Before pushing the submissions for remote evaluation, participants should test the submission docker locally to ensure it is working. Instructions for training, local evaluation, and online submission are provided below.
+Participate in the contest by registering on the [EvalAI challenge page](https://eval.ai/web/challenges/challenge-page/802/overview) and creating a team. Participants will upload docker containers with their agents that are evaluated on an AWS GPU-enabled instance. Before pushing the submissions for remote evaluation, participants should test the submission docker locally to ensure it is working. Instructions for training, local evaluation, and online submission are provided below.
 
 **[NEW]** For your convenience, please check our [Habitat Challenge video tutorial](https://youtu.be/V7PXttmJ8EE?list=PLGywud_-HlCORC0c4uj97oppQrGiB6JNy) and [Colab step-by-step tutorial for this year](https://colab.research.google.com/gist/mathfac/8c9b97d7afef36e377f17d587c903ede). 
 
