@@ -19,7 +19,7 @@ Task #1: PointNav focuses on realism and *sim2real predictivity* (the ability to
 Task #2: ObjectNav focuses on egocentric object/scene recognition and a commonsense understanding of object semantics (where is a fireplace typically located in a house?). 
 
 ### New in 2021
-The results of [Habitat Challenge 2020](https://aihabitat.org/challenge/2020/) indicate that these benchmarks are far from being solved or stagnated. Thus, the task specifications remained unchanged except for the agent’s camera's tilt angle for the PointNav task. The agent can observe the area in front of it as the agent’s camera has now tilted.
+The results of [Habitat Challenge 2020](https://aihabitat.org/challenge/2020/#results) indicate that these benchmarks are far from being solved or stagnated. Thus, the task specifications remained unchanged except for the agent’s camera's tilt angle for the PointNav task. The agent can observe the area in front of it as the agent’s camera has now tilted.
 
 We reserve the right to use additional metrics to choose winners in case of statistically insignificant SPL differences.
 
@@ -61,7 +61,7 @@ ObjectNav-SPL is defined analogous to PointNav-SPL. The only key difference is t
 
 ## Participation Guidelines
 
-Participate in the contest by registering on the [EvalAI challenge page](https://evalai.cloudcv.org/web/challenges/challenge-page/580/overview) and creating a team. Participants will upload docker containers with their agents that are evaluated on an AWS GPU-enabled instance. Before pushing the submissions for remote evaluation, participants should test the submission docker locally to ensure it is working. Instructions for training, local evaluation, and online submission are provided below.
+Participate in the contest by registering on the [EvalAI challenge page](https://eval.ai/web/challenges/challenge-page/802/overview) and creating a team. Participants will upload docker containers with their agents that are evaluated on an AWS GPU-enabled instance. Before pushing the submissions for remote evaluation, participants should test the submission docker locally to ensure it is working. Instructions for training, local evaluation, and online submission are provided below.
 
 **[NEW]** For your convenience, please check our [Habitat Challenge video tutorial](https://youtu.be/V7PXttmJ8EE?list=PLGywud_-HlCORC0c4uj97oppQrGiB6JNy) and [Colab step-by-step tutorial for this year](https://colab.research.google.com/gist/mathfac/8c9b97d7afef36e377f17d587c903ede). 
 
@@ -176,7 +176,7 @@ The challenge consists of the following phases:
 1. **Test Standard phase**: The purpose of this phase/split is to serve as the public leaderboard establishing the state of the art; this is what should be used to report results in papers. Each team is allowed maximum of 10 submissions per day for this phase, but again, please use them judiciously. Don’t overfit to the test set. 
 1. **Test Challenge phase**: This phase/split will be used to decide challenge winners. Each team is allowed a total of 5 submissions until the end of challenge submission phase. The highest performing of these 5 will be automatically chosen. Results on this split will not be made public until the announcement of final results at the [Embodied AI workshop at CVPR](https://embodied-ai.org/). 
 
-Note: Your agent will be evaluated on 1000-2000 episodes and will have a total available time of 24 hours to finish. Your submissions will be evaluated on AWS EC2 p2.xlarge instance which has a Tesla K80 GPU (12 GB Memory), 4 CPU cores, and 61 GB RAM. If you need more time/resources for evaluation of your submission please get in touch. If you face any issues or have questions you can ask them by opening an issue on this repository.
+Note: Your agent will be evaluated on 1000-2000 episodes and will have a total available time of 48 hours to finish. Your submissions will be evaluated on AWS EC2 p2.xlarge instance which has a Tesla K80 GPU (12 GB Memory), 4 CPU cores, and 61 GB RAM. If you need more time/resources for evaluation of your submission please get in touch. If you face any issues or have questions you can ask them by opening an issue on this repository.
 
 ### PointNav/ObjectNav Baselines and DD-PPO Training Starter Code
 We have added a config in `configs/ddppo_pointnav.yaml | configs/ddppo_objectnav.yaml` that includes a baseline using DD-PPO from Habitat-Lab. 
