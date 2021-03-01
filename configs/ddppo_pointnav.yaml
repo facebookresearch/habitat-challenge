@@ -1,4 +1,5 @@
-BASE_TASK_CONFIG_PATH: "configs/challenge_pointnav2021.local.rgbd.yaml"
+BASE_TASK_CONFIG_PATH: "configs/challenge_objectnav2021.local.rgbd.yaml" #configs/challenge_pointnav2021.local.rgbd.yaml"
+CMD_TRAILING_OPTS: ["TASK_CONFIG.ENVIRONMENT.ITERATOR_OPTIONS.MAX_SCENE_REPEAT_STEPS", "50000"]
 TRAINER_NAME: "ddppo"
 ENV_NAME: "NavRLEnv"
 SIMULATOR_GPU_ID: 0
@@ -7,17 +8,24 @@ VIDEO_OPTION: []
 TENSORBOARD_DIR: "tb"
 VIDEO_DIR: "video_dir"
 TEST_EPISODE_COUNT: -1
-EVAL_CKPT_PATH_DIR: "data/new_checkpoints"
-NUM_PROCESSES: 4
-SENSORS: ["RGB_SENSOR" , "DEPTH_SENSOR"]
-CHECKPOINT_FOLDER: "data/new_checkpoints"
-NUM_UPDATES: 10000
+EVAL_CKPT_PATH_DIR: "habitat-challenge-data"
+NUM_ENVIRONMENTS: 4
+SENSORS: ["DEPTH_SENSOR", "RGB_SENSOR"]
+CHECKPOINT_FOLDER: "habitat-challenge-data"
+NUM_UPDATES: 270000
 LOG_INTERVAL: 10
-CHECKPOINT_INTERVAL: 50
+EVAL:
+  SPLIT: "val"
 
 RL:
   SLACK_REWARD: -0.001
   SUCCESS_REWARD: 2.5
+
+  POLICY:
+    name: "PointNavResNetPolicy"
+    OBS_TRANSFORMS:
+        ENABLED_TRANSFORMS: ("ResizeShortestEdge", "CenterCropper")
+
   PPO:
     # ppo params
     clip_param: 0.2
