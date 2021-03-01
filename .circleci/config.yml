@@ -111,7 +111,7 @@ jobs:
               # ./test_locally_pointnav_rgbd.sh --docker-name pointnav_submission
 
               # Push docker image to EvalAI docker registry
-              evalai push pointnav_submission:latest --phase phase habitat21-pointnav-minival --private
+              evalai push pointnav_submission:latest --phase habitat21-pointnav-minival --private
 
               # DDPPO baseline ObjectNav
               wget https://dl.fbaipublicfiles.com/habitat/data/baselines/v1/ddppo_objectnav_habitat2021_challenge_baseline_v1.pth
