@@ -170,8 +170,6 @@ evalai push pointnav_submission:latest --phase <phase-name>
 evalai push objectnav_submission:latest --phase <phase-name>
 ```
 
-Valid challenge phases are `habitat21-{pointnav, objectnav}-{minival, test-std, test-ch}`.
-
 The challenge consists of the following phases:
 
 1. **Minival phase**: This split is same as the one used in `./test_locally_{pointnav, objectnav}_rgbd.sh`. The purpose of this phase/split is sanity checking -- to confirm that our remote evaluation reports the same result as the one you’re seeing locally. Each team is allowed maximum of 100 submissions per day for this phase, but please use them judiciously. We will block and disqualify teams that spam our servers. 
@@ -251,9 +249,6 @@ We have added a config in `configs/ddppo_pointnav.yaml | configs/ddppo_objectnav
     ```bash
     wget https://dl.fbaipublicfiles.com/habitat/data/baselines/v1/ddppo_${task}_habitat2021_challenge_baseline_v1.pth
     ```, where `$Task={pointnav, objectnav}.
-
-    The default *Pointnav* DD-PPO baseline is trained for 120 Updates on 10 million frames with the config param: ```RL.SLACK_REWARD '-0.001'``` which reduces the slack reward to -0.001.
-    The default *Objectnav* DD-PPO baseline is trained for 266 Updates on 209 million frames  with the provided config.
 
 1. To submit your entry via EvalAI, you will need to build a docker file. We provide Dockerfiles ready to use with the DD-PPO baselines in `${Task}_DDPPO_baseline.Dockerfile`, where `$Task={Pointnav, Objectnav}`. For the sake of completeness, we describe how you can make your own Dockerfile below. If you just want to test the baseline code, feel free to skip this bullet because  ```${Task}_DDPPO_baseline.Dockerfile``` is ready to use.
     1. You may want to modify the `${Task}_DDPPO_baseline.Dockerfile` to include PyTorch or other libraries. To install pytorch, ifcfg and tensorboard, add the following command to the Docker file:

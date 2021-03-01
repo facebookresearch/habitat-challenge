@@ -8,24 +8,28 @@
 import argparse
 import os
 import random
-from collections import OrderedDict
+from typing import Dict, Optional
 
 import numba
 import numpy as np
-import PIL
 import torch
-from gym.spaces import Box, Dict, Discrete
+from gym.spaces import Box
+from gym.spaces import Dict as SpaceDict
+from gym.spaces import Discrete
 
 import habitat
-from habitat import Config
+from habitat.config import Config
 from habitat.core.agent import Agent
-from habitat_baselines.common.utils import batch_obs
-from habitat_baselines.config.default import get_config
-from habitat_baselines.rl.ppo import PointNavBaselinePolicy, Policy
-
-from habitat_baselines.rl.ddppo.policy.resnet_policy import (  # isort:skip noqa
-    PointNavResNetPolicy,
+from habitat.core.simulator import Observations
+from habitat_baselines.common.baseline_registry import baseline_registry
+from habitat_baselines.common.obs_transformers import (
+    apply_obs_transforms_batch,
+    apply_obs_transforms_obs_space,
+    get_active_obs_transforms,
 )
+from habitat_baselines.config.default import get_config
+from habitat_baselines.rl.ddppo.policy import PointNavResNetPolicy
+from habitat_baselines.utils.common import batch_obs
 
 
 @numba.njit
@@ -34,15 +38,16 @@ def _seed_numba(seed: int):
     np.random.seed(seed)
 
 
-class DDPPOAgent(Agent):
-    def __init__(self, config: Config):
+class PPOAgent(Agent):
+    def __init__(self, config: Config) -> None:
+        image_size = config.RL.POLICY.OBS_TRANSFORMS.CENTER_CROPPER
         if "ObjectNav" in config.TASK_CONFIG.TASK.TYPE:
             OBJECT_CATEGORIES_NUM = 20
             spaces = {
                 "objectgoal": Box(
                     low=0, high=OBJECT_CATEGORIES_NUM, shape=(1,), dtype=np.int64
                 ),
-                "compass": Box(low=-np.pi, high=np.pi, shape=(1,), dtype=np.float),
+                "compass": Box(low=-np.pi, high=np.pi, shape=(1,), dtype=np.float32),
                 "gps": Box(
                     low=np.finfo(np.float32).min,
                     high=np.finfo(np.float32).max,
@@ -64,11 +69,7 @@ class DDPPOAgent(Agent):
             spaces["depth"] = Box(
                 low=0,
                 high=1,
-                shape=(
-                    config.TASK_CONFIG.SIMULATOR.DEPTH_SENSOR.HEIGHT,
-                    config.TASK_CONFIG.SIMULATOR.DEPTH_SENSOR.WIDTH,
-                    1,
-                ),
+                shape=(image_size.HEIGHT, image_size.WIDTH, 1),
                 dtype=np.float32,
             )
 
@@ -76,51 +77,45 @@ class DDPPOAgent(Agent):
             spaces["rgb"] = Box(
                 low=0,
                 high=255,
-                shape=(
-                    config.TASK_CONFIG.SIMULATOR.RGB_SENSOR.HEIGHT,
-                    config.TASK_CONFIG.SIMULATOR.RGB_SENSOR.WIDTH,
-                    3,
-                ),
+                shape=(image_size.HEIGHT, image_size.WIDTH, 3),
                 dtype=np.uint8,
             )
-        observation_spaces = Dict(spaces)
+        observation_spaces = SpaceDict(spaces)
+        action_spaces = (
+            Discrete(6) if "ObjectNav" in config.TASK_CONFIG.TASK.TYPE else Discrete(4)
+        )
+        self.obs_transforms = get_active_obs_transforms(config)
+        observation_spaces = apply_obs_transforms_obs_space(
+            observation_spaces, self.obs_transforms
+        )
 
-        action_space = Discrete(len(config.TASK_CONFIG.TASK.POSSIBLE_ACTIONS))
-
-        self.device = torch.device("cuda:{}".format(config.TORCH_GPU_ID))
+        self.device = (
+            torch.device("cuda:{}".format(config.PTH_GPU_ID))
+            if torch.cuda.is_available()
+            else torch.device("cpu")
+        )
         self.hidden_size = config.RL.PPO.hidden_size
 
         random.seed(config.RANDOM_SEED)
         np.random.seed(config.RANDOM_SEED)
         _seed_numba(config.RANDOM_SEED)
         torch.random.manual_seed(config.RANDOM_SEED)
-        torch.backends.cudnn.deterministic = True
-        policy_arguments = OrderedDict(
-            observation_space=observation_spaces,
-            action_space=action_space,
-            hidden_size=self.hidden_size,
-            rnn_type=config.RL.DDPPO.rnn_type,
-            num_recurrent_layers=config.RL.DDPPO.num_recurrent_layers,
-            backbone=config.RL.DDPPO.backbone,
-            normalize_visual_inputs="rgb"
-            if config.INPUT_TYPE in ["rgb", "rgbd"]
-            else False,
-        )
-        if "ObjectNav" not in config.TASK_CONFIG.TASK.TYPE:
-            policy_arguments[
-                "goal_sensor_uuid"
-            ] = config.TASK_CONFIG.TASK.GOAL_SENSOR_UUID
+        if torch.cuda.is_available():
+            torch.backends.cudnn.deterministic = True  # type: ignore
 
-        self.actor_critic = PointNavResNetPolicy(**policy_arguments)
+        policy = baseline_registry.get_policy(config.RL.POLICY.name)
+        self.actor_critic = policy.from_config(
+            config, observation_spaces, action_spaces
+        )
+
         self.actor_critic.to(self.device)
 
         if config.MODEL_PATH:
             ckpt = torch.load(config.MODEL_PATH, map_location=self.device)
-            print(f"Checkpoint loaded: {config.MODEL_PATH}")
             #  Filter only actor_critic weights
             self.actor_critic.load_state_dict(
                 {
-                    k.replace("actor_critic.", ""): v
+                    k[len("actor_critic.") :]: v
                     for k, v in ckpt["state_dict"].items()
                     if "actor_critic" in k
                 }
@@ -131,25 +126,25 @@ class DDPPOAgent(Agent):
                 "Model checkpoint wasn't loaded, evaluating " "a random model."
             )
 
-        self.test_recurrent_hidden_states = None
-        self.not_done_masks = None
-        self.prev_actions = None
+        self.test_recurrent_hidden_states: Optional[torch.Tensor] = None
+        self.not_done_masks: Optional[torch.Tensor] = None
+        self.prev_actions: Optional[torch.Tensor] = None
 
-    def reset(self):
+    def reset(self) -> None:
         self.test_recurrent_hidden_states = torch.zeros(
-            self.actor_critic.net.num_recurrent_layers,
             1,
+            self.actor_critic.net.num_recurrent_layers,
             self.hidden_size,
             device=self.device,
         )
-        self.not_done_masks = torch.zeros(1, 1, device=self.device)
+        self.not_done_masks = torch.zeros(1, 1, device=self.device, dtype=torch.bool)
         self.prev_actions = torch.zeros(1, 1, dtype=torch.long, device=self.device)
 
-    def act(self, observations):
+    def act(self, observations: Observations) -> Dict[str, int]:
         batch = batch_obs([observations], device=self.device)
-
+        batch = apply_obs_transforms_batch(batch, self.obs_transforms)
         with torch.no_grad():
-            _, action, _, self.test_recurrent_hidden_states = self.actor_critic.act(
+            (_, actions, _, self.test_recurrent_hidden_states) = self.actor_critic.act(
                 batch,
                 self.test_recurrent_hidden_states,
                 self.prev_actions,
@@ -157,10 +152,10 @@ class DDPPOAgent(Agent):
                 deterministic=False,
             )
             #  Make masks not done till reset (end of episode) will be called
-            self.not_done_masks.fill_(1.0)
-            self.prev_actions.copy_(action)
+            self.not_done_masks.fill_(True)
+            self.prev_actions.copy_(actions)  # type: ignore
 
-        return action.item()
+        return {"action": actions[0][0].item()}
 
 
 def main():
@@ -179,14 +174,14 @@ def main():
         "configs/ddppo_pointnav.yaml", ["BASE_TASK_CONFIG_PATH", config_paths]
     ).clone()
     config.defrost()
-    config.TORCH_GPU_ID = 0
+    config.PTH_GPU_ID = 0
     config.INPUT_TYPE = args.input_type
     config.MODEL_PATH = args.model_path
 
     config.RANDOM_SEED = 7
     config.freeze()
 
-    agent = DDPPOAgent(config)
+    agent = PPOAgent(config)
     if args.evaluation == "local":
         challenge = habitat.Challenge(eval_remote=False)
         challenge._env.seed(config.RANDOM_SEED)
