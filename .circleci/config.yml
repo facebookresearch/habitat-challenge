@@ -103,7 +103,7 @@ jobs:
               # ./test_locally_pointnav_rgbd.sh --docker-name ddppo_pointnav_submission
 
               # Push docker image to EvalAI docker registry
-              evalai push ddppo_pointnav_submission:latest --phase habitat20-pointnav-minival
+              evalai push ddppo_pointnav_submission:latest --phase habitat21-pointnav-minival --private
 
               # Random agent baseline
               docker build . --file Pointnav.Dockerfile -t pointnav_submission
@@ -111,7 +111,21 @@ jobs:
               # ./test_locally_pointnav_rgbd.sh --docker-name pointnav_submission
 
               # Push docker image to EvalAI docker registry
-              evalai push pointnav_submission:latest --phase habitat20-pointnav-minival
+              evalai push pointnav_submission:latest --phase habitat21-pointnav-minival --private
+
+              # DDPPO baseline ObjectNav
+              wget https://dl.fbaipublicfiles.com/habitat/data/baselines/v1/ddppo_objectnav_habitat2021_challenge_baseline_v1.pth
+              docker build . --file Objectnav_DDPPO_baseline.Dockerfile -t ddppo_objectnav_submission
+
+              # Push docker image to EvalAI docker registry
+              evalai push ddppo_objectnav_submission:latest --phase habitat21-objectnav-minival --private
+
+              # Random agent baseline
+              docker build . --file Objectnav.Dockerfile -t objectnav_submission
+
+              # Push docker image to EvalAI docker registry
+              evalai push objectnav_submission:latest --phase habitat21-objectnav-minival --private
+
 
 workflows:
   version: 2
