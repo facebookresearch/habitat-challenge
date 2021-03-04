@@ -124,7 +124,7 @@ jobs:
               docker build . --file Objectnav.Dockerfile -t objectnav_submission
 
               # Push docker image to EvalAI docker registry
-              evalai push objectnav_submission:latest --phase phase habitat21-objectnav-minival --private
+              evalai push objectnav_submission:latest --phase habitat21-objectnav-minival --private
 
 
 workflows:
