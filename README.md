@@ -127,7 +127,7 @@ Note: only supports Linux; no Windows or MacOS.
      ```bash
       docker run \
           -v $(pwd)/habitat-challenge-data:/habitat-challenge-data \
-          -v $(realpath habitat-challenge-data/data/scene_datasets/mp3d) \
+          -v $(realpath habitat-challenge-data/data/scene_datasets/mp3d):/habitat-challenge-data/data/scene_datasets/mp3d \
           --runtime=nvidia \
           -e "AGENT_EVALUATION_TYPE=local" \
           -e "TRACK_CONFIG_FILE=/challenge_objectnav2021.local.rgbd.yaml" \
