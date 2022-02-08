@@ -4,60 +4,43 @@
 
 --------------------------------------------------------------------------------
 
-# Habitat Challenge 2021
+# Habitat Challenge 2022
 
-This repository contains the starter code for the 2021 challenge, details of the tasks, and training and evaluation setups. For an overview of habitat-challenge, visit [aihabitat.org/challenge](https://aihabitat.org/challenge/).
+This repository contains the starter code for the 2022 challenge, details of the tasks, and training and evaluation setups. For an overview of habitat-challenge, visit [aihabitat.org/challenge](https://aihabitat.org/challenge/).
 
-If you are looking for our 2020/2019 starter code, it’s available in the [`challenge-YEAR branch`](https://github.com/facebookresearch/habitat-challenge/tree/challenge-2020).
+If you are looking for our 2021/2020/2019 starter code, it’s available in the [`challenge-YEAR branch`](https://github.com/facebookresearch/habitat-challenge/tree/challenge-2021).
 
-This year, we are hosting challenges on two embodied navigation tasks:
-1. PointNav (*‘Go 5m north, 3m west relative to start’*)
-1. ObjectNav (*‘find a chair’*).
+This year, we are hosting a challenges on the ObjectNav embodied navigation task. ObjectNav focuses on egocentric object/scene recognition and a commonsense understanding of object semantics (where is a fireplace typically located in a house?).
 
-Task #1: PointNav focuses on realism and *sim2real predictivity* (the ability to predict the performance of a nav-model on a real robot from its performance in simulation).
+### New in 2022
+We are introducing a new dataset called [HM3D](https://aihabitat.org/datasets/hm3d/) in 2022.
 
-Task #2: ObjectNav focuses on egocentric object/scene recognition and a commonsense understanding of object semantics (where is a fireplace typically located in a house?).
+## Task: ObjectNav
 
-### New in 2021
-The results of [Habitat Challenge 2020](https://aihabitat.org/challenge/2020/#results) indicate that these benchmarks are far from being solved or stagnated. Thus, the task specifications remained unchanged except for the agent’s camera's tilt angle for the PointNav task. The agent can observe the area in front of it as the agent’s camera has now tilted.
+In ObjectNav, an agent is initialized at a random starting position and orientation in an unseen environment and asked to find an instance of an object category (*‘find a chair’*) by navigating to it. A map of the environment is not provided and the agent must only use its sensory input to navigate.
 
-We reserve the right to use additional metrics to choose winners in case of statistically insignificant SPL differences.
-
-
-## Task 1: PointNav
-In PointNav, an agent is spawned at a random starting position and orientation in an unseen environment and asked to navigate to target coordinates specified relative to the agent’s start location (*‘Go 5m north, 3m west relative to start’*). No ground-truth map is available, and the agent must only use its sensory input (an RGB-D camera) to navigate.
+The agent is equipped with an RGB-D camera and a (noiseless) GPS+Compass sensor. GPS+Compass sensor provides the agent’s current location and orientation information relative to the start of the episode. We attempt to match the camera specification (field of view, resolution) in simulation to the Azure Kinect camera, but this task does not involve any injected sensing noise.
 
 ### Dataset
-We use [Gibson 3D scenes](http://gibsonenv.stanford.edu/database/) for the challenge. As in the 2020 Habitat challenge, we use the Gibson dataset’s splits, retaining the train and val sets, and separating the test set into test-standard and test-challenge. The train and val scenes are provided to participants. The test scenes are used for the official challenge evaluation and are not provided to participants.
+We use 120 scenes in the [Habitat-Matterport3D (HM3D)](https://aihabitat.org/datasets/hm3d/)[2] dataset with train/val/test splits on 80/20/20. Following Chaplot et al.[3], we use 6 object goal categories: chair, couch, potted plant, bed, toilet and tv.
 
 ### Evaluation
-After calling the STOP action, the agent is evaluated using the ‘Success weighted by Path Length’ (SPL) metric [2].
+Similar to 2021 Habitat Challenge, we measure performance along the same two axes as specified by Anderson et al.[4]:
+- **Success**: Did the agent navigate to an instance of the goal object? (Notice: *any* instance, regardless of distance from starting location.)
+
+Concretely, an episode is deemed successful if on calling the STOP action, the agent is within 1.0m Euclidean distance from any instance of the target object category AND the object *can be viewed by an oracle* from that stopping position by turning the agent or looking up/down. Notice: we do NOT require the agent to be actually viewing the object at the stopping location, simply that such oracle-visibility is possible without moving. Why? Because we want participants to focus on *navigation*, not object framing. In Embodied AI’s larger goal, the agent is navigating to an object instance to interact with it (say point at or manipulate an object). Oracle-visibility is our proxy for *‘the agent is close enough to interact with the object’*.
+
+- **SPL**: How efficient was the agent’s path compared to an optimal path? (Notice: optimal path = shortest path from the agent’s starting position to the *closest* instance of the target object category.)
+
+After calling the STOP action, the agent is evaluated using the ‘Success weighted by Path Length’ (SPL) metric [4].
 
 <p align="center">
   <img src='res/img/spl.png' />
 </p>
 
-
-An episode is deemed successful if on calling the STOP action, the agent is within 0.36m (2x agent-radius) of the goal position.
-
-
-## Task 2: ObjectNav
-
-In ObjectNav, an agent is initialized at a random starting position and orientation in an unseen environment and asked to find an instance of an object category (*‘find a chair’*) by navigating to  it. A map of the environment is not provided and the agent must only use its sensory input to navigate.
-
-The agent is equipped with an RGB-D camera and a (noiseless) GPS+Compass sensor. GPS+Compass sensor provides the agent’s current location and orientation information relative to the start of the episode. We attempt to match the camera specification (field of view, resolution) in simulation to the Azure Kinect camera, but this task does not involve any injected sensing noise.
-
-### Dataset
-We use 90 of the [Matterport3D scenes (MP3D)](https://niessner.github.io/Matterport/) with the standard splits of train/val/test as prescribed by Anderson *et al.* [2]. MP3D contains 40 annotated categories. We hand-select a subset of 21 by excluding categories that are not visually well defined (like doorways or windows) and architectural elements (like walls, floors, and ceilings).
-
-### Evaluation
-We generalize the PointNav evaluation protocol used by [1,2,3] to ObjectNav. At a high-level, we measure performance along the same two axes:
-- **Success**: Did the agent navigate to an instance of the goal object? (Notice: *any* instance, regardless of distance from starting location.)
-- **Efficiency**: How efficient was the agent’s path compared to an optimal path? (Notice: optimal path = shortest path from the agent’s starting position to the *closest* instance of the target object category.)
-
-Concretely, an episode is deemed successful if on calling the STOP action, the agent is within 1.0m Euclidean distance from any instance of the target object category AND the object *can be viewed by an oracle* from that stopping position by turning the agent or looking up/down. Notice: we do NOT require the agent to be actually viewing the object at the stopping location, simply that such oracle-visibility is possible without moving. Why? Because we want participants to focus on *navigation*, not object framing. In Embodied AI’s larger goal, the agent is navigating to an object instance to interact with it (say point at or manipulate an object). Oracle-visibility is our proxy for *‘the agent is close enough to interact with the object’*.
-
 ObjectNav-SPL is defined analogous to PointNav-SPL. The only key difference is that the shortest path is computed to the object instance closest to the agent start location. Thus, if an agent spawns very close to *‘chair1’* but stops at a distant *‘chair2’*, it will achieve 100% success (because it found a *‘chair’*) but a fairly low SPL (because the agent path is much longer compared to the oracle path).
+
+We reserve the right to use additional metrics to choose winners in case of statistically insignificant SPL differences.
 
 ## Participation Guidelines
 
@@ -99,7 +82,7 @@ Note: only supports Linux; no Windows or MacOS.
 1. Modify the provided Dockerfile if you need custom modifications. Let’s say your code needs `pytorch`, these dependencies should be pip installed inside a conda environment called `habitat` that is shipped with our habitat-challenge docker, as shown below:
 
     ```dockerfile
-    FROM fairembodied/habitat-challenge:2021
+    FROM fairembodied/habitat-challenge:2022
 
     # install dependencies in the habitat conda environment
     RUN /bin/bash -c ". activate habitat; pip install torch"
@@ -109,28 +92,24 @@ Note: only supports Linux; no Windows or MacOS.
     ```
     Build your docker container: `docker build . --file Pointnav.Dockerfile  -t pointnav_submission` or using `docker build . --file Objectnav.Dockerfile  -t objectnav_submission`. (Note: you may need `sudo` priviliges to run this command.)
 
-1. a) PointNav: Download Gibson scenes used for Habitat Challenge. Accept terms [here](https://docs.google.com/forms/d/e/1FAIpQLScWlx5Z1DM1M-wTSXaa6zV8lTFkPmTHW1LqMsoCBDWsTDjBkQ/viewform) and select the download corresponding to “Habitat Challenge Data for Gibson (1.5 GB)“. Place this data in: `habitat-challenge/habitat-challenge-data/data/scene_datasets/gibson`
+1. b) ObjectNav: Download Habitat-Matterport3D Dataset scenes used for Habitat Challenge [here](https://matterport.com/partners/facebook). Place this data in: `habitat-challenge/habitat-challenge-data/data/scene_datasets/hm3d`
 
-   b) ObjectNav: Download Matterport3D scenes used for Habitat Challenge [here](https://niessner.github.io/Matterport/). Place this data in: `habitat-challenge/habitat-challenge-data/data/scene_datasets/mp3d`
-
-
-    **Using Symlinks:**  If you used symlinks (i.e. `ln -s`) to link to an existing download of Gibson or MP3D, there is an additional step.  For  ObjectNav/MP3D (and similarly for PointNav/Gibson),
-    first, make sure there is only one level of symlink (instead of a symlink to a symlink link to a .... symlink) with
+    **Using Symlinks:**  If you used symlinks (i.e. `ln -s`) to link to an existing download of HM3D, there is an additional step. First, make sure there is only one level of symlink (instead of a symlink to a symlink link to a .... symlink) with
       ```bash
-      ln -f -s $(realpath habitat-challenge-data/data/scene_datasets/mp3d) \
-          habitat-challenge-data/data/scene_datasets/mp3d
+      ln -f -s $(realpath habitat-challenge-data/data/scene_datasets/hm3d) \
+          habitat-challenge-data/data/scene_datasets/hm3d
       ```
 
      Then modify the docker command `test_locally_objectnav_rgbd` to mount the linked to location by adding
-     `-v $(realpath habitat-challenge-data/data/scene_datasets/mp3d):/habitat-challenge-data/data/scene_datasets/mp3d`.  The modified docker command
+     `-v $(realpath habitat-challenge-data/data/scene_datasets/hm3d):/habitat-challenge-data/data/scene_datasets/hm3d`.  The modified docker command
      would be
      ```bash
       docker run \
           -v $(pwd)/habitat-challenge-data:/habitat-challenge-data \
-          -v $(realpath habitat-challenge-data/data/scene_datasets/mp3d):/habitat-challenge-data/data/scene_datasets/mp3d \
+          -v $(realpath habitat-challenge-data/data/scene_datasets/hm3d):/habitat-challenge-data/data/scene_datasets/hm3d \
           --runtime=nvidia \
           -e "AGENT_EVALUATION_TYPE=local" \
-          -e "TRACK_CONFIG_FILE=/challenge_objectnav2021.local.rgbd.yaml" \
+          -e "TRACK_CONFIG_FILE=/challenge_objectnav2022.local.rgbd.yaml" \
           ${DOCKER_NAME}
     ```
 
@@ -144,10 +123,10 @@ Note: only supports Linux; no Windows or MacOS.
     ```
     If the above command runs successfully you will get an output similar to:
     ```
-    2021-02-14 21:23:51,798 initializing sim Sim-v0
-    2021-02-14 21:23:52,820 initializing task Nav-v0
-    2021-02-14 21:23:56,339 distance_to_goal: 5.205519378185272
-    2021-02-14 21:23:56,339 spl: 0.0
+    2022-02-14 01:23:51,798 initializing sim Sim-v0
+    2022-02-14 01:23:52,820 initializing task Nav-v0
+    2022-02-14 01:23:56,339 distance_to_goal: 5.205519378185272
+    2022-02-14 01:23:56,339 spl: 0.0
     ```
     Note: this same command will be run to evaluate your agent for the leaderboard. **Please submit your docker for remote evaluation (below) only if it runs successfully on your local setup.**
 
@@ -163,35 +142,30 @@ pip install "evalai>=1.3.5"
 evalai set_token <your EvalAI participant token>
 
 # Push docker image to EvalAI docker registry
-# Pointnav
-evalai push pointnav_submission:latest --phase <phase-name>
-
 # Objectnav
 evalai push objectnav_submission:latest --phase <phase-name>
 ```
 
 The challenge consists of the following phases:
 
-1. **Minival phase**: This split is same as the one used in `./test_locally_{pointnav, objectnav}_rgbd.sh`. The purpose of this phase/split is sanity checking -- to confirm that our remote evaluation reports the same result as the one you’re seeing locally. Each team is allowed maximum of 100 submissions per day for this phase, but please use them judiciously. We will block and disqualify teams that spam our servers.
+1. **Minival phase**: This split is same as the one used in `./test_locally_objectnav_rgbd.sh`. The purpose of this phase/split is sanity checking -- to confirm that our remote evaluation reports the same result as the one you’re seeing locally. Each team is allowed maximum of 100 submissions per day for this phase, but please use them judiciously. We will block and disqualify teams that spam our servers.
 1. **Test Standard phase**: The purpose of this phase/split is to serve as the public leaderboard establishing the state of the art; this is what should be used to report results in papers. Each team is allowed maximum of 10 submissions per day for this phase, but again, please use them judiciously. Don’t overfit to the test set.
 1. **Test Challenge phase**: This phase/split will be used to decide challenge winners. Each team is allowed a total of 5 submissions until the end of challenge submission phase. The highest performing of these 5 will be automatically chosen. Results on this split will not be made public until the announcement of final results at the [Embodied AI workshop at CVPR](https://embodied-ai.org/).
 
-Note: Your agent will be evaluated on 1000-2000 episodes and will have a total available time of 48 hours to finish. Your submissions will be evaluated on AWS EC2 p2.xlarge instance which has a Tesla K80 GPU (12 GB Memory), 4 CPU cores, and 61 GB RAM. If you need more time/resources for evaluation of your submission please get in touch. If you face any issues or have questions you can ask them by opening an issue on this repository.
+Note: Your agent will be evaluated on 1000 episodes and will have a total available time of 48 hours to finish. Your submissions will be evaluated on AWS EC2 p2.xlarge instance which has a Tesla K80 GPU (12 GB Memory), 4 CPU cores, and 61 GB RAM. If you need more time/resources for evaluation of your submission please get in touch. If you face any issues or have questions you can ask them by opening an issue on this repository.
 
-### PointNav/ObjectNav Baselines and DD-PPO Training Starter Code
-We have added a config in `configs/ddppo_pointnav.yaml | configs/ddppo_objectnav.yaml` that includes a baseline using DD-PPO from Habitat-Lab.
+### ObjectNav Baselines and DD-PPO Training Starter Code
+We have added a config in `configs/ddppo_objectnav.yaml` that includes a baseline using DD-PPO from Habitat-Lab.
 
 1. Install the [Habitat-Sim](https://github.com/facebookresearch/habitat-sim/) and [Habitat-Lab](https://github.com/facebookresearch/habitat-lab/) packages. Also ensure that habitat-baselines is installed when installing Habitat-Lab by installing it with ```python setup.py develop --all```
 
-1. Download the Gibson dataset following the instructions [here](https://github.com/StanfordVL/GibsonEnv#database). After downloading extract the dataset to folder `habitat-challenge/habitat-challenge-data/data/scene_datasets/gibson/` folder (this folder should contain the `.glb` files from gibson). Note that the `habitat-lab` folder is the [habitat-lab](https://github.com/facebookresearch/habitat-lab/) repository folder. The data also needs to be in the habitat-challenge-data/ in this repository.
+1. Download the HM3D dataset following the instructions [here](https://matterport.com/partners/facebook). After downloading extract the dataset to folder `habitat-challenge/habitat-challenge-data/data/scene_datasets/hm3d/` folder (this folder should contain the `.glb` files from HM3D). Note that the `habitat-lab` folder is the [habitat-lab](https://github.com/facebookresearch/habitat-lab/) repository folder. The data also needs to be in the habitat-challenge-data/ in this repository.
 
-1. **Pointnav**: Download the dataset for Gibson PointNav from [link](https://dl.fbaipublicfiles.com/habitat/data/datasets/pointnav/gibson/v2/pointnav_gibson_v2.zip) and place it in the folder `habitat-challenge/habitat-challenge-data/data/datasets/pointnav/gibson`. If placed correctly, you should have the train and val splits at `habitat-challenge/habitat-challenge-data/data/datasets/pointnav/gibson/v2/train/` and `habitat-challenge/habitat-challenge-data/data/datasets/pointnav/gibson/v2/val/` respectively. Place Gibson scenes downloaded in step-4 of local-evaluation under the `habitat-challenge/habitat-challenge-data/data/scene_datasets` folder. If you have already downloaded thes files for the habitat-lab repo, you may simply symlink them using `ln -s $PATH_TO_SCENE_DATASETS habitat-challenge-data/data/scene_datasets` (if on OSX or Linux).
-
-    **Objectnav**: Download the episodes dataset for Matterport3D ObjectNav from [link](https://dl.fbaipublicfiles.com/habitat/data/datasets/objectnav/m3d/v1/objectnav_mp3d_v1.zip) and place it in the folder `habitat-challenge/habitat-challenge-data/data/datasets/objectnav/mp3d`. If placed correctly, you should have the train and val splits at `habitat-challenge/habitat-challenge-data/data/datasets/objectnav/mp3d/v1/train/` and `habitat-challenge/habitat-challenge-data/data/datasets/objectnav/mp3d/v1/val/` respectively. Place Gibson scenes downloaded in step-4 of local-evaluation under the `habitat-challenge/habitat-challenge-data/data/scene_datasets` folder. If you have already downloaded thes files for the habitat-lab repo, you may simply symlink them using `ln -s $PATH_TO_SCENE_DATASETS habitat-challenge-data/data/scene_datasets` (if on OSX or Linux).
+1. **Objectnav**: Download the episodes dataset for HM3D ObjectNav from [link](https://dl.fbaipublicfiles.com/habitat/data/datasets/objectnav/hm3d/v1/objectnav_hm3d_v1.zip) and place it in the folder `habitat-challenge/habitat-challenge-data/data/datasets/objectnav/hm3d`. If placed correctly, you should have the train and val splits at `habitat-challenge/habitat-challenge-data/data/datasets/objectnav/hm3d/v1/train/` and `habitat-challenge/habitat-challenge-data/data/datasets/objectnav/hm3d/v1/val/` respectively. Place HM3D scenes downloaded in step-4 of local-evaluation under the `habitat-challenge/habitat-challenge-data/data/scene_datasets` folder. If you have already downloaded thes files for the habitat-lab repo, you may simply symlink them using `ln -s $PATH_TO_SCENE_DATASETS habitat-challenge-data/data/scene_datasets` (if on OSX or Linux).
 
 1. An example on how to train DD-PPO model can be found in [habitat-lab/habitat_baselines/rl/ddppo](https://github.com/facebookresearch/habitat-lab/tree/main/habitat_baselines/rl/ddppo). See the corresponding README in habitat-lab for how to adjust the various hyperparameters, save locations, visual encoders and other features.
 
-    1. To run on a single machine use the following script from `habitat-lab` directory, where `$task={pointnav, objectnav}`:
+    1. To run on a single machine use the following script from `habitat-lab` directory:
         ```bash
         #/bin/bash
 
@@ -203,7 +177,7 @@ We have added a config in `configs/ddppo_pointnav.yaml | configs/ddppo_objectnav
             --use_env \
             --nproc_per_node 1 \
             habitat_baselines/run.py \
-            --exp-config ../habitat-challenge/configs/ddppo_${task}.yaml \
+            --exp-config ../habitat-challenge/configs/ddppo_objectnav.yaml \
             --run-type train \
             TASK_CONFIG.DATASET.SPLIT 'train'
         ```
@@ -229,29 +203,29 @@ We have added a config in `configs/ddppo_pointnav.yaml | configs/ddppo_objectnav
 
         set -x
         srun python -u -m habitat_baselines.run \
-            --exp-config ../habitat-challenge/configs/ddppo_${task}.yaml \
+            --exp-config ../habitat-challenge/configs/ddppo_objectnav.yaml \
             --run-type train \
             TASK_CONFIG.DATASET.SPLIT 'train'
         ```
-    1. **Notes about performance**: We have noticed that turning on the RGB/Depth sensor noise may lead to reduced simulation speed. As such, we recommend initially training with these noises turned off and using them for fine tuning if necessary. This can be done by commenting out the lines that include the key "NOISE_MODEL" in the config: ```habitat-challenge/configs/challenge_pointnav2021.local.rgbd.yaml```.
+
     1. The preceding two scripts are based off ones found in the [habitat_baselines/ddppo](https://github.com/facebookresearch/habitat-lab/tree/main/habitat_baselines/rl/ddppo).
 
 1. The checkpoint specified by ```$PATH_TO_CHECKPOINT ``` can evaluated by SPL and other measurements by running the following command:
 
     ```bash
     python -u -m habitat_baselines.run \
-        --exp-config ../habitat-challenge/configs/ddppo_${task}.yaml \
+        --exp-config ../habitat-challenge/configs/ddppo_objectnav.yaml \
         --run-type eval \
         EVAL_CKPT_PATH_DIR $PATH_TO_CHECKPOINT \
         TASK_CONFIG.DATASET.SPLIT val
     ```
-    The weights used for our DD-PPO Pointnav or Objectnav baseline for the Habitat-2021 challenge can be downloaded with the following command:
+    The weights used for our DD-PPO Pointnav or Objectnav baseline for the Habitat-2022 challenge can be downloaded with the following command:
     ```bash
-    wget https://dl.fbaipublicfiles.com/habitat/data/baselines/v1/ddppo_${task}_habitat2021_challenge_baseline_v1.pth
-    ```, where `$Task={pointnav, objectnav}.
+    wget https://dl.fbaipublicfiles.com/habitat/data/baselines/v1/ddppo_objectnav_habitat2022_challenge_baseline_v1.pth
+    ```
 
-1. To submit your entry via EvalAI, you will need to build a docker file. We provide Dockerfiles ready to use with the DD-PPO baselines in `${Task}_DDPPO_baseline.Dockerfile`, where `$Task={Pointnav, Objectnav}`. For the sake of completeness, we describe how you can make your own Dockerfile below. If you just want to test the baseline code, feel free to skip this bullet because  ```${Task}_DDPPO_baseline.Dockerfile``` is ready to use.
-    1. You may want to modify the `${Task}_DDPPO_baseline.Dockerfile` to include PyTorch or other libraries. To install pytorch, ifcfg and tensorboard, add the following command to the Docker file:
+1. To submit your entry via EvalAI, you will need to build a docker file. We provide Dockerfiles ready to use with the DD-PPO baselines in `Objectnav_DDPPO_baseline.Dockerfile`. For the sake of completeness, we describe how you can make your own Dockerfile below. If you just want to test the baseline code, feel free to skip this bullet because  ```Objectnav_DDPPO_baseline.Dockerfile``` is ready to use.
+    1. You may want to modify the `Objectnav_DDPPO_baseline.Dockerfile` to include PyTorch or other libraries. To install pytorch, ifcfg and tensorboard, add the following command to the Docker file:
         ```dockerfile
         RUN /bin/bash -c ". activate habitat; pip install ifcfg torch tensorboard"
         ```
@@ -262,31 +236,18 @@ We have added a config in `configs/ddppo_pointnav.yaml | configs/ddppo_objectnav
         ```
     1. Do not forget to add any other files you may need in the Docker, for example, we add the ```demo.ckpt.pth``` file which is the saved weights from the DD-PPO example code.
 
-    1. Finally, modify the submission.sh script to run the appropriate command to test your agents. The scaffold for this code can be found ```agent.py``` and the DD-PPO specific agent can be found in ```ddppo_agents.py```. In this example, we only modify the final command of the PointNav/ObjectNav docker: by adding the following args to submission.sh ```--model-path demo.ckpt.pth --input-type rgbd```. The default submission.sh script will pass these args to the python script. You may also replace the submission.sh.
+    1. Finally, modify the submission.sh script to run the appropriate command to test your agents. The scaffold for this code can be found ```agent.py``` and the DD-PPO specific agent can be found in ```ddppo_agents.py```. In this example, we only modify the final command of the ObjectNav docker: by adding the following args to submission.sh ```--model-path demo.ckpt.pth --input-type rgbd```. The default submission.sh script will pass these args to the python script. You may also replace the submission.sh.
         1. Please note that at this time, that habitat_baselines uses a slightly different config system, and the configs nodes for habitat are defined under TASK_CONFIG which is loaded at runtime from BASE_TASK_CONFIG_PATH. We manually overwrite this config using the opts args in our agent.py file.
 
 1. Once your Dockerfile and other code is modified to your satisfaction, build it with the following command.
     ```bash
-    docker build . --file ${Task}_DDPPO_baseline.Dockerfile -t ${task}_submission
+    docker build . --file Objectnav_DDPPO_baseline.Dockerfile -t objectnav_submission
     ```
-1. To test locally simple run the ```test_locally_${task}_rgbd.sh``` script. If the docker runs your code without errors, it should work on Eval-AI. The instructions for submitting the Docker to EvalAI are listed above.
+1. To test locally simple run the ```test_locally_objectnav_rgbd.sh``` script. If the docker runs your code without errors, it should work on Eval-AI. The instructions for submitting the Docker to EvalAI are listed above.
 1. Happy hacking!
 
-## Citing Habitat Challenge 2021
-Please cite [the following paper](https://arxiv.org/abs/1912.06321) for details about the 2021 PointNav challenge:
-```
-@inproceedings{habitat2020sim2real,
-  title     =     {Sim2{R}eal {P}redictivity: {D}oes {E}valuation in {S}imulation {P}redict {R}eal-{W}orld {P}erformance?},
-  author    =     {{Abhishek Kadian*} and {Joanne Truong*} and Aaron Gokaslan and Alexander Clegg and Erik Wijmans and Stefan Lee and Manolis Savva and Sonia Chernova and Dhruv Batra},
-  journal   =   {IEEE Robotics and Automation Letters},
-  year      =   {2020},
-  volume    =   {5},
-  number    =   {4},
-  pages     =   {6670-6677},
-}
-```
-
-Please cite [the following paper](https://arxiv.org/abs/2006.13171) for details about the 2021 ObjectNav challenge:
+## Citing Habitat Challenge 2022
+Please cite [the following paper](https://arxiv.org/abs/2006.13171) for details about the 2022 ObjectNav challenge:
 ```
 @inproceedings{batra2020objectnav,
   title     =     {Object{N}av {R}evisited: {O}n {E}valuation of {E}mbodied {A}gents {N}avigating to {O}bjects},
@@ -298,12 +259,14 @@ Please cite [the following paper](https://arxiv.org/abs/2006.13171) for details 
 
 ## Acknowledgments
 
-The Habitat challenge would not have been possible without the infrastructure and support of [EvalAI](https://evalai.cloudcv.org/) team. We also thank the work behind [Gibson](http://gibsonenv.stanford.edu/) and [Matterport3D](https://niessner.github.io/Matterport/) datasets.
+The Habitat challenge would not have been possible without the infrastructure and support of [EvalAI](https://evalai.cloudcv.org/) team. We also thank the team behind [Habitat-Matterport3D](https://aihabitat.org/datasets/hm3d/) datasets.
 
 ## References
 
 [1] [Habitat: A Platform for Embodied AI Research](https://arxiv.org/abs/1904.01201). Manolis Savva\*, Abhishek Kadian\*, Oleksandr Maksymets\*, Yili Zhao, Erik Wijmans, Bhavana Jain, Julian Straub, Jia Liu, Vladlen Koltun, Jitendra Malik, Devi Parikh, Dhruv Batra. IEEE/CVF International Conference on Computer Vision (ICCV), 2019.
 
-[2] [On evaluation of embodied navigation agents](https://arxiv.org/abs/1807.06757). Peter Anderson, Angel Chang, Devendra Singh Chaplot, Alexey Dosovitskiy, Saurabh Gupta, Vladlen Koltun, Jana Kosecka, Jitendra Malik, Roozbeh Mottaghi, Manolis Savva, Amir R. Zamir. arXiv:1807.06757, 2018.
+[2] [Habitat-Matterport 3D Dataset (HM3D): 1000 Large-scale 3D Environments for Embodied AI](https://arxiv.org/abs/2109.08238) Santhosh K. Ramakrishnan, Aaron Gokaslan, Erik Wijmans, Oleksandr Maksymets, Alex Clegg, John Turner, Eric Undersander, Wojciech Galuba, Andrew Westbury, Angel X. Chang, Manolis Savva, Yili Zhao, Dhruv Batra. arXiv:2109.08238, 2021.
 
-[3] [Are We Making Real Progress in Simulated Environments? Measuring the Sim2Real Gap in Embodied Visual Navigation](https://abhiskk.github.io/sim2real). Abhishek Kadian\*, Joanne Truong\*, Aaron Gokaslan, Alexander Clegg, Erik Wijmans, Stefan Lee, Manolis Savva, Sonia Chernova, Dhruv Batra. arXiv:1912.06321, 2019.
+[3] [Object Goal Navigation using Goal-Oriented Semantic Exploration](https://arxiv.org/abs/2007.00643) Devendra Singh Chaplot, Dhiraj Gandhi, Abhinav Gupta, Ruslan Salakhutdinov. NeurIPS, 2020.
+
+[4] [On evaluation of embodied navigation agents](https://arxiv.org/abs/1807.06757). Peter Anderson, Angel Chang, Devendra Singh Chaplot, Alexey Dosovitskiy, Saurabh Gupta, Vladlen Koltun, Jana Kosecka, Jitendra Malik, Roozbeh Mottaghi, Manolis Savva, Amir R. Zamir. arXiv:1807.06757, 2018.
