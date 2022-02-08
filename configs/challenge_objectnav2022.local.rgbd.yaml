@@ -1,7 +1,6 @@
 ENVIRONMENT:
   MAX_EPISODE_STEPS: 500
-  ITERATOR_OPTIONS:
-    SHUFFLE: False
+
 SIMULATOR:
   TURN_ANGLE: 30
   TILT_ANGLE: 30
@@ -33,7 +32,6 @@ SIMULATOR:
 TASK:
   TYPE: ObjectNav-v1
   POSSIBLE_ACTIONS: ["STOP", "MOVE_FORWARD", "TURN_LEFT", "TURN_RIGHT", "LOOK_UP", "LOOK_DOWN"]
-  SUCCESS_DISTANCE: 0.1
 
   SENSORS: ['OBJECTGOAL_SENSOR', 'COMPASS_SENSOR', 'GPS_SENSOR']
   GOAL_SENSOR_UUID: objectgoal
@@ -47,6 +45,6 @@ TASK:
 
 DATASET:
   TYPE: ObjectNav-v1
-  SPLIT: val_mini
-  DATA_PATH: habitat-challenge-data/objectgoal_mp3d/{split}/{split}.json.gz
+  SPLIT: train
+  DATA_PATH: "habitat-challenge-data/objectgoal_mp3d/{split}/{split}.json.gz"
   SCENES_DIR: "habitat-challenge-data/data/scene_datasets/"

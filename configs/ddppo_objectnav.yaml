@@ -1,4 +1,4 @@
-BASE_TASK_CONFIG_PATH: "configs/challenge_objectnav2021.local.rgbd.yaml"
+BASE_TASK_CONFIG_PATH: "configs/challenge_objectnav2022.local.rgbd.yaml"
 CMD_TRAILING_OPTS: ["TASK_CONFIG.ENVIRONMENT.ITERATOR_OPTIONS.MAX_SCENE_REPEAT_STEPS", "50000"]
 TRAINER_NAME: "ddppo"
 ENV_NAME: "NavRLEnv"
@@ -14,6 +14,11 @@ SENSORS: ["DEPTH_SENSOR", "RGB_SENSOR"]
 CHECKPOINT_FOLDER: "habitat-challenge-data"
 NUM_UPDATES: 270000
 LOG_INTERVAL: 10
+NUM_CHECKPOINTS: 100
+# Force PyTorch to be single threaded as
+# this improves performance considerably
+FORCE_TORCH_SINGLE_THREADED: True
+
 EVAL:
   SPLIT: "val"
 
@@ -24,7 +29,7 @@ RL:
   POLICY:
     name: "PointNavResNetPolicy"
     OBS_TRANSFORMS:
-        ENABLED_TRANSFORMS: ("ResizeShortestEdge", "CenterCropper")
+      ENABLED_TRANSFORMS: ("ResizeShortestEdge", "CenterCropper")
 
   PPO:
     # ppo params
@@ -66,4 +71,3 @@ RL:
     backbone: resnet50
     rnn_type: LSTM
     num_recurrent_layers: 2
-
