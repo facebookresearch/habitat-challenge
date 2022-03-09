@@ -1,4 +1,4 @@
-FROM fairembodied/habitat-challenge:testing_2021_habitat_base_docker
+FROM fairembodied/habitat-challenge:testing_2022_habitat_base_docker
 
 ADD ddppo_agents.py agent.py
 ADD submission.sh submission.sh

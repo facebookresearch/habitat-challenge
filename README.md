@@ -13,7 +13,7 @@ If you are looking for our 2021/2020/2019 starter code, it’s available in the 
 This year, we are hosting a challenges on the ObjectNav embodied navigation task. ObjectNav focuses on egocentric object/scene recognition and a commonsense understanding of object semantics (where is a fireplace typically located in a house?).
 
 ### New in 2022
-We are introducing a new dataset called [HM3D](https://aihabitat.org/datasets/hm3d/) in 2022.
+We are introducing a new dataset called [HM3D](https://aihabitat.org/datasets/hm3d-semantics/) in 2022.
 
 ## Task: ObjectNav
 
@@ -44,9 +44,9 @@ We reserve the right to use additional metrics to choose winners in case of stat
 
 ## Participation Guidelines
 
-Participate in the contest by registering on the [EvalAI challenge page](https://eval.ai/web/challenges/challenge-page/802/overview) and creating a team. Participants will upload docker containers with their agents that are evaluated on an AWS GPU-enabled instance. Before pushing the submissions for remote evaluation, participants should test the submission docker locally to ensure it is working. Instructions for training, local evaluation, and online submission are provided below.
+Participate in the contest by registering on the [EvalAI challenge page](https://eval.ai/web/challenges/challenge-page/1615/overview) and creating a team. Participants will upload docker containers with their agents that are evaluated on an AWS GPU-enabled instance. Before pushing the submissions for remote evaluation, participants should test the submission docker locally to ensure it is working. Instructions for training, local evaluation, and online submission are provided below.
 
-**[NEW]** For your convenience, please check our [Habitat Challenge video tutorial](https://youtu.be/V7PXttmJ8EE?list=PLGywud_-HlCORC0c4uj97oppQrGiB6JNy) and [Colab step-by-step tutorial for this year](https://colab.research.google.com/gist/mathfac/8c9b97d7afef36e377f17d587c903ede).
+For your convenience, please check our [Habitat Challenge video tutorial](https://youtu.be/V7PXttmJ8EE?list=PLGywud_-HlCORC0c4uj97oppQrGiB6JNy) and [Colab step-by-step tutorial from previous year](https://colab.research.google.com/gist/mathfac/8c9b97d7afef36e377f17d587c903ede).
 
 ### Local Evaluation
 
@@ -90,7 +90,7 @@ Note: only supports Linux; no Windows or MacOS.
     ADD agent.py /agent.py
     ADD submission.sh /submission.sh
     ```
-    Build your docker container: `docker build . --file Pointnav.Dockerfile  -t pointnav_submission` or using `docker build . --file Objectnav.Dockerfile  -t objectnav_submission`. (Note: you may need `sudo` priviliges to run this command.)
+    Build your docker container using: `docker build . --file Objectnav.Dockerfile  -t objectnav_submission`. (Note: you may need `sudo` priviliges to run this command.)
 
 1. b) ObjectNav: Download Habitat-Matterport3D Dataset scenes used for Habitat Challenge [here](https://matterport.com/partners/facebook). Place this data in: `habitat-challenge/habitat-challenge-data/data/scene_datasets/hm3d`
 
@@ -115,10 +115,6 @@ Note: only supports Linux; no Windows or MacOS.
 
 1. Evaluate your docker container locally:
     ```bash
-    # Testing PointNav
-    ./test_locally_pointnav_rgbd.sh --docker-name pointnav_submission
-
-    # Testing ObjectNav
     ./test_locally_objectnav_rgbd.sh --docker-name objectnav_submission
     ```
     If the above command runs successfully you will get an output similar to:
@@ -142,7 +138,6 @@ pip install "evalai>=1.3.5"
 evalai set_token <your EvalAI participant token>
 
 # Push docker image to EvalAI docker registry
-# Objectnav
 evalai push objectnav_submission:latest --phase <phase-name>
 ```
 
@@ -219,7 +214,7 @@ We have added a config in `configs/ddppo_objectnav.yaml` that includes a baselin
         EVAL_CKPT_PATH_DIR $PATH_TO_CHECKPOINT \
         TASK_CONFIG.DATASET.SPLIT val
     ```
-    The weights used for our DD-PPO Pointnav or Objectnav baseline for the Habitat-2022 challenge can be downloaded with the following command:
+    The weights used for our DD-PPO Objectnav baseline for the Habitat-2022 challenge can be downloaded with the following command:
     ```bash
     wget https://dl.fbaipublicfiles.com/habitat/data/baselines/v1/ddppo_objectnav_habitat2022_challenge_baseline_v1.pth
     ```
@@ -249,11 +244,11 @@ We have added a config in `configs/ddppo_objectnav.yaml` that includes a baselin
 ## Citing Habitat Challenge 2022
 Please cite [the following paper](https://arxiv.org/abs/2006.13171) for details about the 2022 ObjectNav challenge:
 ```
-@inproceedings{batra2020objectnav,
-  title     =     {Object{N}av {R}evisited: {O}n {E}valuation of {E}mbodied {A}gents {N}avigating to {O}bjects},
-  author    =     {Dhruv Batra and Aaron Gokaslan and Aniruddha Kembhavi and Oleksandr Maksymets and Roozbeh Mottaghi and Manolis Savva and Alexander Toshev and Erik Wijmans},
-  booktitle =     {arXiv:2006.13171},
-  year      =     {2020}
+@misc{habitatchallenge2022,
+  title         =     Habitat Challenge 2022,
+  author        =     {Karmesh Yadav and Santhosh Kumar Ramakrishnan and Aaron Gokaslan and Oleksandr Maksymets and Rishabh Jain and Ram Ramrakhya and Angel X Chang and Alexander Clegg and Manolis Savva and Eric Undersander and Devendra Singh Chaplot and Dhruv Batra},
+  howpublished  =     {\url{https://aihabitat.org/challenge/2022/}},
+  year          =     {2022}
 }
 ```
 
