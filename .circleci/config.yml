@@ -73,7 +73,7 @@ jobs:
               nvidia-smi
 
       - run:
-          name: Test PointNav 2021 submission
+          name: Test ObjectNav 2022 submission
           command: |
               export PATH=$HOME/miniconda/bin:/usr/local/cuda/bin:$PATH
               . activate habitat;
@@ -96,35 +96,18 @@ jobs:
               # Set EvalAI account token
               evalai set_token $EVALAI_TOKEN
 
-              # DDPPO baseline
-              wget https://dl.fbaipublicfiles.com/habitat/data/baselines/v1/ddppo_pointnav_habitat2021_challenge_baseline_v1.pth
-              docker build . --file Pointnav_DDPPO_baseline.Dockerfile -t ddppo_pointnav_submission
-              # we can't test locally without val scenes yet.
-              # ./test_locally_pointnav_rgbd.sh --docker-name ddppo_pointnav_submission
-
-              # Push docker image to EvalAI docker registry
-              evalai push ddppo_pointnav_submission:latest --phase habitat21-pointnav-minival --private
-
-              # Random agent baseline
-              docker build . --file Pointnav.Dockerfile -t pointnav_submission
-              # we can't test locally without val scenes yet.
-              # ./test_locally_pointnav_rgbd.sh --docker-name pointnav_submission
-
-              # Push docker image to EvalAI docker registry
-              evalai push pointnav_submission:latest --phase habitat21-pointnav-minival --private
-
               # DDPPO baseline ObjectNav
-              wget https://dl.fbaipublicfiles.com/habitat/data/baselines/v1/ddppo_objectnav_habitat2021_challenge_baseline_v1.pth
+              wget https://dl.fbaipublicfiles.com/habitat/data/baselines/v1/ddppo_objectnav_habitat2022_challenge_baseline_v1.pth
               docker build . --file Objectnav_DDPPO_baseline.Dockerfile -t ddppo_objectnav_submission
 
               # Push docker image to EvalAI docker registry
-              evalai push ddppo_objectnav_submission:latest --phase habitat21-objectnav-minival --private
+              evalai push ddppo_objectnav_submission:latest --phase habitat22-objectnav-minival --private
 
               # Random agent baseline
               docker build . --file Objectnav.Dockerfile -t objectnav_submission
 
               # Push docker image to EvalAI docker registry
-              evalai push objectnav_submission:latest --phase habitat21-objectnav-minival --private
+              evalai push objectnav_submission:latest --phase habitat22-objectnav-minival --private
 
 
 workflows:

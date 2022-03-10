@@ -22,6 +22,6 @@ done
 docker run -v $(pwd)/habitat-challenge-data:/habitat-challenge-data \
     --runtime=nvidia \
     -e "AGENT_EVALUATION_TYPE=local" \
-    -e "TRACK_CONFIG_FILE=/challenge_objectnav2021.local.rgbd.yaml" \
+    -e "TRACK_CONFIG_FILE=/challenge_objectnav2022.local.rgbd.yaml" \
     ${DOCKER_NAME}\
 
