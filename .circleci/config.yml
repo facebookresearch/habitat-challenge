@@ -101,13 +101,13 @@ jobs:
               docker build . --file Objectnav_DDPPO_baseline.Dockerfile -t ddppo_objectnav_submission
 
               # Push docker image to EvalAI docker registry
-              evalai push ddppo_objectnav_submission:latest --phase habitat22-objectnav-minival --private
+              evalai push ddppo_objectnav_submission:latest --phase habitat-objectnav-minival-2022-1615 --private
 
               # Random agent baseline
               docker build . --file Objectnav.Dockerfile -t objectnav_submission
 
               # Push docker image to EvalAI docker registry
-              evalai push objectnav_submission:latest --phase habitat22-objectnav-minival --private
+              evalai push objectnav_submission:latest --phase habitat-objectnav-minival-2022-1615 --private
 
 
 workflows:
