@@ -42,7 +42,7 @@ class PPOAgent(Agent):
     def __init__(self, config: Config) -> None:
         image_size = config.RL.POLICY.OBS_TRANSFORMS.CENTER_CROPPER
         if "ObjectNav" in config.TASK_CONFIG.TASK.TYPE:
-            OBJECT_CATEGORIES_NUM = 20
+            OBJECT_CATEGORIES_NUM = 5
             spaces = {
                 "objectgoal": Box(
                     low=0, high=OBJECT_CATEGORIES_NUM, shape=(1,), dtype=np.int64
@@ -171,7 +171,7 @@ def main():
     args = parser.parse_args()
 
     config = get_config(
-        "configs/ddppo_pointnav.yaml", ["BASE_TASK_CONFIG_PATH", config_paths]
+        "configs/ddppo_objectnav.yaml", ["BASE_TASK_CONFIG_PATH", config_paths]
     ).clone()
     config.defrost()
     config.PTH_GPU_ID = 0
