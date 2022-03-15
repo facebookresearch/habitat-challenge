@@ -93,25 +93,25 @@ Note: only supports Linux; no Windows or MacOS.
     ```
     Build your docker container using: `docker build . --file Objectnav.Dockerfile  -t objectnav_submission`. (Note: you may need `sudo` priviliges to run this command.)
 
-1. b) ObjectNav: Download Habitat-Matterport3D Dataset scenes used for Habitat Challenge [following instructions here](https://github.com/facebookresearch/habitat-sim/blob/main/DATASETS.md#habitat-matterport-3d-research-dataset-hm3d). Place this data in: `habitat-challenge/habitat-challenge-data/data/scene_datasets/hm3d`
+1. Dataset: First, get access to the Habitat-Matterport3D Dataset scenes by visiting [this link](https://matterport.com/habitat-matterport-3d-research-dataset) and following the given instructions. After getting access to the dataset, carry out the following steps to download the dataset:
+    
+    a) First, you will need to generate a matterport API Token:
 
-    **Using Symlinks:**  If you used symlinks (i.e. `ln -s`) to link to an existing download of HM3D, there is an additional step. First, make sure there is only one level of symlink (instead of a symlink to a symlink link to a .... symlink) with
+    1. Navigate to https://my.matterport.com/settings/account/devtools
+        
+    1. Generate an API token
+        
+    1. Your API token ID then functions as your username, passed to the download script with --username, and your API token secret functions as your password, passed to the download script with --password. Note: Make sure to write your API token secret down, you can't reveal it again!
+
+    b) Now, you are ready to download. Start by downloading the val split, which we will use in the following steps:
+
       ```bash
-      ln -f -s $(realpath habitat-challenge-data/data/scene_datasets/hm3d) \
-          habitat-challenge-data/data/scene_datasets/hm3d
+      python -m habitat_sim.utils.datasets_download --username <api-token-id> --password <api-token-secret> --uids hm3d_val --data-path <path to download folder>
       ```
-
-     Then modify the docker command `test_locally_objectnav_rgbd` to mount the linked to location by adding
-     `-v $(realpath habitat-challenge-data/data/scene_datasets/hm3d):/habitat-challenge-data/data/scene_datasets/hm3d`.  The modified docker command
-     would be
-     ```bash
-    docker run \
-          -v $(pwd)/habitat-challenge-data:/habitat-challenge-data \
-          -v $(realpath habitat-challenge-data/data/scene_datasets/hm3d):/habitat-challenge-data/data/scene_datasets/hm3d \
-          --runtime=nvidia \
-          -e "AGENT_EVALUATION_TYPE=local" \
-          -e "TRACK_CONFIG_FILE=/challenge_objectnav2022.local.rgbd.yaml" \
-          ${DOCKER_NAME}
+    
+    c) Create a symlink to the downloaded data in your habitat-challenge repository: 
+    ```
+    ln -s <path to download folder>/scene_datasets/hm3d habitat-challenge-data/data/scene_datasets/hm3d
     ```
 
 1. Evaluate your docker container locally:
