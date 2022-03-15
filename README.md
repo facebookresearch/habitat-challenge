@@ -6,14 +6,15 @@
 
 # Habitat Challenge 2022
 
-This repository contains the starter code for the 2022 challenge, details of the tasks, and training and evaluation setups. For an overview of habitat-challenge, visit [aihabitat.org/challenge](https://aihabitat.org/challenge/).
+This repository contains the starter code for the 2022 challenge, and training and evaluation setups. For an overview of habitat-challenge, visit [aihabitat.org/challenge](https://aihabitat.org/challenge/).
 
 If you are looking for our 2021/2020/2019 starter code, it’s available in the [`challenge-YEAR branch`](https://github.com/facebookresearch/habitat-challenge/tree/challenge-2021).
 
 This year, we are hosting a challenges on the ObjectNav embodied navigation task. ObjectNav focuses on egocentric object/scene recognition and a commonsense understanding of object semantics (where is a fireplace typically located in a house?).
 
-### New in 2022
-We are introducing a new dataset called [HM3D](https://aihabitat.org/datasets/hm3d-semantics/) in 2022.
+### Changes in 2022 (over 2021)
+- We are instantiating ObjectNav on a new dataset called [HM3D-Semantics v0.1](https://aihabitat.org/datasets/hm3d-semantics/).
+- We are retiring the PointNav challenge, although the evaluation servers will continue to be open and researchers are welcome to submit to them.
 
 ## Task: ObjectNav
 
@@ -22,7 +23,7 @@ In ObjectNav, an agent is initialized at a random starting position and orientat
 The agent is equipped with an RGB-D camera and a (noiseless) GPS+Compass sensor. GPS+Compass sensor provides the agent’s current location and orientation information relative to the start of the episode. We attempt to match the camera specification (field of view, resolution) in simulation to the Azure Kinect camera, but this task does not involve any injected sensing noise.
 
 ### Dataset
-We use 120 scenes in the [Habitat-Matterport3D (HM3D)](https://aihabitat.org/datasets/hm3d/)[2] dataset with train/val/test splits on 80/20/20. Following Chaplot et al.[3], we use 6 object goal categories: chair, couch, potted plant, bed, toilet and tv.
+The 2022 ObjectNav challenge uses 120 scenes from the [Habitat-Matterport3D (HM3D) Semantics v0.1](https://aihabitat.org/datasets/hm3d/)[2] dataset with train/val/test splits on 80/20/20. Following Chaplot et al.[3], we use 6 object goal categories: chair, couch, potted plant, bed, toilet and tv.
 
 ### Evaluation
 Similar to 2021 Habitat Challenge, we measure performance along the same two axes as specified by Anderson et al.[4]:
@@ -92,7 +93,7 @@ Note: only supports Linux; no Windows or MacOS.
     ```
     Build your docker container using: `docker build . --file Objectnav.Dockerfile  -t objectnav_submission`. (Note: you may need `sudo` priviliges to run this command.)
 
-1. b) ObjectNav: Download Habitat-Matterport3D Dataset scenes used for Habitat Challenge [here](https://matterport.com/partners/facebook). Place this data in: `habitat-challenge/habitat-challenge-data/data/scene_datasets/hm3d`
+1. b) ObjectNav: Download Habitat-Matterport3D Dataset scenes used for Habitat Challenge [following instructions here](https://github.com/facebookresearch/habitat-sim/blob/main/DATASETS.md#habitat-matterport-3d-research-dataset-hm3d). Place this data in: `habitat-challenge/habitat-challenge-data/data/scene_datasets/hm3d`
 
     **Using Symlinks:**  If you used symlinks (i.e. `ln -s`) to link to an existing download of HM3D, there is an additional step. First, make sure there is only one level of symlink (instead of a symlink to a symlink link to a .... symlink) with
       ```bash
