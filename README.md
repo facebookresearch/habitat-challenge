@@ -108,10 +108,12 @@ Note: only supports Linux; no Windows or MacOS.
       ```bash
       python -m habitat_sim.utils.datasets_download --username <api-token-id> --password <api-token-secret> --uids hm3d_val --data-path <path to download folder>
       ```
+Replace `val` by `train` or `minival` to download different splits. 
     
     c) Create a symlink to the downloaded data in your habitat-challenge repository: 
     ```
-    ln -s <path to download folder>/scene_datasets/hm3d habitat-challenge-data/data/scene_datasets/hm3d
+    mkdir -p habitat-challenge-data/data/scene_datasets/
+    ln -s <absolute path to download folder>/scene_datasets/hm3d habitat-challenge-data/data/scene_datasets/hm3d
     ```
 
 1. Evaluate your docker container locally:
