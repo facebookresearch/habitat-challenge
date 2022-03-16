@@ -129,7 +129,7 @@ Note: only supports Linux; no Windows or MacOS.
 
 ### Online submission
 
-Follow instructions in the `submit` tab of the EvalAI challenge page (coming soon) to submit your docker image. Note that you will need a version of EvalAI `>= 1.2.3`. Pasting those instructions here for convenience:
+Follow instructions in the `submit` tab of the [EvalAI challenge page](https://eval.ai/web/challenges/challenge-page/1615/submission) to submit your docker image. Note that you will need a version of EvalAI `>= 1.2.3`. Pasting those instructions here for convenience:
 
 ```bash
 # Installing EvalAI Command Line Interface
@@ -142,7 +142,7 @@ evalai set_token <your EvalAI participant token>
 evalai push objectnav_submission:latest --phase <phase-name>
 ```
 
-The challenge consists of the following phases:
+Valid phase names are `habitat-objectnav-{minival, test-standard, test-challenge}-2022-1615`. The challenge consists of the following phases:
 
 1. **Minival phase**: This split is same as the one used in `./test_locally_objectnav_rgbd.sh`. The purpose of this phase/split is sanity checking -- to confirm that our remote evaluation reports the same result as the one you’re seeing locally. Each team is allowed maximum of 100 submissions per day for this phase, but please use them judiciously. We will block and disqualify teams that spam our servers.
 1. **Test Standard phase**: The purpose of this phase/split is to serve as the public leaderboard establishing the state of the art; this is what should be used to report results in papers. Each team is allowed maximum of 10 submissions per day for this phase, but again, please use them judiciously. Don’t overfit to the test set.
