@@ -49,7 +49,7 @@ def set_random_seed(seed: int):
 
 
 def sample_random_seed():
-    set_random_seed(random_generator.randint(2 ** 32))
+    set_random_seed(random_generator.randint(2**32))
 
 
 class PPOAgent(Agent):
