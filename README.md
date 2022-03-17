@@ -93,6 +93,11 @@ Note: only supports Linux; no Windows or MacOS.
     ```
     Build your docker container using: `docker build . --file Objectnav.Dockerfile  -t objectnav_submission`. (Note: you may need `sudo` priviliges to run this command.)
 
+    **Note:** Please make sure that you keep your local version of `fairembodied/habitat-challenge:testing_2022_habitat_base_docker` image up to date with the image we have hosted on [dockerhub](https://hub.docker.com/r/fairembodied/habitat-challenge/tags). This can be done by pruning all cached images, using:
+    ```
+    docker system prune -a
+    ```
+
 1. Dataset: First, get access to the Habitat-Matterport3D Dataset scenes by visiting [this link](https://matterport.com/habitat-matterport-3d-research-dataset) and following the given instructions. After getting access to the dataset, carry out the following steps to download the dataset:
     
     a) First, you will need to generate a matterport API Token:
@@ -108,7 +113,7 @@ Note: only supports Linux; no Windows or MacOS.
       ```bash
       python -m habitat_sim.utils.datasets_download --username <api-token-id> --password <api-token-secret> --uids hm3d_val --data-path <path to download folder>
       ```
-Replace `val` by `train` or `minival` to download different splits. 
+    Replace `val` by `train` or `example` to download the different splits. By default, downloading the data for `train/val/example` scenes also pulls in the semantic annotations and configs for [HM3D-Semantics v0.1](https://aihabitat.org/datasets/hm3d-semantics/). To download only the semantic files for these splits, use the uid `hm3d_semantics`.
     
     c) Create a symlink to the downloaded data in your habitat-challenge repository: 
     ```
