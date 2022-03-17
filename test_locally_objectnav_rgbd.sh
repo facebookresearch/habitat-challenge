@@ -20,6 +20,7 @@ esac
 done
 
 docker run -v $(pwd)/habitat-challenge-data:/habitat-challenge-data \
+    -v $(realpath habitat-challenge-data/data/scene_datasets/hm3d):/habitat-challenge-data/data/scene_datasets/hm3d \
     --runtime=nvidia \
     -e "AGENT_EVALUATION_TYPE=local" \
     -e "TRACK_CONFIG_FILE=/challenge_objectnav2022.local.rgbd.yaml" \

@@ -93,25 +93,32 @@ Note: only supports Linux; no Windows or MacOS.
     ```
     Build your docker container using: `docker build . --file Objectnav.Dockerfile  -t objectnav_submission`. (Note: you may need `sudo` priviliges to run this command.)
 
-1. b) ObjectNav: Download Habitat-Matterport3D Dataset scenes used for Habitat Challenge [following instructions here](https://github.com/facebookresearch/habitat-sim/blob/main/DATASETS.md#habitat-matterport-3d-research-dataset-hm3d). Place this data in: `habitat-challenge/habitat-challenge-data/data/scene_datasets/hm3d`
+    **Note:** Please make sure that you keep your local version of `fairembodied/habitat-challenge:testing_2022_habitat_base_docker` image up to date with the image we have hosted on [dockerhub](https://hub.docker.com/r/fairembodied/habitat-challenge/tags). This can be done by pruning all cached images, using:
+    ```
+    docker system prune -a
+    ```
 
-    **Using Symlinks:**  If you used symlinks (i.e. `ln -s`) to link to an existing download of HM3D, there is an additional step. First, make sure there is only one level of symlink (instead of a symlink to a symlink link to a .... symlink) with
+1. Dataset: First, get access to the Habitat-Matterport3D Dataset scenes by visiting [this link](https://matterport.com/habitat-matterport-3d-research-dataset) and following the given instructions. After getting access to the dataset, carry out the following steps to download the dataset:
+    
+    a) First, you will need to generate a matterport API Token:
+
+    1. Navigate to https://my.matterport.com/settings/account/devtools
+        
+    1. Generate an API token
+        
+    1. Your API token ID then functions as your username, passed to the download script with --username, and your API token secret functions as your password, passed to the download script with --password. Note: Make sure to write your API token secret down, you can't reveal it again!
+
+    b) Now, you are ready to download. Start by downloading the val split, which we will use in the following steps:
+
       ```bash
-      ln -f -s $(realpath habitat-challenge-data/data/scene_datasets/hm3d) \
-          habitat-challenge-data/data/scene_datasets/hm3d
+      python -m habitat_sim.utils.datasets_download --username <api-token-id> --password <api-token-secret> --uids hm3d_val --data-path <path to download folder>
       ```
-
-     Then modify the docker command `test_locally_objectnav_rgbd` to mount the linked to location by adding
-     `-v $(realpath habitat-challenge-data/data/scene_datasets/hm3d):/habitat-challenge-data/data/scene_datasets/hm3d`.  The modified docker command
-     would be
-     ```bash
-    docker run \
-          -v $(pwd)/habitat-challenge-data:/habitat-challenge-data \
-          -v $(realpath habitat-challenge-data/data/scene_datasets/hm3d):/habitat-challenge-data/data/scene_datasets/hm3d \
-          --runtime=nvidia \
-          -e "AGENT_EVALUATION_TYPE=local" \
-          -e "TRACK_CONFIG_FILE=/challenge_objectnav2022.local.rgbd.yaml" \
-          ${DOCKER_NAME}
+    Replace `val` by `train` or `example` to download the different splits. By default, downloading the data for `train/val/example` scenes also pulls in the semantic annotations and configs for [HM3D-Semantics v0.1](https://aihabitat.org/datasets/hm3d-semantics/). To download only the semantic files for these splits, use the uid `hm3d_semantics`.
+    
+    c) Create a symlink to the downloaded data in your habitat-challenge repository: 
+    ```
+    mkdir -p habitat-challenge-data/data/scene_datasets/
+    ln -s <absolute path to download folder>/scene_datasets/hm3d habitat-challenge-data/data/scene_datasets/hm3d
     ```
 
 1. Evaluate your docker container locally:
@@ -129,7 +136,7 @@ Note: only supports Linux; no Windows or MacOS.
 
 ### Online submission
 
-Follow instructions in the `submit` tab of the EvalAI challenge page (coming soon) to submit your docker image. Note that you will need a version of EvalAI `>= 1.2.3`. Pasting those instructions here for convenience:
+Follow instructions in the `submit` tab of the [EvalAI challenge page](https://eval.ai/web/challenges/challenge-page/1615/submission) to submit your docker image. Note that you will need a version of EvalAI `>= 1.2.3`. Pasting those instructions here for convenience:
 
 ```bash
 # Installing EvalAI Command Line Interface
@@ -142,7 +149,7 @@ evalai set_token <your EvalAI participant token>
 evalai push objectnav_submission:latest --phase <phase-name>
 ```
 
-The challenge consists of the following phases:
+Valid phase names are `habitat-objectnav-{minival, test-standard, test-challenge}-2022-1615`. The challenge consists of the following phases:
 
 1. **Minival phase**: This split is same as the one used in `./test_locally_objectnav_rgbd.sh`. The purpose of this phase/split is sanity checking -- to confirm that our remote evaluation reports the same result as the one you’re seeing locally. Each team is allowed maximum of 100 submissions per day for this phase, but please use them judiciously. We will block and disqualify teams that spam our servers.
 1. **Test Standard phase**: The purpose of this phase/split is to serve as the public leaderboard establishing the state of the art; this is what should be used to report results in papers. Each team is allowed maximum of 10 submissions per day for this phase, but again, please use them judiciously. Don’t overfit to the test set.
