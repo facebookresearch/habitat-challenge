@@ -34,16 +34,19 @@ from habitat_baselines.utils.common import batch_obs
 
 random_generator = np.random.RandomState()
 
+
 @numba.njit
 def _seed_numba(seed: int):
     random.seed(seed)
     np.random.seed(seed)
+
 
 def set_random_seed(seed: int):
     random.seed(seed)
     np.random.seed(seed)
     _seed_numba(seed)
     torch.random.manual_seed(seed)
+
 
 def sample_random_seed():
     set_random_seed(random_generator.randint(2 ** 32))
