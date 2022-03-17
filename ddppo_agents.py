@@ -32,10 +32,21 @@ from habitat_baselines.rl.ddppo.policy import PointNavResNetPolicy
 from habitat_baselines.utils.common import batch_obs
 
 
+random_generator = np.random.RandomState()
+
 @numba.njit
 def _seed_numba(seed: int):
     random.seed(seed)
     np.random.seed(seed)
+
+def set_random_seed(seed: int):
+    random.seed(seed)
+    np.random.seed(seed)
+    _seed_numba(seed)
+    torch.random.manual_seed(seed)
+
+def sample_random_seed():
+    set_random_seed(random_generator.randint(2 ** 32))
 
 
 class PPOAgent(Agent):
@@ -96,10 +107,6 @@ class PPOAgent(Agent):
         )
         self.hidden_size = config.RL.PPO.hidden_size
 
-        random.seed(config.RANDOM_SEED)
-        np.random.seed(config.RANDOM_SEED)
-        _seed_numba(config.RANDOM_SEED)
-        torch.random.manual_seed(config.RANDOM_SEED)
         if torch.cuda.is_available():
             torch.backends.cudnn.deterministic = True  # type: ignore
 
@@ -141,6 +148,7 @@ class PPOAgent(Agent):
         self.prev_actions = torch.zeros(1, 1, dtype=torch.long, device=self.device)
 
     def act(self, observations: Observations) -> Dict[str, int]:
+        sample_random_seed()
         batch = batch_obs([observations], device=self.device)
         batch = apply_obs_transforms_batch(batch, self.obs_transforms)
         with torch.no_grad():
