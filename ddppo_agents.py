@@ -31,7 +31,6 @@ from habitat_baselines.config.default import get_config
 from habitat_baselines.rl.ddppo.policy import PointNavResNetPolicy
 from habitat_baselines.utils.common import batch_obs
 
-
 random_generator = np.random.RandomState()
 
 
