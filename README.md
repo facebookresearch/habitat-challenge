@@ -91,9 +91,14 @@ Note: only supports Linux; no Windows or MacOS.
     ADD agent.py /agent.py
     ADD submission.sh /submission.sh
     ```
-    Build your docker container using: `docker build . --file Objectnav.Dockerfile  -t objectnav_submission`. (Note: you may need `sudo` priviliges to run this command.)
+    Build your docker container using: 
+    ```bash
+    docker build . --file Objectnav.Dockerfile  -t objectnav_submission
+    ```
+    
+    Note #1: you may need `sudo` priviliges to run this command.
 
-    **Note:** Please make sure that you keep your local version of `fairembodied/habitat-challenge:testing_2022_habitat_base_docker` image up to date with the image we have hosted on [dockerhub](https://hub.docker.com/r/fairembodied/habitat-challenge/tags). This can be done by pruning all cached images, using:
+    Note #2: Please make sure that you keep your local version of `fairembodied/habitat-challenge:testing_2022_habitat_base_docker` image up to date with the image we have hosted on [dockerhub](https://hub.docker.com/r/fairembodied/habitat-challenge/tags). This can be done by pruning all cached images, using:
     ```
     docker system prune -a
     ```
@@ -162,9 +167,13 @@ We have added a config in `configs/ddppo_objectnav.yaml` that includes a baselin
 
 1. Install the [Habitat-Sim](https://github.com/facebookresearch/habitat-sim/) and [Habitat-Lab](https://github.com/facebookresearch/habitat-lab/) packages. You can install Habitat-Sim using our custom Conda package for habitat challenge 2022 with: ```conda install habitat-sim-challenge-2022 -c conda-forge -c aihabitat```. For Habitat-Lab, we have created the `habitat-challenge-2022` tag in our Github repo, which can be cloned using: ```git clone --branch challenge-2022 https://github.com/facebookresearch/habitat-lab.git``` . Also ensure that habitat-baselines is installed when installing Habitat-Lab by using ```python setup.py develop --all``` . You will find further information for installation in the Github repositories. 
 
-1. Download the HM3D dataset following the instructions [here](https://matterport.com/partners/facebook). After downloading extract the dataset to folder `habitat-challenge/habitat-challenge-data/data/scene_datasets/hm3d/` folder (this folder should contain the `.glb` files from HM3D). Note that the `habitat-lab` folder is the [habitat-lab](https://github.com/facebookresearch/habitat-lab/) repository folder. The data also needs to be in the habitat-challenge-data/ in this repository.
+1. Download the episode dataset for HM3D ObjectNav from [link](https://dl.fbaipublicfiles.com/habitat/data/datasets/objectnav/hm3d/v1/objectnav_hm3d_v1.zip) and place it in the folder `habitat-challenge/habitat-challenge-data/data/datasets/objectnav/hm3d`. 
+```bash
+wget https://dl.fbaipublicfiles.com/habitat/data/datasets/objectnav/hm3d/v1/objectnav_hm3d_v1.zip -P habitat-challenge-data/data/datasets/objectnav/hm3d/
+unzip habitat-challenge-data/data/datasets/objectnav/hm3d/objectnav_hm3d_v1.zip -d habitat-challenge-data/data/datasets/objectnav/hm3d/
+```
 
-1. **Objectnav**: Download the episodes dataset for HM3D ObjectNav from [link](https://dl.fbaipublicfiles.com/habitat/data/datasets/objectnav/hm3d/v1/objectnav_hm3d_v1.zip) and place it in the folder `habitat-challenge/habitat-challenge-data/data/datasets/objectnav/hm3d`. If placed correctly, you should have the train and val splits at `habitat-challenge/habitat-challenge-data/data/datasets/objectnav/hm3d/v1/train/` and `habitat-challenge/habitat-challenge-data/data/datasets/objectnav/hm3d/v1/val/` respectively. Place HM3D scenes downloaded in step-4 of local-evaluation under the `habitat-challenge/habitat-challenge-data/data/scene_datasets` folder. If you have already downloaded thes files for the habitat-lab repo, you may simply symlink them using `ln -s $PATH_TO_SCENE_DATASETS habitat-challenge-data/data/scene_datasets` (if on OSX or Linux).
+If placed correctly, you should have the train and val splits at `habitat-challenge/habitat-challenge-data/data/datasets/objectnav/hm3d/v1/train/` and `habitat-challenge/habitat-challenge-data/data/datasets/objectnav/hm3d/v1/val/` respectively. 
 
 1. An example on how to train DD-PPO model can be found in [habitat-lab/habitat_baselines/rl/ddppo](https://github.com/facebookresearch/habitat-lab/tree/main/habitat_baselines/rl/ddppo). See the corresponding README in habitat-lab for how to adjust the various hyperparameters, save locations, visual encoders and other features.
 
@@ -227,7 +236,7 @@ We have added a config in `configs/ddppo_objectnav.yaml` that includes a baselin
     wget https://dl.fbaipublicfiles.com/habitat/data/baselines/v1/ddppo_objectnav_habitat2022_challenge_baseline_v1.pth
     ```
 
-1. To submit your entry via EvalAI, you will need to build a docker file. We provide Dockerfiles ready to use with the DD-PPO baselines in `Objectnav_DDPPO_baseline.Dockerfile`. For the sake of completeness, we describe how you can make your own Dockerfile below. If you just want to test the baseline code, feel free to skip this bullet because  ```Objectnav_DDPPO_baseline.Dockerfile``` is ready to use.
+1. We provide Dockerfiles ready to use with the DD-PPO baselines in `Objectnav_DDPPO_baseline.Dockerfile`. For the sake of completeness, we describe how you can make your own Dockerfile below. If you just want to test the baseline code, feel free to skip this bullet because  ```Objectnav_DDPPO_baseline.Dockerfile``` is ready to use.
     1. You may want to modify the `Objectnav_DDPPO_baseline.Dockerfile` to include PyTorch or other libraries. To install pytorch, ifcfg and tensorboard, add the following command to the Docker file:
         ```dockerfile
         RUN /bin/bash -c ". activate habitat; pip install ifcfg torch tensorboard"
