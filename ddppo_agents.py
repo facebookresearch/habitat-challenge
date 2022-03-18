@@ -108,6 +108,7 @@ class PPOAgent(Agent):
             else torch.device("cpu")
         )
         self.hidden_size = config.RL.PPO.hidden_size
+        random_generator.seed(config.RANDOM_SEED)
 
         if torch.cuda.is_available():
             torch.backends.cudnn.deterministic = True  # type: ignore
