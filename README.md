@@ -113,14 +113,28 @@ Note: only supports Linux; no Windows or MacOS.
         
     1. Your API token ID then functions as your username, passed to the download script with --username, and your API token secret functions as your password, passed to the download script with --password. Note: Make sure to write your API token secret down, you can't reveal it again!
 
-    b) Now, you are ready to download. Start by downloading the val split, which we will use in the following steps:
+    b)  Install [Habitat-Sim](https://github.com/facebookresearch/habitat-sim/) to get access to our dataset downloader:
+
+    1. Prepare your [conda](https://docs.conda.io/projects/conda/en/latest/user-guide/install/) env:
+        ```bash
+        # We require python>=3.7 and cmake>=3.10
+        conda create -n habitat python=3.7 cmake=3.14.0
+        conda activate habitat
+        ```
+
+    1. Install Habitat-Sim using our custom Conda package for habitat challenge 2022 with: 
+        ```
+        conda install habitat-sim-challenge-2022 -c conda-forge -c aihabitat
+        ```
+
+    c) Now, you are ready to download. Start by downloading the val split, which we will use in the following steps:
 
       ```bash
       python -m habitat_sim.utils.datasets_download --username <api-token-id> --password <api-token-secret> --uids hm3d_val --data-path <path to download folder>
       ```
     Replace `val` by `train` or `example` to download the different splits. By default, downloading the data for `train/val/example` scenes also pulls in the semantic annotations and configs for [HM3D-Semantics v0.1](https://aihabitat.org/datasets/hm3d-semantics/). To download only the semantic files for these splits, use the uid `hm3d_semantics`.
     
-    c) Create a symlink to the downloaded data in your habitat-challenge repository: 
+    d) Create a symlink to the downloaded data in your habitat-challenge repository: 
     ```
     mkdir -p habitat-challenge-data/data/scene_datasets/
     ln -s <absolute path to download folder>/scene_datasets/hm3d habitat-challenge-data/data/scene_datasets/hm3d
@@ -165,13 +179,25 @@ Note: Your agent will be evaluated on 1000 episodes and will have a total availa
 ### ObjectNav Baselines and DD-PPO Training Starter Code
 We have added a config in `configs/ddppo_objectnav.yaml` that includes a baseline using DD-PPO from Habitat-Lab. Follow these next steps to get the DD-PPO baseline running:
 
-1. 
+1. Prepare your [conda](https://docs.conda.io/projects/conda/en/latest/user-guide/install/) env:
+    ```bash
+    # We require python>=3.7 and cmake>=3.10
+    conda create -n habitat python=3.7 cmake=3.14.0
+    conda activate habitat
+    ```
 
 1. Install the [Habitat-Sim](https://github.com/facebookresearch/habitat-sim/) and [Habitat-Lab](https://github.com/facebookresearch/habitat-lab/) packages:
 
-    a) You can install Habitat-Sim using our custom Conda package for habitat challenge 2022 with: ```conda install habitat-sim-challenge-2022 -c conda-forge -c aihabitat``` .
+    a) You can install Habitat-Sim using our custom Conda package for habitat challenge 2022 with: 
+    ```
+    conda install habitat-sim-challenge-2022 -c conda-forge -c aihabitat
+    ```
 
-    b) For Habitat-Lab, we have created the `habitat-challenge-2022` tag in our Github repo, which can be cloned using: ```git clone --branch challenge-2022 https://github.com/facebookresearch/habitat-lab.git``` . Also ensure that habitat-baselines is installed when installing Habitat-Lab by using ```python setup.py develop --all``` . You will find further information for installation in the Github repositories. 
+    b) For Habitat-Lab, we have created the `habitat-challenge-2022` tag in our Github repo, which can be cloned using: 
+    ```
+    git clone --branch challenge-2022 https://github.com/facebookresearch/habitat-lab.git
+    ``` 
+    Also ensure that habitat-baselines is installed when installing Habitat-Lab by using ```python setup.py develop --all``` . You will find further information for installation in the Github repositories. 
 
 1. Download the episode dataset for HM3D ObjectNav from [link](https://dl.fbaipublicfiles.com/habitat/data/datasets/objectnav/hm3d/v1/objectnav_hm3d_v1.zip) and place it in the folder `habitat-challenge/habitat-challenge-data/data/datasets/objectnav/hm3d`. 
     ```bash
