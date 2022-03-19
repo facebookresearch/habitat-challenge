@@ -83,7 +83,7 @@ Note: only supports Linux; no Windows or MacOS.
 1. Modify the provided Dockerfile if you need custom modifications. Let’s say your code needs `pytorch`, these dependencies should be pip installed inside a conda environment called `habitat` that is shipped with our habitat-challenge docker, as shown below:
 
     ```dockerfile
-    FROM fairembodied/habitat-challenge:2022
+    FROM fairembodied/habitat-challenge:testing_2022_habitat_base_docker
 
     # install dependencies in the habitat conda environment
     RUN /bin/bash -c ". activate habitat; pip install torch"
