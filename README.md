@@ -107,18 +107,6 @@ Note: only supports Linux; no Windows or MacOS.
     
     a) First, you will need to generate a matterport API Token:
 
-<<<<<<< HEAD
-=======
-    **Note:** Please make sure that you keep your local version of `fairembodied/habitat-challenge:testing_2022_habitat_base_docker` image up to date with the image we have hosted on [dockerhub](https://hub.docker.com/r/fairembodied/habitat-challenge/tags). This can be done by pruning all cached images, using:
-    ```
-    docker system prune -a
-    ```
-
-1. Dataset: First, get access to the Habitat-Matterport3D Dataset scenes by visiting [this link](https://matterport.com/habitat-matterport-3d-research-dataset) and following the given instructions. After getting access to the dataset, carry out the following steps to download the dataset:
-    
-    a) First, you will need to generate a matterport API Token:
-
->>>>>>> 35d16d6fbe5b67b6c6faa6e7d520baf2497be8bf
     1. Navigate to https://my.matterport.com/settings/account/devtools
         
     1. Generate an API token
