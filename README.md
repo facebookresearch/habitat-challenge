@@ -83,7 +83,7 @@ Note: only supports Linux; no Windows or MacOS.
 1. Modify the provided Dockerfile if you need custom modifications. Let’s say your code needs `pytorch`, these dependencies should be pip installed inside a conda environment called `habitat` that is shipped with our habitat-challenge docker, as shown below:
 
     ```dockerfile
-    FROM fairembodied/habitat-challenge:2022
+    FROM fairembodied/habitat-challenge:testing_2022_habitat_base_docker
 
     # install dependencies in the habitat conda environment
     RUN /bin/bash -c ". activate habitat; pip install torch"
@@ -141,7 +141,7 @@ Note: only supports Linux; no Windows or MacOS.
 
 ### Online submission
 
-Follow instructions in the `submit` tab of the [EvalAI challenge page](https://eval.ai/web/challenges/challenge-page/1615/submission) to submit your docker image. Note that you will need a version of EvalAI `>= 1.2.3`. Pasting those instructions here for convenience:
+Follow instructions in the `submit` tab of the [EvalAI challenge page](https://eval.ai/web/challenges/challenge-page/1615/submission) to submit your docker image. Note that you will need a version of EvalAI `>= 1.3.5`. Pasting those instructions here for convenience:
 
 ```bash
 # Installing EvalAI Command Line Interface
@@ -163,17 +163,24 @@ Valid phase names are `habitat-objectnav-{minival, test-standard, test-challenge
 Note: Your agent will be evaluated on 1000 episodes and will have a total available time of 48 hours to finish. Your submissions will be evaluated on AWS EC2 p2.xlarge instance which has a Tesla K80 GPU (12 GB Memory), 4 CPU cores, and 61 GB RAM. If you need more time/resources for evaluation of your submission please get in touch. If you face any issues or have questions you can ask them by opening an issue on this repository.
 
 ### ObjectNav Baselines and DD-PPO Training Starter Code
-We have added a config in `configs/ddppo_objectnav.yaml` that includes a baseline using DD-PPO from Habitat-Lab.
+We have added a config in `configs/ddppo_objectnav.yaml` that includes a baseline using DD-PPO from Habitat-Lab. Follow these next steps to get the DD-PPO baseline running:
 
-1. Install the [Habitat-Sim](https://github.com/facebookresearch/habitat-sim/) and [Habitat-Lab](https://github.com/facebookresearch/habitat-lab/) packages. You can install Habitat-Sim using our custom Conda package for habitat challenge 2022 with: ```conda install habitat-sim-challenge-2022 -c conda-forge -c aihabitat```. For Habitat-Lab, we have created the `habitat-challenge-2022` tag in our Github repo, which can be cloned using: ```git clone --branch challenge-2022 https://github.com/facebookresearch/habitat-lab.git``` . Also ensure that habitat-baselines is installed when installing Habitat-Lab by using ```python setup.py develop --all``` . You will find further information for installation in the Github repositories. 
+1. 
+
+1. Install the [Habitat-Sim](https://github.com/facebookresearch/habitat-sim/) and [Habitat-Lab](https://github.com/facebookresearch/habitat-lab/) packages:
+
+    a) You can install Habitat-Sim using our custom Conda package for habitat challenge 2022 with: ```conda install habitat-sim-challenge-2022 -c conda-forge -c aihabitat``` .
+
+    b) For Habitat-Lab, we have created the `habitat-challenge-2022` tag in our Github repo, which can be cloned using: ```git clone --branch challenge-2022 https://github.com/facebookresearch/habitat-lab.git``` . Also ensure that habitat-baselines is installed when installing Habitat-Lab by using ```python setup.py develop --all``` . You will find further information for installation in the Github repositories. 
 
 1. Download the episode dataset for HM3D ObjectNav from [link](https://dl.fbaipublicfiles.com/habitat/data/datasets/objectnav/hm3d/v1/objectnav_hm3d_v1.zip) and place it in the folder `habitat-challenge/habitat-challenge-data/data/datasets/objectnav/hm3d`. 
-```bash
-wget https://dl.fbaipublicfiles.com/habitat/data/datasets/objectnav/hm3d/v1/objectnav_hm3d_v1.zip -P habitat-challenge-data/data/datasets/objectnav/hm3d/
-unzip habitat-challenge-data/data/datasets/objectnav/hm3d/objectnav_hm3d_v1.zip -d habitat-challenge-data/data/datasets/objectnav/hm3d/
-```
+    ```bash
+    wget https://dl.fbaipublicfiles.com/habitat/data/datasets/objectnav/hm3d/v1/objectnav_hm3d_v1.zip -P habitat-challenge-data/data/datasets/objectnav/hm3d/
 
-If placed correctly, you should have the train and val splits at `habitat-challenge/habitat-challenge-data/data/datasets/objectnav/hm3d/v1/train/` and `habitat-challenge/habitat-challenge-data/data/datasets/objectnav/hm3d/v1/val/` respectively. 
+    unzip habitat-challenge-data/data/datasets/objectnav/hm3d/objectnav_hm3d_v1.zip -d habitat-challenge-data/data/datasets/objectnav/hm3d/
+    ```
+
+    If placed correctly, you should have the train and val splits at `habitat-challenge/habitat-challenge-data/data/datasets/objectnav/hm3d/v1/train/` and `habitat-challenge/habitat-challenge-data/data/datasets/objectnav/hm3d/v1/val/` respectively. 
 
 1. An example on how to train DD-PPO model can be found in [habitat-lab/habitat_baselines/rl/ddppo](https://github.com/facebookresearch/habitat-lab/tree/main/habitat_baselines/rl/ddppo). See the corresponding README in habitat-lab for how to adjust the various hyperparameters, save locations, visual encoders and other features.
 
