@@ -1,7 +1,7 @@
 version: 2
 gpu: &gpu
   machine:
-    image: ubuntu-1604:201903-01
+    image: ubuntu-2004-cuda-11.4:202110-01
   resource_class: gpu.nvidia.medium
 
 jobs:
@@ -61,16 +61,16 @@ jobs:
                 . activate habitat
               fi
 
-      - run:
-          name: Install cuda
-          no_output_timeout: 20m
-          command: |
-              wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/cuda-repo-ubuntu1604_8.0.44-1_amd64.deb
-              sudo dpkg -i cuda-repo-ubuntu1604_8.0.44-1_amd64.deb
-              sudo apt-get update || true
-              sudo apt-get --yes --force-yes install cuda
-              touch ./cuda_installed
-              nvidia-smi
+      # - run:
+      #     name: Install cuda
+      #     no_output_timeout: 20m
+      #     command: |
+      #         wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1604/x86_64/cuda-repo-ubuntu1604_8.0.44-1_amd64.deb
+      #         sudo dpkg -i cuda-repo-ubuntu1604_8.0.44-1_amd64.deb
+      #         sudo apt-get update || true
+      #         sudo apt-get --yes --force-yes install cuda
+      #         touch ./cuda_installed
+      #         nvidia-smi
 
       - run:
           name: Test ObjectNav 2022 submission
