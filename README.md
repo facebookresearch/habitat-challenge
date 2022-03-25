@@ -126,6 +126,7 @@ Note: only supports Linux; no Windows or MacOS.
         ```
         conda install habitat-sim-challenge-2022 -c conda-forge -c aihabitat
         ```
+        In case you face any issues related to the `GLIBCXX` version after conda installation, please uninstall this conda package and install the habitat-sim repository from source (more information [here](https://github.com/facebookresearch/habitat-sim/blob/main/BUILD_FROM_SOURCE.md#build-from-source)). Make sure that you are using the `challenge-2022` tag and not the `stable` branch for your installation.
 
     c) Now, you are ready to download. Start by downloading the val split, which we will use in the following steps:
 
@@ -133,7 +134,9 @@ Note: only supports Linux; no Windows or MacOS.
       python -m habitat_sim.utils.datasets_download --username <api-token-id> --password <api-token-secret> --uids hm3d_val --data-path <path to download folder>
       ```
     Replace `val` by `train` or `example` to download the different splits. By default, downloading the data for `train/val/example` scenes also pulls in the semantic annotations and configs for [HM3D-Semantics v0.1](https://aihabitat.org/datasets/hm3d-semantics/). To download only the semantic files for these splits, use the uid `hm3d_semantics`.
-    
+
+    **Note**: We do not support loading of semantic annotations inside the challenge docker and the usage of semantic annotations is not allowed during evaluation on EvalAI. This is to prevent the navigating agent from accessing ground truth information during testing.
+
     d) Create a symlink to the downloaded data in your habitat-challenge repository: 
     ```
     mkdir -p habitat-challenge-data/data/scene_datasets/
@@ -190,6 +193,7 @@ We have added a config in `configs/ddppo_objectnav.yaml` that includes a baselin
     ```
     conda install habitat-sim-challenge-2022 -c conda-forge -c aihabitat
     ```
+    In case you face any issues related to the `GLIBCXX` version after conda installation, please uninstall this conda package and install the habitat-sim repository from source (more information [here](https://github.com/facebookresearch/habitat-sim/blob/main/BUILD_FROM_SOURCE.md#build-from-source)). Make sure that you are using the `challenge-2022` tag and not the `stable` branch for your installation.
 
 1. Install [Habitat-Lab](https://github.com/facebookresearch/habitat-lab/) - We have created the `habitat-challenge-2022` tag in our Github repo, which can be cloned using: 
     ```
