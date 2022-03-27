@@ -135,7 +135,7 @@ Note: only supports Linux; no Windows or MacOS.
       ```
     Replace `val` by `train` or `example` to download the different splits. By default, downloading the data for `train/val/example` scenes also pulls in the semantic annotations and configs for [HM3D-Semantics v0.1](https://aihabitat.org/datasets/hm3d-semantics/). To download only the semantic files for these splits, use the uid `hm3d_semantics`.
 
-    **Note**: We do not support loading of semantic annotations inside the challenge docker and the usage of semantic annotations is not allowed during evaluation on EvalAI. This is to prevent the navigating agent from accessing ground truth information during testing.
+    **Note**: We do not support loading of semantic annotations inside the challenge docker and the usage of semantic annotations is not allowed during evaluation on EvalAI. This is to prevent the navigating agent from accessing ground truth information during testing. To load the semantic annotations outside of the docker, take a look at the instructions posted [here](https://github.com/facebookresearch/habitat-sim/blob/main/DATASETS.md#loading-semantics-for-hm3d).
 
     d) Create a symlink to the downloaded data in your habitat-challenge repository: 
     ```
