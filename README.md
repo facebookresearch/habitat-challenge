@@ -60,6 +60,8 @@ For your convenience, please check our [Habitat Challenge video tutorial](https:
 
 1. Implement your own agent or try one of ours. We provide an agent in `agent.py` that takes random actions:
     ```python
+    import numpy
+
     import habitat
 
     class RandomAgent(habitat.Agent):
@@ -70,6 +72,8 @@ For your convenience, please check our [Habitat Challenge video tutorial](https:
             return {"action": numpy.random.choice(task_config.TASK.POSSIBLE_ACTIONS)}
 
     def main():
+        config_paths = "/path/to/challenge/config/file"
+        config = habitat.get_config(config_paths)
         agent = RandomAgent(task_config=config)
         challenge = habitat.Challenge()
         challenge.submit(agent)
@@ -80,13 +84,13 @@ For your convenience, please check our [Habitat Challenge video tutorial](https:
 1. Install [nvidia-docker v2](https://github.com/NVIDIA/nvidia-docker) following instructions here: [https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html#docker](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html#docker).
 Note: only supports Linux; no Windows or MacOS.
 
-1. Modify the provided Dockerfile if you need custom modifications. Let’s say your code needs `pytorch`, these dependencies should be pip installed inside a conda environment called `habitat` that is shipped with our habitat-challenge docker, as shown below:
+1. Modify the provided Dockerfile if you need custom modifications. Let’s say your code needs `pytorch==1.9.0`, these dependencies should be pip installed inside a conda environment called `habitat` that is shipped with our habitat-challenge docker, as shown below:
 
     ```dockerfile
     FROM fairembodied/habitat-challenge:testing_2022_habitat_base_docker
 
     # install dependencies in the habitat conda environment
-    RUN /bin/bash -c ". activate habitat; pip install torch"
+    RUN /bin/bash -c ". activate habitat; pip install torch==1.9.0"
 
     ADD agent.py /agent.py
     ADD submission.sh /submission.sh
