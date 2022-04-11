@@ -237,9 +237,9 @@ We have added a config in `configs/ddppo_objectnav.yaml` that includes a baselin
             TASK_CONFIG.DATASET.DATA_PATH ../habitat-challenge/habitat-challenge-data/objectgoal_hm3d/{split}/{split}.json.gz \
             TASK_CONFIG.DATASET.SCENES_DIR ../habitat-challenge/habitat-challenge-data/data/scene_datasets/ \
             TASK_CONFIG.DATASET.SPLIT 'train' \
-            TENSORBOARD_DIR data/ddppo_testing/tb \
-            CHECKPOINT_FOLDER data/ddppo_testing/checkpoints \
-            LOG_FILE data/ddppo_testing/train.log
+            TENSORBOARD_DIR ./tb \
+            CHECKPOINT_FOLDER ./checkpoints \
+            LOG_FILE ./train.log
         ```
     1. There is also an example of running the code distributed on a cluster with SLURM. While this is not necessary, if you have access to a cluster, it can significantly speed up training. To run on multiple machines in a SLURM cluster run the following script: change ```#SBATCH --nodes $NUM_OF_MACHINES``` to the number of machines and ```#SBATCH --ntasks-per-node $NUM_OF_GPUS``` and ```$SBATCH --gres $NUM_OF_GPUS``` to specify the number of GPUS to use per requested machine.
         ```bash
@@ -269,9 +269,9 @@ We have added a config in `configs/ddppo_objectnav.yaml` that includes a baselin
             TASK_CONFIG.DATASET.DATA_PATH ../habitat-challenge/habitat-challenge-data/objectgoal_hm3d/{split}/{split}.json.gz \
             TASK_CONFIG.DATASET.SCENES_DIR ../habitat-challenge/habitat-challenge-data/data/scene_datasets/ \
             TASK_CONFIG.DATASET.SPLIT 'train' \
-            TENSORBOARD_DIR data/ddppo_testing/tb \
-            CHECKPOINT_FOLDER data/ddppo_testing/checkpoints \
-            LOG_FILE data/ddppo_testing/train.log
+            TENSORBOARD_DIR ./tb \
+            CHECKPOINT_FOLDER ./checkpoints \
+            LOG_FILE ./train.log
         ```
 
     1. The preceding two scripts are based off ones found in the [habitat_baselines/ddppo](https://github.com/facebookresearch/habitat-lab/tree/main/habitat_baselines/rl/ddppo).
