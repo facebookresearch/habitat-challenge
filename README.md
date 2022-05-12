@@ -259,7 +259,7 @@ We have added a config in `configs/ddppo_objectnav.yaml` that includes a baselin
         export GLOG_minloglevel=2
         export MAGNUM_LOG=quiet
 
-        export MASTER_ADDR=$(srun --ntasks=1 hostname 2>&1 | tail -n1)
+        export MAIN_ADDR=$(srun --ntasks=1 hostname 2>&1 | tail -n1)
 
         set -x
         srun python -u -m habitat_baselines.run \
