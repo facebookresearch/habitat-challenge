@@ -4,57 +4,28 @@
 
 --------------------------------------------------------------------------------
 
-# Habitat Challenge 2022
+# Habitat Rearrange Challenge 2022
 
-This repository contains the starter code for the 2022 challenge, and training and evaluation setups. For an overview of habitat-challenge, visit [aihabitat.org/challenge](https://aihabitat.org/challenge/).
+This repository contains the starter code for the 2022 challenge, and training and evaluation setups. For an overview of habitat-challenge, visit [aihabitat.org/challenge/rearrange_2022](https://aihabitat.org/challenge/rearrange_2022).
 
-If you are looking for our 2021/2020/2019 starter code, it’s available in the [`challenge-YEAR branch`](https://github.com/facebookresearch/habitat-challenge/tree/challenge-2021).
-
-This year, we are hosting a challenges on the ObjectNav embodied navigation task. ObjectNav focuses on egocentric object/scene recognition and a commonsense understanding of object semantics (where is a fireplace typically located in a house?).
-
-### Changes in 2022 (over 2021)
-- We are instantiating ObjectNav on a new dataset called [HM3D-Semantics v0.1](https://aihabitat.org/datasets/hm3d-semantics/).
-- We are retiring the PointNav challenge, although the evaluation servers will continue to be open and researchers are welcome to submit to them.
-
-## Task: ObjectNav
+## Task: Object Rearrangement
 
 In ObjectNav, an agent is initialized at a random starting position and orientation in an unseen environment and asked to find an instance of an object category (*‘find a chair’*) by navigating to it. A map of the environment is not provided and the agent must only use its sensory input to navigate.
 
 The agent is equipped with an RGB-D camera and a (noiseless) GPS+Compass sensor. GPS+Compass sensor provides the agent’s current location and orientation information relative to the start of the episode. We attempt to match the camera specification (field of view, resolution) in simulation to the Azure Kinect camera, but this task does not involve any injected sensing noise.
 
-### Dataset
-The 2022 ObjectNav challenge uses 120 scenes from the [Habitat-Matterport3D (HM3D) Semantics v0.1](https://aihabitat.org/datasets/hm3d/)[2] dataset with train/val/test splits on 80/20/20. Following Chaplot et al.[3], we use 6 object goal categories: chair, couch, potted plant, bed, toilet and tv.
-
-### Evaluation
-Similar to 2021 Habitat Challenge, we measure performance along the same two axes as specified by Anderson et al.[4]:
-- **Success**: Did the agent navigate to an instance of the goal object? (Notice: *any* instance, regardless of distance from starting location.)
-
-Concretely, an episode is deemed successful if on calling the STOP action, the agent is within 1.0m Euclidean distance from any instance of the target object category AND the object *can be viewed by an oracle* from that stopping position by turning the agent or looking up/down. Notice: we do NOT require the agent to be actually viewing the object at the stopping location, simply that such oracle-visibility is possible without moving. Why? Because we want participants to focus on *navigation*, not object framing. In Embodied AI’s larger goal, the agent is navigating to an object instance to interact with it (say point at or manipulate an object). Oracle-visibility is our proxy for *‘the agent is close enough to interact with the object’*.
-
-- **SPL**: How efficient was the agent’s path compared to an optimal path? (Notice: optimal path = shortest path from the agent’s starting position to the *closest* instance of the target object category.)
-
-After calling the STOP action, the agent is evaluated using the ‘Success weighted by Path Length’ (SPL) metric [4].
-
-<p align="center">
-  <img src='res/img/spl.png' />
-</p>
-
-ObjectNav-SPL is defined analogous to PointNav-SPL. The only key difference is that the shortest path is computed to the object instance closest to the agent start location. Thus, if an agent spawns very close to *‘chair1’* but stops at a distant *‘chair2’*, it will achieve 100% success (because it found a *‘chair’*) but a fairly low SPL (because the agent path is much longer compared to the oracle path).
-
-We reserve the right to use additional metrics to choose winners in case of statistically insignificant SPL differences.
+For details about the agent, dataset, and evaluation, see the challenge website: [aihabitat.org/challenge/rearrange_2022](https://aihabitat.org/challenge/rearrange_2022).
 
 ## Participation Guidelines
 
 Participate in the contest by registering on the [EvalAI challenge page](https://eval.ai/web/challenges/challenge-page/1615/overview) and creating a team. Participants will upload docker containers with their agents that are evaluated on an AWS GPU-enabled instance. Before pushing the submissions for remote evaluation, participants should test the submission docker locally to ensure it is working. Instructions for training, local evaluation, and online submission are provided below.
-
-For your convenience, please check our [Habitat Challenge video tutorial](https://youtu.be/V7PXttmJ8EE?list=PLGywud_-HlCORC0c4uj97oppQrGiB6JNy) and [Colab step-by-step tutorial from previous year](https://colab.research.google.com/gist/mathfac/8c9b97d7afef36e377f17d587c903ede).
 
 ### Local Evaluation
 
 1. Clone the challenge repository:
 
     ```bash
-    git clone https://github.com/facebookresearch/habitat-challenge.git
+    git clone -b rearrangement-challenge-2022 https://github.com/facebookresearch/habitat-challenge.git
     cd habitat-challenge
     ```
 
@@ -99,7 +70,7 @@ Note: only supports Linux; no Windows or MacOS.
     ```bash
     docker build . --file Objectnav.Dockerfile  -t objectnav_submission
     ```
-    
+
     Note #1: you may need `sudo` priviliges to run this command.
 
     Note #2: Please make sure that you keep your local version of `fairembodied/habitat-challenge:testing_2022_habitat_base_docker` image up to date with the image we have hosted on [dockerhub](https://hub.docker.com/r/fairembodied/habitat-challenge/tags). This can be done by pruning all cached images, using:
@@ -108,14 +79,6 @@ Note: only supports Linux; no Windows or MacOS.
     ```
 
 1. Dataset: First, get access to the Habitat-Matterport3D Dataset scenes by visiting [this link](https://matterport.com/habitat-matterport-3d-research-dataset) and following the given instructions. After getting access to the dataset, carry out the following steps to download the dataset:
-    
-    a) First, you will need to generate a matterport API Token:
-
-    1. Navigate to https://my.matterport.com/settings/account/devtools
-        
-    1. Generate an API token
-        
-    1. Your API token ID then functions as your username, passed to the download script with --username, and your API token secret functions as your password, passed to the download script with --password. Note: Make sure to write your API token secret down, you can't reveal it again!
 
     b)  Install [Habitat-Sim](https://github.com/facebookresearch/habitat-sim/) to get access to our dataset downloader:
 
@@ -135,12 +98,8 @@ Note: only supports Linux; no Windows or MacOS.
     c) Now, you are ready to download. Start by downloading the val split, which we will use in the following steps:
 
       ```bash
-      python -m habitat_sim.utils.datasets_download --username <api-token-id> --password <api-token-secret> --uids hm3d_val --data-path <path to download folder>
+      python -m habitat_sim.utils.datasets_download --uids rearrange_task_assets--data-path <path to download folder>
       ```
-    Replace `val` by `train` or `example` to download the different splits. By default, downloading the data for `train/val/example` scenes also pulls in the semantic annotations and configs for [HM3D-Semantics v0.1](https://aihabitat.org/datasets/hm3d-semantics/). To download only the semantic files for these splits, use the uid `hm3d_semantics`.
-
-    **Note**: We do not support loading of semantic annotations inside the challenge docker and the usage of semantic annotations is not allowed during evaluation on EvalAI. This is to prevent the navigating agent from accessing ground truth information during testing. To load the semantic annotations outside of the docker, take a look at the instructions posted [here](https://github.com/facebookresearch/habitat-sim/blob/main/DATASETS.md#loading-semantics-for-hm3d).
-
     d) Create a symlink to the downloaded data in your habitat-challenge repository: 
     ```
     mkdir -p habitat-challenge-data/data/scene_datasets/
@@ -203,7 +162,7 @@ We have added a config in `configs/ddppo_objectnav.yaml` that includes a baselin
     ```
     git clone --branch challenge-2022 https://github.com/facebookresearch/habitat-lab.git
     ``` 
-    Also ensure that habitat-baselines is installed when installing Habitat-Lab by using ```python setup.py develop --all``` . You will find further information for installation in the Github repositories. 
+    Also ensure that habitat-baselines is installed when installing Habitat-Lab by using `python setup.py develop --all` . You will find further information for installation in the Github repositories. 
 
 1. Download the episode dataset for HM3D ObjectNav from [link](https://dl.fbaipublicfiles.com/habitat/data/datasets/objectnav/hm3d/v1/objectnav_hm3d_v1.zip) and place it in the folder `habitat-challenge/habitat-challenge-data/data/datasets/objectnav/hm3d`.
     ```bash
@@ -241,7 +200,7 @@ We have added a config in `configs/ddppo_objectnav.yaml` that includes a baselin
             CHECKPOINT_FOLDER ./checkpoints \
             LOG_FILE ./train.log
         ```
-    1. There is also an example of running the code distributed on a cluster with SLURM. While this is not necessary, if you have access to a cluster, it can significantly speed up training. To run on multiple machines in a SLURM cluster run the following script: change ```#SBATCH --nodes $NUM_OF_MACHINES``` to the number of machines and ```#SBATCH --ntasks-per-node $NUM_OF_GPUS``` and ```$SBATCH --gres $NUM_OF_GPUS``` to specify the number of GPUS to use per requested machine.
+    1. There is also an example of running the code distributed on a cluster with SLURM. While this is not necessary, if you have access to a cluster, it can significantly speed up training. To run on multiple machines in a SLURM cluster run the following script: change `#SBATCH --nodes $NUM_OF_MACHINES` to the number of machines and `#SBATCH --ntasks-per-node $NUM_OF_GPUS` and `$SBATCH --gres $NUM_OF_GPUS` to specify the number of GPUS to use per requested machine.
         ```bash
         #!/bin/bash
         #SBATCH --job-name=ddppo
@@ -259,7 +218,7 @@ We have added a config in `configs/ddppo_objectnav.yaml` that includes a baselin
         export GLOG_minloglevel=2
         export MAGNUM_LOG=quiet
 
-        export MASTER_ADDR=$(srun --ntasks=1 hostname 2>&1 | tail -n1)
+        export MAIN_ADDR=$(srun --ntasks=1 hostname 2>&1 | tail -n1)
 
         set -x
         srun python -u -m habitat_baselines.run \
@@ -276,7 +235,7 @@ We have added a config in `configs/ddppo_objectnav.yaml` that includes a baselin
 
     1. The preceding two scripts are based off ones found in the [habitat_baselines/ddppo](https://github.com/facebookresearch/habitat-lab/tree/main/habitat_baselines/rl/ddppo).
 
-1. The checkpoint specified by ```$PATH_TO_CHECKPOINT``` can evaluated using SPL and other measurements by running the following command:
+1. The checkpoint specified by `$PATH_TO_CHECKPOINT` can evaluated using SPL and other measurements by running the following command:
 
     ```bash
     python -u -m habitat_baselines.run \

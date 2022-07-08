@@ -1,8 +1,8 @@
 import argparse
 import os
-import random
 
 import numpy
+import numpy as np
 
 import habitat
 
@@ -15,7 +15,15 @@ class RandomAgent(habitat.Agent):
         pass
 
     def act(self, observations):
-        return {"action": numpy.random.choice(self._POSSIBLE_ACTIONS)}
+        return {
+            "action": ("ARM_ACTION", "BASE_VELOCITY", "REARRANGE_STOP"),
+            "action_args": {
+                "arm_action": np.random.rand(7),
+                "grip_action": np.random.rand(1),
+                "base_vel": np.random.rand(2),
+                "REARRANGE_STOP": np.random.rand(1),
+            },
+        }
 
 
 def main():
