@@ -29,26 +29,8 @@ Participate in the contest by registering on the [EvalAI challenge page](https:/
     cd habitat-challenge
     ```
 
-1. Implement your own agent or try one of ours. We provide an agent in `agent.py` that takes random actions:
-    ```python
-    import numpy
+1. Implement your own agent or try one of ours. We provide an agent in `agents/random_agent.py` that takes random actions.
 
-    import habitat
-
-    class RandomAgent(habitat.Agent):
-        def reset(self):
-            pass
-
-        def act(self, observations):
-            return {"action": numpy.random.choice(task_config.TASK.POSSIBLE_ACTIONS)}
-
-    def main():
-        config_paths = "/path/to/challenge/config/file"
-        config = habitat.get_config(config_paths)
-        agent = RandomAgent(task_config=config)
-        challenge = habitat.Challenge()
-        challenge.submit(agent)
-    ```
     [Optional] Modify submission.sh file if your agent needs any custom modifications (e.g. command-line arguments). Otherwise, nothing to do. Default submission.sh is simply a call to `RandomAgent` agent in `agent.py`.
 
 
@@ -68,7 +50,7 @@ Note: only supports Linux; no Windows or MacOS.
     ```
     Build your docker container using: 
     ```bash
-    docker build . --file Objectnav.Dockerfile  -t objectnav_submission
+    docker build . --file docker/hab2.Dockerfile  -t rearrange_submission
     ```
 
     Note #1: you may need `sudo` priviliges to run this command.
@@ -78,33 +60,7 @@ Note: only supports Linux; no Windows or MacOS.
     docker system prune -a
     ```
 
-1. Dataset: First, get access to the Habitat-Matterport3D Dataset scenes by visiting [this link](https://matterport.com/habitat-matterport-3d-research-dataset) and following the given instructions. After getting access to the dataset, carry out the following steps to download the dataset:
-
-    b)  Install [Habitat-Sim](https://github.com/facebookresearch/habitat-sim/) to get access to our dataset downloader:
-
-    1. Prepare your [conda](https://docs.conda.io/projects/conda/en/latest/user-guide/install/) env:
-        ```bash
-        # We require python>=3.7 and cmake>=3.10
-        conda create -n habitat python=3.7 cmake=3.14.0
-        conda activate habitat
-        ```
-
-    1. Install Habitat-Sim using our custom Conda package for habitat challenge 2022 with: 
-        ```
-        conda install habitat-sim-challenge-2022 -c conda-forge -c aihabitat
-        ```
-        In case you face any issues related to the `GLIBCXX` version after conda installation, please uninstall this conda package and install the habitat-sim repository from source (more information [here](https://github.com/facebookresearch/habitat-sim/blob/main/BUILD_FROM_SOURCE.md#build-from-source)). Make sure that you are using the `challenge-2022` tag and not the `stable` branch for your installation.
-
-    c) Now, you are ready to download. Start by downloading the val split, which we will use in the following steps:
-
-      ```bash
-      python -m habitat_sim.utils.datasets_download --uids rearrange_task_assets--data-path <path to download folder>
-      ```
-    d) Create a symlink to the downloaded data in your habitat-challenge repository: 
-    ```
-    mkdir -p habitat-challenge-data/data/scene_datasets/
-    ln -s <absolute path to download folder>/scene_datasets/hm3d habitat-challenge-data/data/scene_datasets/hm3d
-    ```
+1. Dataset: Install [Habitat-Sim](https://github.com/facebookresearch/habitat-sim/) `Habitat-Sim` via these instructions and download the dataset with `python -m habitat_sim.utils.datasets_download --uids rearrange_task_assets`.
 
 1. Evaluate your docker container locally:
     ```bash
@@ -142,8 +98,8 @@ Valid phase names are `habitat-objectnav-{minival, test-standard, test-challenge
 
 Note: Your agent will be evaluated on 1000 episodes and will have a total available time of 48 hours to finish. Your submissions will be evaluated on AWS EC2 p3.2xlarge instance which has a V100 GPU (16 GB Memory), 8 vCPU cores, and 61 GB RAM. If you need more time/resources for evaluation of your submission please get in touch. If you face any issues or have questions you can ask them by opening an issue on this repository.
 
-### ObjectNav Baselines and DD-PPO Training Starter Code
-We have added a config in `configs/ddppo_objectnav.yaml` that includes a baseline using DD-PPO from Habitat-Lab. Follow these next steps to get the DD-PPO baseline running (skip to step 3 if you have completed step 5.b from the local evaluation section):
+
+### Installing Habitat-Sim
 
 1. Prepare your [conda](https://docs.conda.io/projects/conda/en/latest/user-guide/install/) env:
     ```bash
@@ -152,30 +108,34 @@ We have added a config in `configs/ddppo_objectnav.yaml` that includes a baselin
     conda activate habitat
     ```
 
-1. Install [Habitat-Sim](https://github.com/facebookresearch/habitat-sim/) - Use our custom Conda package for habitat challenge 2022: 
+1. Install Habitat-Sim using our custom Conda package for habitat challenge 2022 with: 
     ```
     conda install habitat-sim-challenge-2022 -c conda-forge -c aihabitat
     ```
     In case you face any issues related to the `GLIBCXX` version after conda installation, please uninstall this conda package and install the habitat-sim repository from source (more information [here](https://github.com/facebookresearch/habitat-sim/blob/main/BUILD_FROM_SOURCE.md#build-from-source)). Make sure that you are using the `challenge-2022` tag and not the `stable` branch for your installation.
 
-1. Install [Habitat-Lab](https://github.com/facebookresearch/habitat-lab/) - We have created the `habitat-challenge-2022` tag in our Github repo, which can be cloned using: 
+### PPO Starter Code
+TODO
+
+### DD-PPO Training Starter Code
+Evaluate a [Habitat Baselines config](https://github.com/facebookresearch/habitat-lab/tree/main/habitat_baselines/config/rearrange). In this example, we will evaluate a DD-PPO baseline from Habitat Lab.
+Follow these next steps to get the DD-PPO baseline running (skip to step 3 if you have completed step 5.b from the local evaluation section):
+
+1. Install Habitat-Sim via these instructions.
+
+1. Install [Habitat-Lab](https://github.com/facebookresearch/habitat-lab/) - We have created the `challenge-tasks` tag in our Github repo, which can be cloned using: 
     ```
-    git clone --branch challenge-2022 https://github.com/facebookresearch/habitat-lab.git
+    git clone --branch challenge-tasks https://github.com/facebookresearch/habitat-lab.git
     ``` 
     Also ensure that habitat-baselines is installed when installing Habitat-Lab by using `python setup.py develop --all` . You will find further information for installation in the Github repositories. 
 
-1. Download the episode dataset for HM3D ObjectNav from [link](https://dl.fbaipublicfiles.com/habitat/data/datasets/objectnav/hm3d/v1/objectnav_hm3d_v1.zip) and place it in the folder `habitat-challenge/habitat-challenge-data/data/datasets/objectnav/hm3d`.
-    ```bash
-    wget https://dl.fbaipublicfiles.com/habitat/data/datasets/objectnav/hm3d/v1/objectnav_hm3d_v1.zip -P habitat-challenge-data/objectgoal_hm3d
+1. Download the dataset `python -m habitat_sim.utils.datasets_download --uids rearrange_task_assets`
 
-    unzip habitat-challenge-data/objectgoal_hm3d/objectnav_hm3d_v1.zip -d habitat-challenge-data/objectgoal_hm3d
-    mv habitat-challenge-data/objectgoal_hm3d/objectnav_hm3d_v1/* habitat-challenge-data/objectgoal_hm3d
-    rm -r habitat-challenge-data/objectgoal_hm3d/objectnav_hm3d_v1*
-    ```
-
-    If placed correctly, you should see the train, val and val mini splits in the `habitat-challenge-data/objectgoal_hm3d/{train, val, val_mini}` folders respectively. 
+    If placed correctly, you should see the train, val and val mini splits in the `data/datasets/replica_cad/rearrange/v1/{train, val, minival}` folders respectively. 
 
 1. An example on how to train DD-PPO model can be found in [habitat-lab/habitat_baselines/rl/ddppo](https://github.com/facebookresearch/habitat-lab/tree/main/habitat_baselines/rl/ddppo). See the corresponding README in habitat-lab for how to adjust the various hyperparameters, save locations, visual encoders and other features.
+
+1. Follow this documentation for how to run DD-PPO in a single or multi-machine setup. 
 
     1. To run on a single machine use the following script from `habitat-lab` directory:
         ```bash
@@ -190,11 +150,11 @@ We have added a config in `configs/ddppo_objectnav.yaml` that includes a baselin
             --use_env \
             --nproc_per_node 1 \
             habitat_baselines/run.py \
-            --exp-config ../habitat-challenge/configs/ddppo_objectnav.yaml \
+            --exp-config ../habitat-challenge/configs/methods/ddppo_monolithic.yaml \
             --run-type train \
-            BASE_TASK_CONFIG_PATH ../habitat-challenge/configs/challenge_objectnav2022.local.rgbd.yaml \
-            TASK_CONFIG.DATASET.DATA_PATH ../habitat-challenge/habitat-challenge-data/objectgoal_hm3d/{split}/{split}.json.gz \
-            TASK_CONFIG.DATASET.SCENES_DIR ../habitat-challenge/habitat-challenge-data/data/scene_datasets/ \
+            BASE_TASK_CONFIG_PATH ../habitat-challenge/configs/rearrange.local.rgbd.yaml \
+            TASK_CONFIG.DATASET.DATA_PATH ../habitat-challenge/data/replica_cad/v1/{split}/rearrange.json.gz \
+            TASK_CONFIG.DATASET.SCENES_DIR ../habitat-challenge/data/replica_cad/ \
             TASK_CONFIG.DATASET.SPLIT 'train' \
             TENSORBOARD_DIR ./tb \
             CHECKPOINT_FOLDER ./checkpoints \
@@ -224,9 +184,9 @@ We have added a config in `configs/ddppo_objectnav.yaml` that includes a baselin
         srun python -u -m habitat_baselines.run \
             --exp-config ../habitat-challenge/configs/ddppo_objectnav.yaml \
             --run-type train \
-            BASE_TASK_CONFIG_PATH ../habitat-challenge/configs/challenge_objectnav2022.local.rgbd.yaml \
-            TASK_CONFIG.DATASET.DATA_PATH ../habitat-challenge/habitat-challenge-data/objectgoal_hm3d/{split}/{split}.json.gz \
-            TASK_CONFIG.DATASET.SCENES_DIR ../habitat-challenge/habitat-challenge-data/data/scene_datasets/ \
+            BASE_TASK_CONFIG_PATH ../habitat-challenge/configs/rearrange.local.rgbd.yaml \
+            TASK_CONFIG.DATASET.DATA_PATH ../habitat-challenge/data/replica_cad/v1/{split}/rearrange.json.gz \
+            TASK_CONFIG.DATASET.SCENES_DIR ../habitat-challenge/data/replica_cad/ \
             TASK_CONFIG.DATASET.SPLIT 'train' \
             TENSORBOARD_DIR ./tb \
             CHECKPOINT_FOLDER ./checkpoints \
@@ -235,8 +195,7 @@ We have added a config in `configs/ddppo_objectnav.yaml` that includes a baselin
 
     1. The preceding two scripts are based off ones found in the [habitat_baselines/ddppo](https://github.com/facebookresearch/habitat-lab/tree/main/habitat_baselines/rl/ddppo).
 
-1. The checkpoint specified by `$PATH_TO_CHECKPOINT` can evaluated using SPL and other measurements by running the following command:
-
+1. The checkpoint specified by `$PATH_TO_CHECKPOINT` can evaluated displaying videos and evaluation metrics:
     ```bash
     python -u -m habitat_baselines.run \
         --exp-config ../habitat-challenge/configs/ddppo_objectnav.yaml \
@@ -247,54 +206,48 @@ We have added a config in `configs/ddppo_objectnav.yaml` that includes a baselin
         EVAL_CKPT_PATH_DIR $PATH_TO_CHECKPOINT \
         TASK_CONFIG.DATASET.SPLIT val
     ```
-    The weights used for our DD-PPO Objectnav baseline for the Habitat-2022 challenge can be downloaded with the following command:
-    ```bash
-    wget https://dl.fbaipublicfiles.com/habitat/data/baselines/v1/ddppo_objectnav_habitat2022_challenge_baseline_v1.pth
-    ```
-
-1. We provide Dockerfiles ready to use with the DD-PPO baselines in `Objectnav_DDPPO_baseline.Dockerfile`. For the sake of completeness, we describe how you can make your own Dockerfile below. If you just want to test the baseline code, feel free to skip this bullet because  ```Objectnav_DDPPO_baseline.Dockerfile``` is ready to use.
-    1. You may want to modify the `Objectnav_DDPPO_baseline.Dockerfile` to include torchvision or other libraries. To install torchvision, ifcfg and tensorboard, add the following command to the Docker file:
+1. We provide Dockerfiles ready to use with the DD-PPO baselines in `hab2_DDPPO_baseline.Dockerfile`. For the sake of completeness, we describe how you can make your own Dockerfile below. If you just want to test the baseline code, feel free to skip this bullet because  `hab2_DDPPO_baseline.Dockerfile` is ready to use.
+    1. You may want to modify the `hab2_DDPPO_baseline.Dockerfile` to include torchvision or other libraries. To install torchvision, ifcfg and tensorboard, add the following command to the Docker file:
         ```dockerfile
         RUN /bin/bash -c ". activate habitat; pip install ifcfg torchvision tensorboard"
         ```
-    1. You change which ```agent.py``` and which ``submission.sh`` script is used in the Docker, modify the following lines and replace the first agent.py or submission.sh with your new files.:
+    1. You change which `agent.py` and which `submission.sh` script is used in the Docker, modify the following lines and replace the first agent.py or submission.sh with your new files.:
         ```dockerfile
         ADD agent.py agent.py
         ADD submission.sh submission.sh
         ```
-    1. Do not forget to add any other files you may need in the Docker, for example, we add the ```demo.ckpt.pth``` file which is the saved weights from the DD-PPO example code.
+    1. Do not forget to add any other files you may need in the Docker, for example, we add the `demo.ckpt.pth` file which is the saved weights from the DD-PPO example code.
 
-    1. Finally, modify the submission.sh script to run the appropriate command to test your agents. The scaffold for this code can be found ```agent.py``` and the DD-PPO specific agent can be found in ```ddppo_agents.py```. In this example, we only modify the final command of the ObjectNav docker: by adding the following args to submission.sh ```--model-path demo.ckpt.pth --input-type rgbd```. The default submission.sh script will pass these args to the python script. You may also replace the submission.sh.
+    1. Finally, modify the submission.sh script to run the appropriate command to test your agents. The scaffold for this code can be found `agent.py` and the DD-PPO specific agent can be found in `ddppo_agents.py`. In this example, we only modify the final command of the ObjectNav docker: by adding the following args to submission.sh `--model-path demo.ckpt.pth --input-type rgbd`. The default submission.sh script will pass these args to the python script. You may also replace the submission.sh.
         1. Please note that at this time, that habitat_baselines uses a slightly different config system, and the configs nodes for habitat are defined under TASK_CONFIG which is loaded at runtime from BASE_TASK_CONFIG_PATH. We manually overwrite this config using the opts args in our agent.py file.
 
 1. Once your Dockerfile and other code is modified to your satisfaction, build it with the following command.
     ```bash
     docker build . --file Objectnav_DDPPO_baseline.Dockerfile -t objectnav_submission
     ```
-1. To test locally simple run the ```test_locally_objectnav_rgbd.sh``` script. If the docker runs your code without errors, it should work on Eval-AI. The instructions for submitting the Docker to EvalAI are listed above.
-1. Happy hacking!
+1. To test locally simple run the `test_locally_objectnav_rgbd.sh` script. If the docker runs your code without errors, it should work on Eval-AI. The instructions for submitting the Docker to EvalAI are listed above.
+
+### Hierarchical RL Starter Code
+TODO
+
 
 ## Citing Habitat Challenge 2022
 Please cite [the following paper](https://arxiv.org/abs/2006.13171) for details about the 2022 ObjectNav challenge:
 ```
-@misc{habitatchallenge2022,
-  title         =     Habitat Challenge 2022,
-  author        =     {Karmesh Yadav and Santhosh Kumar Ramakrishnan and Aaron Gokaslan and Oleksandr Maksymets and Rishabh Jain and Ram Ramrakhya and Angel X Chang and Alexander Clegg and Manolis Savva and Eric Undersander and Devendra Singh Chaplot and Dhruv Batra},
-  howpublished  =     {\url{https://aihabitat.org/challenge/2022/}},
+@misc{habitatrearrangechallenge2022,
+  title         =     Habitat Rearrangement Challenge 2022,
+  author        =     {Andrew Szot, Karmesh Yadav, Alex Clegg, Vincent-Pierre Berges, Aaron Gokaslan, Angel Chang, Manolis Savva, Zsolt Kira, Dhruv Batra},
+  howpublished  =     {\url{https://aihabitat.org/challenge/rearrange_2022}},
   year          =     {2022}
 }
 ```
 
 ## Acknowledgments
 
-The Habitat challenge would not have been possible without the infrastructure and support of [EvalAI](https://evalai.cloudcv.org/) team. We also thank the team behind [Habitat-Matterport3D](https://aihabitat.org/datasets/hm3d/) datasets.
+The Habitat challenge would not have been possible without the infrastructure and support of [EvalAI](https://evalai.cloudcv.org/) team.
 
 ## References
 
 [1] [Habitat: A Platform for Embodied AI Research](https://arxiv.org/abs/1904.01201). Manolis Savva\*, Abhishek Kadian\*, Oleksandr Maksymets\*, Yili Zhao, Erik Wijmans, Bhavana Jain, Julian Straub, Jia Liu, Vladlen Koltun, Jitendra Malik, Devi Parikh, Dhruv Batra. IEEE/CVF International Conference on Computer Vision (ICCV), 2019.
 
-[2] [Habitat-Matterport 3D Dataset (HM3D): 1000 Large-scale 3D Environments for Embodied AI](https://arxiv.org/abs/2109.08238) Santhosh K. Ramakrishnan, Aaron Gokaslan, Erik Wijmans, Oleksandr Maksymets, Alex Clegg, John Turner, Eric Undersander, Wojciech Galuba, Andrew Westbury, Angel X. Chang, Manolis Savva, Yili Zhao, Dhruv Batra. arXiv:2109.08238, 2021.
 
-[3] [Object Goal Navigation using Goal-Oriented Semantic Exploration](https://arxiv.org/abs/2007.00643) Devendra Singh Chaplot, Dhiraj Gandhi, Abhinav Gupta, Ruslan Salakhutdinov. NeurIPS, 2020.
-
-[4] [On evaluation of embodied navigation agents](https://arxiv.org/abs/1807.06757). Peter Anderson, Angel Chang, Devendra Singh Chaplot, Alexey Dosovitskiy, Saurabh Gupta, Vladlen Koltun, Jana Kosecka, Jitendra Malik, Roozbeh Mottaghi, Manolis Savva, Amir R. Zamir. arXiv:1807.06757, 2018.
