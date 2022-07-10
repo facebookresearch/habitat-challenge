@@ -1,6 +1,6 @@
 GYM:
     CLASS_NAME: RearrangeRLEnv
-    AUTO_NAME: Rearrange
+    AUTO_NAME: RearrangeEasy
     OBS_KEYS:
     - robot_head_depth
     - obj_start_sensor
@@ -10,11 +10,11 @@ GYM:
     - joint
     - is_holding
 ENVIRONMENT:
-    MAX_EPISODE_STEPS: 1000
+    MAX_EPISODE_STEPS: 500
 DATASET:
     TYPE: RearrangeDataset-v0
-    SPLIT: minival
-    DATA_PATH: data/datasets/replica_cad/rearrange/v1/{split}/rearrange.json.gz
+    SPLIT: train
+    DATA_PATH: data/datasets/replica_cad/rearrange/v1/{split}/rearrange_easy.json.gz
     SCENES_DIR: data/replica_cad/
 TASK:
     TYPE: RearrangeCompositeTask-v0
@@ -31,7 +31,7 @@ TASK:
     BASE_NOISE: 0.05
     EASY_INIT: false
     TASK_SPEC_BASE_PATH: configs/pddl/
-    TASK_SPEC: rearrange
+    TASK_SPEC: rearrange_easy
     PDDL_DOMAIN_DEF: replica_cad
     OBJ_SUCC_THRESH: 0.3
     ART_SUCC_THRESH: 0.15
@@ -60,8 +60,7 @@ TASK:
     - TARGET_GOAL_GPS_COMPASS_SENSOR
     FORCE_TERMINATE:
         TYPE: ForceTerminate
-        MAX_ACCUM_FORCE: 100_000.0
-        MAX_INSTANT_FORCE: 10_000.0
+        MAX_ACCUM_FORCE: -1.0
     ROBOT_FORCE:
         TYPE: RobotForce
         MIN_FORCE: 20.0

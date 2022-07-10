@@ -114,9 +114,6 @@ Note: Your agent will be evaluated on 1000 episodes and will have a total availa
     ```
     In case you face any issues related to the `GLIBCXX` version after conda installation, please uninstall this conda package and install the habitat-sim repository from source (more information [here](https://github.com/facebookresearch/habitat-sim/blob/main/BUILD_FROM_SOURCE.md#build-from-source)). Make sure that you are using the `challenge-2022` tag and not the `stable` branch for your installation.
 
-### PPO Starter Code
-TODO
-
 ### DD-PPO Training Starter Code
 Evaluate a [Habitat Baselines config](https://github.com/facebookresearch/habitat-lab/tree/main/habitat_baselines/config/rearrange). In this example, we will evaluate a DD-PPO baseline from Habitat Lab.
 Follow these next steps to get the DD-PPO baseline running (skip to step 3 if you have completed step 5.b from the local evaluation section):
@@ -135,13 +132,12 @@ Follow these next steps to get the DD-PPO baseline running (skip to step 3 if yo
 
 1. An example on how to train DD-PPO model can be found in [habitat-lab/habitat_baselines/rl/ddppo](https://github.com/facebookresearch/habitat-lab/tree/main/habitat_baselines/rl/ddppo). See the corresponding README in habitat-lab for how to adjust the various hyperparameters, save locations, visual encoders and other features.
 
-1. Follow this documentation for how to run DD-PPO in a single or multi-machine setup. 
+1. Follow this documentation for how to run DD-PPO in a single or multi-machine setup. See [habitat_baselines/ddppo](https://github.com/facebookresearch/habitat-lab/tree/main/habitat_baselines/rl/ddppo) for more information.
 
     1. To run on a single machine use the following script from `habitat-lab` directory:
         ```bash
         #/bin/bash
 
-        export GLOG_minloglevel=2
         export MAGNUM_LOG=quiet
         export HABITAT_SIM_LOG=quiet
 
@@ -152,13 +148,15 @@ Follow these next steps to get the DD-PPO baseline running (skip to step 3 if yo
             habitat_baselines/run.py \
             --exp-config ../habitat-challenge/configs/methods/ddppo_monolithic.yaml \
             --run-type train \
-            BASE_TASK_CONFIG_PATH ../habitat-challenge/configs/rearrange.local.rgbd.yaml \
-            TASK_CONFIG.DATASET.DATA_PATH ../habitat-challenge/data/replica_cad/v1/{split}/rearrange.json.gz \
+            BASE_TASK_CONFIG_PATH ../habitat-challenge/configs/tasks/rearrange.local.rgbd.yaml \
+            TASK_CONFIG.DATASET.DATA_PATH ../habitat-challenge/data/datasets/replica_cad/rearrange/v1/{split}/rearrange.json.gz \
             TASK_CONFIG.DATASET.SCENES_DIR ../habitat-challenge/data/replica_cad/ \
             TASK_CONFIG.DATASET.SPLIT 'train' \
+            TASK_CONFIG.TASK.TASK_SPEC_BASE_PATH ../habitat-challenge/configs/pddl/ \
             TENSORBOARD_DIR ./tb \
             CHECKPOINT_FOLDER ./checkpoints \
             LOG_FILE ./train.log
+
         ```
     1. There is also an example of running the code distributed on a cluster with SLURM. While this is not necessary, if you have access to a cluster, it can significantly speed up training. To run on multiple machines in a SLURM cluster run the following script: change `#SBATCH --nodes $NUM_OF_MACHINES` to the number of machines and `#SBATCH --ntasks-per-node $NUM_OF_GPUS` and `$SBATCH --gres $NUM_OF_GPUS` to specify the number of GPUS to use per requested machine.
         ```bash
@@ -175,37 +173,26 @@ Follow these next steps to get the DD-PPO baseline running (skip to step 3 if yo
         #SBATCH --signal=USR1@600
         #SBATCH --partition=dev
 
-        export GLOG_minloglevel=2
         export MAGNUM_LOG=quiet
+        export HABITAT_SIM_LOG=quiet
 
         export MAIN_ADDR=$(srun --ntasks=1 hostname 2>&1 | tail -n1)
 
         set -x
         srun python -u -m habitat_baselines.run \
-            --exp-config ../habitat-challenge/configs/ddppo_objectnav.yaml \
+            habitat_baselines/run.py \
+            --exp-config ../habitat-challenge/configs/methods/ddppo_monolithic.yaml \
             --run-type train \
-            BASE_TASK_CONFIG_PATH ../habitat-challenge/configs/rearrange.local.rgbd.yaml \
-            TASK_CONFIG.DATASET.DATA_PATH ../habitat-challenge/data/replica_cad/v1/{split}/rearrange.json.gz \
+            BASE_TASK_CONFIG_PATH ../habitat-challenge/configs/tasks/rearrange.local.rgbd.yaml \
+            TASK_CONFIG.DATASET.DATA_PATH ../habitat-challenge/data/datasets/replica_cad/rearrange/v1/{split}/rearrange.json.gz \
             TASK_CONFIG.DATASET.SCENES_DIR ../habitat-challenge/data/replica_cad/ \
             TASK_CONFIG.DATASET.SPLIT 'train' \
+            TASK_CONFIG.TASK.TASK_SPEC_BASE_PATH ../habitat-challenge/configs/pddl/ \
             TENSORBOARD_DIR ./tb \
             CHECKPOINT_FOLDER ./checkpoints \
             LOG_FILE ./train.log
         ```
 
-    1. The preceding two scripts are based off ones found in the [habitat_baselines/ddppo](https://github.com/facebookresearch/habitat-lab/tree/main/habitat_baselines/rl/ddppo).
-
-1. The checkpoint specified by `$PATH_TO_CHECKPOINT` can evaluated displaying videos and evaluation metrics:
-    ```bash
-    python -u -m habitat_baselines.run \
-        --exp-config ../habitat-challenge/configs/ddppo_objectnav.yaml \
-        --run-type eval \
-        BASE_TASK_CONFIG_PATH ../habitat-challenge/configs/challenge_objectnav2022.local.rgbd.yaml \
-        TASK_CONFIG.DATASET.DATA_PATH ../habitat-challenge/habitat-challenge-data/objectgoal_hm3d/{split}/{split}.json.gz \
-        TASK_CONFIG.DATASET.SCENES_DIR ../habitat-challenge/habitat-challenge-data/data/scene_datasets/ \
-        EVAL_CKPT_PATH_DIR $PATH_TO_CHECKPOINT \
-        TASK_CONFIG.DATASET.SPLIT val
-    ```
 1. We provide Dockerfiles ready to use with the DD-PPO baselines in `hab2_DDPPO_baseline.Dockerfile`. For the sake of completeness, we describe how you can make your own Dockerfile below. If you just want to test the baseline code, feel free to skip this bullet because  `hab2_DDPPO_baseline.Dockerfile` is ready to use.
     1. You may want to modify the `hab2_DDPPO_baseline.Dockerfile` to include torchvision or other libraries. To install torchvision, ifcfg and tensorboard, add the following command to the Docker file:
         ```dockerfile
