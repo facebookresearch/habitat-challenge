@@ -1,6 +1,6 @@
 GYM:
     CLASS_NAME: RearrangeRLEnv
-    AUTO_NAME: Rearrange
+    AUTO_NAME: RearrangeChallenge
     OBS_KEYS:
     - robot_head_depth
     - obj_start_sensor
@@ -9,6 +9,7 @@ GYM:
     - obj_goal_gps_compass
     - joint
     - is_holding
+    - relative_resting_position
 ENVIRONMENT:
     MAX_EPISODE_STEPS: 1000
 DATASET:
@@ -43,14 +44,8 @@ TASK:
         TYPE: GoalSensor
         GOAL_FORMAT: CARTESIAN
         DIMENSIONALITY: 3
-    JOINT_SENSOR:
-        TYPE: JointSensor
-        DIMENSIONALITY: 7
-    END_EFFECTOR_SENSOR:
-        TYPE: EEPositionSensor
-    IS_HOLDING_SENSOR:
-        TYPE: IsHoldingSensor
     SENSORS:
+    - RELATIVE_RESTING_POS_SENSOR
     - TARGET_START_SENSOR
     - GOAL_SENSOR
     - JOINT_SENSOR
@@ -143,8 +138,6 @@ SIMULATOR:
     DEBUG_RENDER_GOAL: true
     AGENTS:
     - AGENT_0
-    CONCUR_RENDER: true
-    AUTO_SLEEP: true
     AGENT_0:
         HEIGHT: 1.5
         RADIUS: 0.3

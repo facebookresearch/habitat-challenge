@@ -215,7 +215,23 @@ Follow these next steps to get the DD-PPO baseline running (skip to step 3 if yo
 1. To test locally simple run the `test_locally_objectnav_rgbd.sh` script. If the docker runs your code without errors, it should work on Eval-AI. The instructions for submitting the Docker to EvalAI are listed above.
 
 ### Hierarchical RL Starter Code
-TODO
+First, you will need to train individual skill policies with RL. In this example we will approach the `rearrange-easy` task by training a Pick, Place, and Navigation policy and then plug them into a hard-coded high-level controller.
+1. From the Habitat Lab directory run `python -m habitat_sim.utils.datasets_download --uids rearrange_task_assets` to ensure the task assets are downloaded for Habitat Baselines.
+1. Train the Pick skill. From the Habitat Lab directory, run 
+```bash
+python -u -m torch.distributed.launch \
+    --use_env \
+    --nproc_per_node 1 \
+    habitat_baselines/run.py \
+    --exp-config habitat_baselines/config/rearrange/ddppo_pick.yaml \
+    --run-type train \
+    TENSORBOARD_DIR ./pick_tb/ \
+    CHECKPOINT_FOLDER ./pick_checkpoints/ \
+    LOG_FILE ./pick_train.log
+```
+1. Train the Place skill. Use the exact same command as the above, but replace every instance of "pick" with "place".
+1. Train the Navigation skill. Use the exact same command as the above, but replace every instance of "pick" with "nav_to_obj".
+1. Copy the checkpoints for the different skills to the `data/models` directory in the Habitat Challenge directory. There should now be three files `data/models/[nav,pick,place].pth`.
 
 
 ## Citing Habitat Challenge 2022

@@ -14,8 +14,6 @@ TEST_EPISODE_COUNT: -1
 EVAL_CKPT_PATH_DIR: "data/new_checkpoints"
 NUM_ENVIRONMENTS: 1
 WRITER_TYPE: 'tb'
-# Visual sensors to include
-SENSORS: ["HEAD_DEPTH_SENSOR"]
 CHECKPOINT_FOLDER: "data/new_checkpoints"
 NUM_UPDATES: -1
 TOTAL_NUM_STEPS: 1.0e8
@@ -32,6 +30,11 @@ RL:
       name: "HierarchicalPolicy"
       high_level_policy:
         name: "GtHighLevelPolicy"
+      OBS_TRANSFORMS:
+        ENABLED_TRANSFORMS: ['AddVirtualKeys']
+        ADD_VIRTUAL_KEYS:
+          "nav_to_skill": 8
+          "object_to_agent_gps_compass": 2
       DEFINED_SKILLS:
         NN_OPEN_CAB:
           skill_name: "ArtObjSkillPolicy"
@@ -151,6 +154,6 @@ RL:
     reset_critic: False
 
     # Model parameters
-    backbone: resnet50
+    backbone: resnet18
     rnn_type: LSTM
     num_recurrent_layers: 2

@@ -109,7 +109,7 @@ class PPOAgent(Agent):
     def reset(self) -> None:
         self.test_recurrent_hidden_states = torch.zeros(
             1,
-            self.actor_critic.net.num_recurrent_layers,
+            self.actor_critic.num_recurrent_layers,
             self.hidden_size,
             device=self.device,
         )

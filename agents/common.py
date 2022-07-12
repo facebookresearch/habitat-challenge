@@ -72,10 +72,16 @@ def get_obs_space():
             "joint": spaces.Box(
                 low=np.finfo(np.float32).min,
                 high=np.finfo(np.float32).max,
-                shape=(3,),
+                shape=(7,),
                 dtype=np.float32,
             ),
             "is_holding": spaces.Box(
+                low=np.finfo(np.float32).min,
+                high=np.finfo(np.float32).max,
+                shape=(1,),
+                dtype=np.float32,
+            ),
+            "relative_resting_position": spaces.Box(
                 low=np.finfo(np.float32).min,
                 high=np.finfo(np.float32).max,
                 shape=(3,),
