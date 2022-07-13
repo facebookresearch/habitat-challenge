@@ -108,16 +108,16 @@ Note: Your agent will be evaluated on 1000 episodes and will have a total availa
     conda activate habitat
     ```
 
-1. Install Habitat-Sim using our custom Conda package for habitat challenge 2022 with: 
+1. Install Habitat-Sim using our custom Conda package for habitat challenge 2022 with:  (THIS WILL CHANGE TO CHALLENGE TAGGED VERSION SOON)
     ```
-    conda install habitat-sim withbullet headless -c aihabitat -c conda-forge
+    conda install habitat-sim withbullet  headless -c conda-forge -c aihabitat-nightly
     ```
     In case you face any issues related to the `GLIBCXX` version after conda installation, please uninstall this conda package and install the habitat-sim repository from source (more information [here](https://github.com/facebookresearch/habitat-sim/blob/main/BUILD_FROM_SOURCE.md#build-from-source)). Make sure that you are using the `challenge-2022` tag and not the `stable` branch for your installation. If you are on MacOS, exclude the `headless` flag.
 
 ### DD-PPO Training Starter Code
 In this example, we will evaluate a end-to-end policy trained with DD-PPO. Follow these next steps to train and evaluate the DD-PPO baseline.
 
-1. Install Habitat-Sim via (these instructions)[https://github.com/facebookresearch/habitat-challenge/tree/rearrangement-challenge-2022#installing-habitat-sim].
+1. Install Habitat-Sim via [these instructions](https://github.com/facebookresearch/habitat-challenge/tree/rearrangement-challenge-2022#installing-habitat-sim).
 
 1. Install [Habitat-Lab](https://github.com/facebookresearch/habitat-lab/) - Use the `challenge_tasks` branch in our Github repo, which can be cloned using: 
     ```
@@ -192,7 +192,7 @@ In this example, we will evaluate a end-to-end policy trained with DD-PPO. Follo
 
 1. More instructions on how to train the DD-PPO model can be found in [habitat-lab/habitat_baselines/rl/ddppo](https://github.com/facebookresearch/habitat-lab/tree/main/habitat_baselines/rl/ddppo). See the corresponding README in habitat-lab for how to adjust the various hyperparameters, save locations, visual encoders and other features.
 
-1. Evaluate on the minival dataset for the `rearrange_easy` task from the command line via 
+1. Evaluate on the minival dataset for the `rearrange_easy` task from the command line via. First enter the `habitat-challenge` directory. Ensure, you have the datasets installed in this directory as well. If not, run `python -m habitat_sim.utils.datasets_download --uids rearrange_task_assets`.
     ```bash
     CHALLENGE_CONFIG_FILE=configs/tasks/rearrange_easy.local.rgbd.yaml python agents/habitat_baselines_agent.py --evaluation local --input-type depth --cfg-path configs/methods/ddppo_monolithic.yaml
     ```
@@ -239,9 +239,9 @@ First, you will need to train individual skill policies with RL. In this example
     1. Train the Navigation skill. Use the exact same command as the above, but replace every instance of "pick" with "nav_to_obj".
     1. Copy the checkpoints for the different skills to the `data/models` directory in the Habitat Challenge directory. There should now be three files `data/models/[nav,pick,place].pth`.
 
-1. Use the pre-trained skills located at [this Google Drive link.](https://drive.google.com/drive/folders/1F-T5zJvz-EIzh9waDvMnuwCmkxztvaFG?usp=sharing)
+1. Instead of training the skills, you can also use the pre-trained skills located at [this Google Drive link.](https://drive.google.com/drive/folders/1F-T5zJvz-EIzh9waDvMnuwCmkxztvaFG?usp=sharing)
 
-1. Evaluate on the minival dataset for the `rearrange_easy` task from the command line via 
+1. Evaluate on the minival dataset for the `rearrange_easy` task from the command line via. First enter the `habitat-challenge` directory. Ensure, you have the datasets installed in this directory as well. If not, run `python -m habitat_sim.utils.datasets_download --uids rearrange_task_assets`.
     ```bash
     CHALLENGE_CONFIG_FILE=configs/tasks/rearrange_easy.local.rgbd.yaml python agents/habitat_baselines_agent.py --evaluation local --input-type depth --cfg-path configs/methods/tp_srl.yaml
     ```
