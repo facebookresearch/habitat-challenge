@@ -60,7 +60,7 @@ Note: only supports Linux; no Windows or MacOS.
     docker system prune -a
     ```
 
-1. Dataset: Install [Habitat-Sim](https://github.com/facebookresearch/habitat-sim/) `Habitat-Sim` via these instructions and download the dataset with `python -m habitat_sim.utils.datasets_download --uids rearrange_task_assets`.
+1. Dataset: Install [Habitat-Sim](https://github.com/facebookresearch/habitat-sim/) `Habitat-Sim` via [these instructions](https://github.com/facebookresearch/habitat-challenge/tree/rearrangement-challenge-2022#installing-habitat-sim) and download the dataset with `python -m habitat_sim.utils.datasets_download --uids rearrange_task_assets`.
 
 1. Evaluate your docker container locally:
     ```bash
@@ -116,21 +116,19 @@ Note: Your agent will be evaluated on 1000 episodes and will have a total availa
 
 ### DD-PPO Training Starter Code
 Evaluate a [Habitat Baselines config](https://github.com/facebookresearch/habitat-lab/tree/main/habitat_baselines/config/rearrange). In this example, we will evaluate a DD-PPO baseline from Habitat Lab.
-Follow these next steps to get the DD-PPO baseline running (skip to step 3 if you have completed step 5.b from the local evaluation section):
+Follow these next steps to get the DD-PPO baseline running.
 
-1. Install Habitat-Sim via these instructions.
+1. Install Habitat-Sim via (these instructions)[https://github.com/facebookresearch/habitat-challenge/tree/rearrangement-challenge-2022#installing-habitat-sim].
 
-1. Install [Habitat-Lab](https://github.com/facebookresearch/habitat-lab/) - We have created the `challenge-tasks` tag in our Github repo, which can be cloned using: 
+1. Install [Habitat-Lab](https://github.com/facebookresearch/habitat-lab/) - We have created the `challenge_tasks` tag in our Github repo, which can be cloned using: 
     ```
-    git clone --branch challenge-tasks https://github.com/facebookresearch/habitat-lab.git
+    git clone --branch challenge_tasks https://github.com/facebookresearch/habitat-lab.git
     ``` 
     Also ensure that habitat-baselines is installed when installing Habitat-Lab by using `python setup.py develop --all` . You will find further information for installation in the Github repositories. 
 
 1. Download the dataset `python -m habitat_sim.utils.datasets_download --uids rearrange_task_assets`
 
     If placed correctly, you should see the train, val and val mini splits in the `data/datasets/replica_cad/rearrange/v1/{train, val, minival}` folders respectively. 
-
-1. An example on how to train DD-PPO model can be found in [habitat-lab/habitat_baselines/rl/ddppo](https://github.com/facebookresearch/habitat-lab/tree/main/habitat_baselines/rl/ddppo). See the corresponding README in habitat-lab for how to adjust the various hyperparameters, save locations, visual encoders and other features.
 
 1. Follow this documentation for how to run DD-PPO in a single or multi-machine setup. See [habitat_baselines/ddppo](https://github.com/facebookresearch/habitat-lab/tree/main/habitat_baselines/rl/ddppo) for more information.
 
@@ -193,6 +191,8 @@ Follow these next steps to get the DD-PPO baseline running (skip to step 3 if yo
             LOG_FILE ./train.log
         ```
 
+1. An example on how to train DD-PPO model can be found in [habitat-lab/habitat_baselines/rl/ddppo](https://github.com/facebookresearch/habitat-lab/tree/main/habitat_baselines/rl/ddppo). See the corresponding README in habitat-lab for how to adjust the various hyperparameters, save locations, visual encoders and other features.
+
 1. We provide Dockerfiles ready to use with the DD-PPO baselines in `hab2_DDPPO_baseline.Dockerfile`. For the sake of completeness, we describe how you can make your own Dockerfile below. If you just want to test the baseline code, feel free to skip this bullet because  `hab2_DDPPO_baseline.Dockerfile` is ready to use.
     1. You may want to modify the `hab2_DDPPO_baseline.Dockerfile` to include torchvision or other libraries. To install torchvision, ifcfg and tensorboard, add the following command to the Docker file:
         ```dockerfile
@@ -212,11 +212,11 @@ Follow these next steps to get the DD-PPO baseline running (skip to step 3 if yo
     ```bash
     docker build . --file Objectnav_DDPPO_baseline.Dockerfile -t objectnav_submission
     ```
-1. To test locally simple run the `test_locally_objectnav_rgbd.sh` script. If the docker runs your code without errors, it should work on Eval-AI. The instructions for submitting the Docker to EvalAI are listed above.
+1. To test locally simple run the `scripts/test_local.sh` script. If the docker runs your code without errors, it should work on Eval-AI. The instructions for submitting the Docker to EvalAI are listed above.
 
 ### Hierarchical RL Starter Code
-First, you will need to train individual skill policies with RL. In this example we will approach the `rearrange-easy` task by training a Pick, Place, and Navigation policy and then plug them into a hard-coded high-level controller.
-1. From the Habitat Lab directory run `python -m habitat_sim.utils.datasets_download --uids rearrange_task_assets` to ensure the task assets are downloaded for Habitat Baselines.
+First, you will need to train individual skill policies with RL. In this example we will approach the `rearrange_easy` task by training a Pick, Place, and Navigation policy and then plug them into a hard-coded high-level controller.
+1. Follow steps 1,2,3 of [the DD-PPO section](https://github.com/facebookresearch/habitat-challenge/tree/rearrangement-challenge-2022#dd-ppo-training-starter-code) to install Habitat-Sim and Habitat Lab and download the datasets.
 1. Train the Pick skill. From the Habitat Lab directory, run 
 ```bash
 python -u -m torch.distributed.launch \
