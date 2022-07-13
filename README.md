@@ -115,7 +115,7 @@ Note: Your agent will be evaluated on 1000 episodes and will have a total availa
     In case you face any issues related to the `GLIBCXX` version after conda installation, please uninstall this conda package and install the habitat-sim repository from source (more information [here](https://github.com/facebookresearch/habitat-sim/blob/main/BUILD_FROM_SOURCE.md#build-from-source)). Make sure that you are using the `challenge-2022` tag and not the `stable` branch for your installation. If you are on MacOS, exclude the `headless` flag.
 
 ### DD-PPO Training Starter Code
-In this example, we will evaluate a end-to-end policy trained with DD-PPO. Follow these next steps to train and evaluate the DD-PPO baseline.
+In this example, we will evaluate an end-to-end policy trained with DD-PPO. Follow these next steps to train and evaluate the DD-PPO baseline.
 
 1. Install Habitat-Sim via [these instructions](https://github.com/facebookresearch/habitat-challenge/tree/rearrangement-challenge-2022#installing-habitat-sim).
 
