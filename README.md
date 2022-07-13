@@ -110,25 +110,24 @@ Note: Your agent will be evaluated on 1000 episodes and will have a total availa
 
 1. Install Habitat-Sim using our custom Conda package for habitat challenge 2022 with: 
     ```
-    conda install habitat-sim-challenge-2022 -c conda-forge -c aihabitat
+    conda install habitat-sim withbullet headless -c aihabitat -c conda-forge
     ```
-    In case you face any issues related to the `GLIBCXX` version after conda installation, please uninstall this conda package and install the habitat-sim repository from source (more information [here](https://github.com/facebookresearch/habitat-sim/blob/main/BUILD_FROM_SOURCE.md#build-from-source)). Make sure that you are using the `challenge-2022` tag and not the `stable` branch for your installation.
+    In case you face any issues related to the `GLIBCXX` version after conda installation, please uninstall this conda package and install the habitat-sim repository from source (more information [here](https://github.com/facebookresearch/habitat-sim/blob/main/BUILD_FROM_SOURCE.md#build-from-source)). Make sure that you are using the `challenge-2022` tag and not the `stable` branch for your installation. If you are on MacOS, exclude the `headless` flag.
 
 ### DD-PPO Training Starter Code
-Evaluate a [Habitat Baselines config](https://github.com/facebookresearch/habitat-lab/tree/main/habitat_baselines/config/rearrange). In this example, we will evaluate a DD-PPO baseline from Habitat Lab.
-Follow these next steps to get the DD-PPO baseline running.
+In this example, we will evaluate a end-to-end policy trained with DD-PPO. Follow these next steps to train and evaluate the DD-PPO baseline.
 
 1. Install Habitat-Sim via (these instructions)[https://github.com/facebookresearch/habitat-challenge/tree/rearrangement-challenge-2022#installing-habitat-sim].
 
-1. Install [Habitat-Lab](https://github.com/facebookresearch/habitat-lab/) - We have created the `challenge_tasks` tag in our Github repo, which can be cloned using: 
+1. Install [Habitat-Lab](https://github.com/facebookresearch/habitat-lab/) - Use the `challenge_tasks` branch in our Github repo, which can be cloned using: 
     ```
     git clone --branch challenge_tasks https://github.com/facebookresearch/habitat-lab.git
     ``` 
-    Also ensure that habitat-baselines is installed when installing Habitat-Lab by using `python setup.py develop --all` . You will find further information for installation in the Github repositories. 
+    Install Habitat Lab along with the included RL trainer code by first entering the `habitat-lab` directory and then running `pip install -r requirements.txt && python setup.py develop --all`. 
 
-1. Download the dataset `python -m habitat_sim.utils.datasets_download --uids rearrange_task_assets`
+1. Download the Challenge dataset by running `python -m habitat_sim.utils.datasets_download --uids rearrange_task_assets` from the `habitat-lab` folder.
 
-    If placed correctly, you should see the train, val and val mini splits in the `data/datasets/replica_cad/rearrange/v1/{train, val, minival}` folders respectively. 
+    If this step was successful, you should see the train, val and minival splits in the `data/datasets/replica_cad/rearrange/v1/{train, val, minival}` folders respectively. 
 
 1. Follow this documentation for how to run DD-PPO in a single or multi-machine setup. See [habitat_baselines/ddppo](https://github.com/facebookresearch/habitat-lab/tree/main/habitat_baselines/rl/ddppo) for more information.
 
@@ -156,7 +155,7 @@ Follow these next steps to get the DD-PPO baseline running.
             LOG_FILE ./train.log
 
         ```
-    1. There is also an example of running the code distributed on a cluster with SLURM. While this is not necessary, if you have access to a cluster, it can significantly speed up training. To run on multiple machines in a SLURM cluster run the following script: change `#SBATCH --nodes $NUM_OF_MACHINES` to the number of machines and `#SBATCH --ntasks-per-node $NUM_OF_GPUS` and `$SBATCH --gres $NUM_OF_GPUS` to specify the number of GPUS to use per requested machine.
+    1. To run on a cluster with SLURM using distributed training run the following script. While this is not necessary, if you have access to a cluster, it can significantly speed up training. To run on multiple machines in a SLURM cluster run the following script: change `#SBATCH --nodes $NUM_OF_MACHINES` to the number of machines and `#SBATCH --ntasks-per-node $NUM_OF_GPUS` and `$SBATCH --gres $NUM_OF_GPUS` to specify the number of GPUS to use per requested machine.
         ```bash
         #!/bin/bash
         #SBATCH --job-name=ddppo
@@ -191,7 +190,12 @@ Follow these next steps to get the DD-PPO baseline running.
             LOG_FILE ./train.log
         ```
 
-1. An example on how to train DD-PPO model can be found in [habitat-lab/habitat_baselines/rl/ddppo](https://github.com/facebookresearch/habitat-lab/tree/main/habitat_baselines/rl/ddppo). See the corresponding README in habitat-lab for how to adjust the various hyperparameters, save locations, visual encoders and other features.
+1. More instructions on how to train the DD-PPO model can be found in [habitat-lab/habitat_baselines/rl/ddppo](https://github.com/facebookresearch/habitat-lab/tree/main/habitat_baselines/rl/ddppo). See the corresponding README in habitat-lab for how to adjust the various hyperparameters, save locations, visual encoders and other features.
+
+1. Evaluate on the minival dataset for the `rearrange_easy` task from the command line via 
+    ```bash
+    CHALLENGE_CONFIG_FILE=configs/tasks/rearrange_easy.local.rgbd.yaml python agents/habitat_baselines_agent.py --evaluation local --input-type depth --cfg-path configs/methods/ddppo_monolithic.yaml
+    ```
 
 1. We provide Dockerfiles ready to use with the DD-PPO baselines in `hab2_DDPPO_baseline.Dockerfile`. For the sake of completeness, we describe how you can make your own Dockerfile below. If you just want to test the baseline code, feel free to skip this bullet because  `hab2_DDPPO_baseline.Dockerfile` is ready to use.
     1. You may want to modify the `hab2_DDPPO_baseline.Dockerfile` to include torchvision or other libraries. To install torchvision, ifcfg and tensorboard, add the following command to the Docker file:
@@ -216,22 +220,31 @@ Follow these next steps to get the DD-PPO baseline running.
 
 ### Hierarchical RL Starter Code
 First, you will need to train individual skill policies with RL. In this example we will approach the `rearrange_easy` task by training a Pick, Place, and Navigation policy and then plug them into a hard-coded high-level controller.
-1. Follow steps 1,2,3 of [the DD-PPO section](https://github.com/facebookresearch/habitat-challenge/tree/rearrangement-challenge-2022#dd-ppo-training-starter-code) to install Habitat-Sim and Habitat Lab and download the datasets.
-1. Train the Pick skill. From the Habitat Lab directory, run 
-```bash
-python -u -m torch.distributed.launch \
-    --use_env \
-    --nproc_per_node 1 \
-    habitat_baselines/run.py \
-    --exp-config habitat_baselines/config/rearrange/ddppo_pick.yaml \
-    --run-type train \
-    TENSORBOARD_DIR ./pick_tb/ \
-    CHECKPOINT_FOLDER ./pick_checkpoints/ \
-    LOG_FILE ./pick_train.log
-```
-1. Train the Place skill. Use the exact same command as the above, but replace every instance of "pick" with "place".
-1. Train the Navigation skill. Use the exact same command as the above, but replace every instance of "pick" with "nav_to_obj".
-1. Copy the checkpoints for the different skills to the `data/models` directory in the Habitat Challenge directory. There should now be three files `data/models/[nav,pick,place].pth`.
+1. Follow steps 1,2,3 of [the DD-PPO section](https://github.com/facebookresearch/habitat-challenge/tree/rearrangement-challenge-2022#dd-ppo-training-starter-code) to install Habitat-Sim, install Habitat-Lab, and download the datasets.
+1. Steps to train the skills from scratch:
+
+    1. Train the Pick skill. From the Habitat Lab directory, run 
+    ```bash
+    python -u -m torch.distributed.launch \
+        --use_env \
+        --nproc_per_node 1 \
+        habitat_baselines/run.py \
+        --exp-config habitat_baselines/config/rearrange/ddppo_pick.yaml \
+        --run-type train \
+        TENSORBOARD_DIR ./pick_tb/ \
+        CHECKPOINT_FOLDER ./pick_checkpoints/ \
+        LOG_FILE ./pick_train.log
+    ```
+    1. Train the Place skill. Use the exact same command as the above, but replace every instance of "pick" with "place".
+    1. Train the Navigation skill. Use the exact same command as the above, but replace every instance of "pick" with "nav_to_obj".
+    1. Copy the checkpoints for the different skills to the `data/models` directory in the Habitat Challenge directory. There should now be three files `data/models/[nav,pick,place].pth`.
+
+1. Use the pre-trained skills located at [this Google Drive link.](https://drive.google.com/drive/folders/1F-T5zJvz-EIzh9waDvMnuwCmkxztvaFG?usp=sharing)
+
+1. Evaluate on the minival dataset for the `rearrange_easy` task from the command line via 
+    ```bash
+    CHALLENGE_CONFIG_FILE=configs/tasks/rearrange_easy.local.rgbd.yaml python agents/habitat_baselines_agent.py --evaluation local --input-type depth --cfg-path configs/methods/tp_srl.yaml
+    ```
 
 
 ## Citing Habitat Challenge 2022

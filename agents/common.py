@@ -60,13 +60,13 @@ def get_obs_space():
             "obj_start_gps_compass": spaces.Box(
                 low=np.finfo(np.float32).min,
                 high=np.finfo(np.float32).max,
-                shape=(3,),
+                shape=(2,),
                 dtype=np.float32,
             ),
             "obj_goal_gps_compass": spaces.Box(
                 low=np.finfo(np.float32).min,
                 high=np.finfo(np.float32).max,
-                shape=(3,),
+                shape=(2,),
                 dtype=np.float32,
             ),
             "joint": spaces.Box(
