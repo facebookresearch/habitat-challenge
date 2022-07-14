@@ -55,7 +55,7 @@ Note: only supports Linux; no Windows or MacOS.
 
     Note #1: you may need `sudo` priviliges to run this command.
 
-    Note #2: Please make sure that you keep your local version of `fairembodied/habitat-challenge:testing_2022_habitat_base_docker` image up to date with the image we have hosted on [dockerhub](https://hub.docker.com/r/fairembodied/habitat-challenge/tags). This can be done by pruning all cached images, using:
+    Note #2: Please make sure that you keep your local version of `fairembodied/habitat-challenge:habitat_rearrangement_2022_base_docker` image up to date with the image we have hosted on [dockerhub](https://hub.docker.com/r/fairembodied/habitat-challenge/tags). This can be done by pruning all cached images, using:
     ```
     docker system prune -a
     ```
@@ -64,39 +64,55 @@ Note: only supports Linux; no Windows or MacOS.
 
 1. Evaluate your docker container locally:
     ```bash
-    ./test_locally_objectnav_rgbd.sh --docker-name objectnav_submission
+    bash ./scripts/test_local.sh --docker-name rearrange_submission
     ```
     If the above command runs successfully you will get an output similar to:
     ```
-    2022-02-14 01:23:51,798 initializing sim Sim-v0
-    2022-02-14 01:23:52,820 initializing task Nav-v0
-    2022-02-14 01:23:56,339 distance_to_goal: 5.205519378185272
-    2022-02-14 01:23:56,339 spl: 0.0
+    2022-07-14 22:03:05,811 Initializing dataset RearrangeDataset-v0
+    2022-07-14 22:03:05,811 Rearrange task assets are not downloaded locally, downloading and extracting now...
+    2022-07-14 22:03:05,812 Downloaded and extracted the data.
+    2022-07-14 22:03:05,818 initializing sim RearrangeSim-v0
+    2022-07-14 22:03:06,214 Initializing task RearrangeCompositeTask-v0
+    2022-07-14 22:03:08,822 object_to_goal_distance/30: 4.302241203188896
+    2022-07-14 22:03:08,822 robot_force/accum: 657186.0750969499
+    2022-07-14 22:03:08,823 robot_force/instant: 657193.0133517366
+    2022-07-14 22:03:08,823 force_terminate: 0.05
+    2022-07-14 22:03:08,823 robot_collisions/total_collisions: 0.0
+    2022-07-14 22:03:08,823 robot_collisions/robot_obj_colls: 0.0
+    2022-07-14 22:03:08,823 robot_collisions/robot_scene_colls: 0.0
+    2022-07-14 22:03:08,823 robot_collisions/obj_scene_colls: 0.0
+    2022-07-14 22:03:08,823 ee_to_object_distance/30: 4.221194922924042
+    2022-07-14 22:03:08,823 does_want_terminate: 1.0
+    2022-07-14 22:03:08,823 composite_success: 0.0
+    2022-07-14 22:03:08,823 composite_bad_called_terminate: 1.0
+    2022-07-14 22:03:08,823 num_steps: 1.0
+    2022-07-14 22:03:08,823 did_violate_hold_constraint: 0.0
+    2022-07-14 22:03:08,823 move_obj_reward: -0.5103676795959473
     ```
     Note: this same command will be run to evaluate your agent for the leaderboard. **Please submit your docker for remote evaluation (below) only if it runs successfully on your local setup.**
 
-### Online submission
+### Online submission (NOT READY YET)
 
-Follow instructions in the `submit` tab of the [EvalAI challenge page](https://eval.ai/web/challenges/challenge-page/1615/submission) to submit your docker image. Note that you will need a version of EvalAI `>= 1.3.13`. Pasting those instructions here for convenience:
-
-```bash
-# Installing EvalAI Command Line Interface
-pip install "evalai>=1.3.13"
-
-# Set EvalAI account token
-evalai set_token <your EvalAI participant token>
-
-# Push docker image to EvalAI docker registry
-evalai push objectnav_submission:latest --phase <phase-name>
-```
-
-Valid phase names are `habitat-objectnav-{minival, test-standard, test-challenge}-2022-1615`. The challenge consists of the following phases:
-
-1. **Minival phase**: This split is same as the one used in `./test_locally_objectnav_rgbd.sh`. The purpose of this phase/split is sanity checking -- to confirm that our remote evaluation reports the same result as the one you’re seeing locally. Each team is allowed maximum of 100 submissions per day for this phase, but please use them judiciously. We will block and disqualify teams that spam our servers.
-1. **Test Standard phase**: The purpose of this phase/split is to serve as the public leaderboard establishing the state of the art; this is what should be used to report results in papers. Each team is allowed maximum of 10 submissions per day for this phase, but again, please use them judiciously. Don’t overfit to the test set.
-1. **Test Challenge phase**: This phase/split will be used to decide challenge winners. Each team is allowed a total of 5 submissions until the end of challenge submission phase. The highest performing of these 5 will be automatically chosen. 
-
-Note: Your agent will be evaluated on 1000 episodes and will have a total available time of 48 hours to finish. Your submissions will be evaluated on AWS EC2 p3.2xlarge instance which has a V100 GPU (16 GB Memory), 8 vCPU cores, and 61 GB RAM. If you need more time/resources for evaluation of your submission please get in touch. If you face any issues or have questions you can ask them by opening an issue on this repository.
+> Follow instructions in the `submit` tab of the [EvalAI challenge page](https://eval.ai/web/challenges/challenge-page/1615/submission) to submit your docker image. Note that you will need a version of EvalAI `>= 1.3.13`. Pasting those instructions here for convenience:
+> 
+> ```bash
+> # Installing EvalAI Command Line Interface
+> pip install "evalai>=1.3.13"
+> 
+> # Set EvalAI account token
+> evalai set_token <your EvalAI participant token>
+> 
+> # Push docker image to EvalAI docker registry
+> evalai push objectnav_submission:latest --phase <phase-name>
+> ```
+> 
+> Valid phase names are `habitat-objectnav-{minival, test-standard, test-challenge}-2022-1615`. The challenge consists of the following phases:
+> 
+> 1. **Minival phase**: This split is same as the one used in `./test_locally_objectnav_rgbd.sh`. The purpose of this phase/split is sanity checking -- to confirm that our remote evaluation reports the same result as the one you’re seeing locally. Each team is allowed maximum of 100 submissions per day for this phase, but please use them judiciously. We will block and disqualify teams that spam our servers.
+> 1. **Test Standard phase**: The purpose of this phase/split is to serve as the public leaderboard establishing the state of the art; this is what should be used to report results in papers. Each team is allowed maximum of 10 submissions per day for this phase, but again, please use them judiciously. Don’t overfit to the test set.
+> 1. **Test Challenge phase**: This phase/split will be used to decide challenge winners. Each team is allowed a total of 5 submissions until the end of challenge submission phase. The highest performing of these 5 will be automatically chosen. 
+> 
+> Note: Your agent will be evaluated on 1000 episodes and will have a total available time of 48 hours to finish. Your submissions will be evaluated on AWS EC2 p3.2xlarge instance which has a V100 GPU (16 GB Memory), 8 vCPU cores, and 61 GB RAM. If you need more time/resources for evaluation of your submission please get in touch. If you face any issues or have questions you can ask them by opening an issue on this repository.
 
 
 ### Installing Habitat-Sim
