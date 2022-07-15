@@ -1,5 +1,5 @@
 FROM fairembodied/habitat-challenge:habitat_rearrangement_2022_base_docker
-ADD agents/habitat_baselines_agent.py agent.py
+ADD agents/random_agent.py agent.py
 ADD configs/ /configs/
 ADD scripts/submission.sh submission.sh
 ENV AGENT_EVALUATION_TYPE remote

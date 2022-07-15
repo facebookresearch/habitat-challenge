@@ -208,7 +208,7 @@ In this example, we will evaluate an end-to-end policy trained with DD-PPO. Foll
     CHALLENGE_CONFIG_FILE=configs/tasks/rearrange_easy.local.rgbd.yaml python agents/habitat_baselines_agent.py --evaluation local --input-type depth --cfg-path configs/methods/ddppo_monolithic.yaml
     ```
 
-1. We provide Dockerfiles ready to use with the DD-PPO baselines in `hab2_DDPPO_baseline.Dockerfile`. For the sake of completeness, we describe how you can make your own Dockerfile below. If you just want to test the baseline code, feel free to skip this bullet because  `hab2_DDPPO_baseline.Dockerfile` is ready to use.
+1. We provide Dockerfiles ready to use with the DD-PPO baselines in `docker/hab2_monolithic.Dockerfile`. For the sake of completeness, we describe how you can make your own Dockerfile below. If you just want to test the baseline code, feel free to skip this bullet because  `hab2_DDPPO_baseline.Dockerfile` is ready to use.
     1. You may want to modify the `hab2_DDPPO_baseline.Dockerfile` to include torchvision or other libraries. To install torchvision, ifcfg and tensorboard, add the following command to the Docker file:
         ```dockerfile
         RUN /bin/bash -c ". activate habitat; pip install ifcfg torchvision tensorboard"
@@ -220,12 +220,11 @@ In this example, we will evaluate an end-to-end policy trained with DD-PPO. Foll
         ```
     1. Do not forget to add any other files you may need in the Docker, for example, we add the `demo.ckpt.pth` file which is the saved weights from the DD-PPO example code.
 
-    1. Finally, modify the submission.sh script to run the appropriate command to test your agents. The scaffold for this code can be found `agent.py` and the DD-PPO specific agent can be found in `ddppo_agents.py`. In this example, we only modify the final command of the ObjectNav docker: by adding the following args to submission.sh `--model-path demo.ckpt.pth --input-type rgbd`. The default submission.sh script will pass these args to the python script. You may also replace the submission.sh.
-        1. Please note that at this time, that habitat_baselines uses a slightly different config system, and the configs nodes for habitat are defined under TASK_CONFIG which is loaded at runtime from BASE_TASK_CONFIG_PATH. We manually overwrite this config using the opts args in our agent.py file.
+    1. Finally, modify the submission.sh script to run the appropriate command to test your agents. The scaffold for this code can be found `agents/random_agent.py` and the code for policies trained with Habitat Baselines can be found in `agents/habitat_baselines_agent.py`. In this example, we only modify the final command of the docker: by adding the following args to submission.sh `--model-path demo.ckpt.pth --input-type rgbd`. The default submission.sh script will pass these args to the python script. You may also replace the submission.sh.
 
 1. Once your Dockerfile and other code is modified to your satisfaction, build it with the following command.
     ```bash
-    docker build . --file Objectnav_DDPPO_baseline.Dockerfile -t objectnav_submission
+    docker build . --file docker/hab2_monolithic.Dockerfile.Dockerfile -t rearrange_submission
     ```
 1. To test locally simple run the `scripts/test_local.sh` script. If the docker runs your code without errors, it should work on Eval-AI. The instructions for submitting the Docker to EvalAI are listed above.
 
