@@ -37,7 +37,7 @@ In these steps, we will evaluate a sample agent in Docker. We evaluate in Docker
 1. Install [nvidia-docker v2](https://github.com/NVIDIA/nvidia-docker) following instructions here: [https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html#docker](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html#docker).
 Note: only supports Linux; no Windows or MacOS.
 
-1. Modify the provided Dockerfile if you need custom modifications. Let’s say your code needs `pytorch==1.9.0`, these dependencies should be pip installed inside the Docker conda environment called `habitat`. Below is a an example Dockerfile with pip installing custom dependencies. 
+1. Modify the provided Dockerfile if you need custom modifications. Let’s say your code needs `pytorch==1.9.0`, these dependencies should be pip installed inside the Docker conda environment called `habitat`. Below is an example Dockerfile with pip installing custom dependencies. 
 
     ```dockerfile
     FROM fairembodied/habitat-challenge:habitat_rearrangement_2022_base_docker
@@ -53,7 +53,7 @@ Note: only supports Linux; no Windows or MacOS.
     docker build . --file docker/hab2.Dockerfile  -t rearrange_submission
     ```
 
-    Note #1: you may need `sudo` priviliges to run this command.
+    Note #1: you may need `sudo` privileges to run this command.
 
     Note #2: Please make sure that you keep your local version of `fairembodied/habitat-challenge:habitat_rearrangement_2022_base_docker` image up to date with the image we have hosted on [dockerhub](https://hub.docker.com/r/fairembodied/habitat-challenge/tags). This can be done by pruning all cached images, using:
     ```
@@ -156,21 +156,15 @@ In this example, we will evaluate an end-to-end policy trained with DD-PPO. Foll
         export HABITAT_SIM_LOG=quiet
 
         set -x
-        python -u -m torch.distributed.launch \
-            --use_env \
-            --nproc_per_node 1 \
-            habitat_baselines/run.py \
+        python habitat_baselines/run.py \
             --exp-config ../habitat-challenge/configs/methods/ddppo_monolithic.yaml \
             --run-type train \
             BASE_TASK_CONFIG_PATH ../habitat-challenge/configs/tasks/rearrange.local.rgbd.yaml \
-            TASK_CONFIG.DATASET.DATA_PATH ../habitat-challenge/data/datasets/replica_cad/rearrange/v1/{split}/rearrange.json.gz \
-            TASK_CONFIG.DATASET.SCENES_DIR ../habitat-challenge/data/replica_cad/ \
             TASK_CONFIG.DATASET.SPLIT 'train' \
             TASK_CONFIG.TASK.TASK_SPEC_BASE_PATH ../habitat-challenge/configs/pddl/ \
             TENSORBOARD_DIR ./tb \
             CHECKPOINT_FOLDER ./checkpoints \
             LOG_FILE ./train.log
-
         ```
     1. To run on a cluster with SLURM using distributed training run the following script. While this is not necessary, if you have access to a cluster, it can significantly speed up training. To run on multiple machines in a SLURM cluster run the following script: change `#SBATCH --nodes $NUM_OF_MACHINES` to the number of machines and `#SBATCH --ntasks-per-node $NUM_OF_GPUS` and `$SBATCH --gres $NUM_OF_GPUS` to specify the number of GPUS to use per requested machine.
         ```bash
