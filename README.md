@@ -146,7 +146,7 @@ In this example, we will evaluate an end-to-end policy trained with DD-PPO. Foll
 
     If this step was successful, you should see the train, val and minival splits in the `data/datasets/replica_cad/rearrange/v1/{train, val, minival}` folders respectively. 
 
-1. Follow this documentation for how to run DD-PPO in a single or multi-machine setup. See [habitat_baselines/ddppo](https://github.com/facebookresearch/habitat-lab/tree/main/habitat_baselines/rl/ddppo) for more information.
+1. Follow this documentation for how to run DD-PPO in a single or multi-machine setup. See [habitat_baselines/ddppo](https://github.com/facebookresearch/habitat-lab/tree/main/habitat_baselines/rl/ddppo) for more information. These commands assume `habitat-lab` and `habitat-challenge` are in the same directory. Modify the paths in the arguments if your `habitat-challenge` directory is located somewhere else.
 
     1. To run on a single machine use the following script from `habitat-lab` directory:
         ```bash
