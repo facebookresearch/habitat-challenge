@@ -174,7 +174,7 @@ class PPOAgent(Agent):
                 high=1,
                 dtype=np.float32,
             ),
-            self.action_space,
+            orig_action_space=self.action_space,
         )
 
         self.actor_critic.to(self.device)

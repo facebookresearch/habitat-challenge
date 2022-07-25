@@ -232,7 +232,7 @@ First, you will need to train individual skill policies with RL. In this example
     ```bash
     CHALLENGE_CONFIG_FILE=configs/tasks/rearrange_easy.local.rgbd.yaml python agents/habitat_baselines_agent.py --evaluation local --input-type depth --cfg-path configs/methods/tp_srl.yaml
     ```
-    Using the pre-trained skills from the Google Drive, you should see around a `20%` success rate.
+    Using the pre-trained skills from the Google Drive, you should see around a `30%` success rate.
 
 
 ## Citing Habitat Challenge 2022
