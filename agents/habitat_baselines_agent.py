@@ -29,10 +29,10 @@ from habitat_baselines.common.obs_transformers import (
 from habitat_baselines.config.default import get_config
 from habitat_baselines.rl.ddppo.policy import PointNavResNetPolicy
 from habitat_baselines.utils.common import (
-    action_array_to_dict,
     batch_obs,
     get_num_actions,
 )
+from habitat.utils.gym_adapter import continuous_vector_action_to_hab_dict
 
 random_generator = np.random.RandomState()
 
@@ -149,7 +149,9 @@ class PPOAgent(Agent):
             del obs_space.spaces["robot_head_depth"]
 
         self.obs_transforms = get_active_obs_transforms(config)
-        obs_space = apply_obs_transforms_obs_space(obs_space, self.obs_transforms)
+        obs_space = apply_obs_transforms_obs_space(
+            obs_space, self.obs_transforms
+        )
 
         self.device = (
             torch.device("cuda:{}".format(config.PTH_GPU_ID))
@@ -163,7 +165,17 @@ class PPOAgent(Agent):
             torch.backends.cudnn.deterministic = True  # type: ignore
 
         policy = baseline_registry.get_policy(config.RL.POLICY.name)
-        self.actor_critic = policy.from_config(config, obs_space, self.action_space)
+        self.actor_critic = policy.from_config(
+            config,
+            obs_space,
+            spaces.Box(
+                shape=(get_num_actions(self.action_space),),
+                low=-1,
+                high=1,
+                dtype=np.float32,
+            ),
+            self.action_space,
+        )
 
         self.actor_critic.to(self.device)
 
@@ -194,7 +206,9 @@ class PPOAgent(Agent):
             self.hidden_size,
             device=self.device,
         )
-        self.not_done_masks = torch.zeros(1, 1, device=self.device, dtype=torch.bool)
+        self.not_done_masks = torch.zeros(
+            1, 1, device=self.device, dtype=torch.bool
+        )
         self.prev_actions = torch.zeros(
             1,
             get_num_actions(self.action_space),
@@ -207,7 +221,12 @@ class PPOAgent(Agent):
         batch = batch_obs([observations], device=self.device)
         batch = apply_obs_transforms_batch(batch, self.obs_transforms)
         with torch.no_grad():
-            (_, actions, _, self.test_recurrent_hidden_states) = self.actor_critic.act(
+            (
+                _,
+                actions,
+                _,
+                self.test_recurrent_hidden_states,
+            ) = self.actor_critic.act(
                 batch,
                 self.test_recurrent_hidden_states,
                 self.prev_actions,
@@ -218,15 +237,19 @@ class PPOAgent(Agent):
             self.not_done_masks.fill_(True)
             self.prev_actions.copy_(actions)  # type: ignore
 
-        step_action = action_array_to_dict(self.action_space, actions[0])
+        step_action = continuous_vector_action_to_hab_dict(
+            self.action_space, None, actions[0].cpu().numpy()
+        )
 
-        return step_action["action"]
+        return step_action
 
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--input-type", default="blind", choices=["blind", "rgb", "depth", "rgbd"]
+        "--input-type",
+        default="blind",
+        choices=["blind", "rgb", "depth", "rgbd"],
     )
     parser.add_argument(
         "--evaluation", type=str, required=True, choices=["local", "remote"]
@@ -237,7 +260,9 @@ def main():
     parser.add_argument("--model-path", default="", type=str)
     args = parser.parse_args()
 
-    config = get_config(args.cfg_path, ["BASE_TASK_CONFIG_PATH", config_paths]).clone()
+    config = get_config(
+        args.cfg_path, ["BASE_TASK_CONFIG_PATH", config_paths]
+    ).clone()
     config.defrost()
     config.PTH_GPU_ID = 0
     config.INPUT_TYPE = args.input_type

@@ -93,6 +93,7 @@ Note: only supports Linux; no Windows or MacOS.
 
 ### Online submission (COMING SOON)
 
+Online submission on EvalAI will be announced soon!
 
 ### Installing Habitat-Sim
 
@@ -113,7 +114,7 @@ Note: only supports Linux; no Windows or MacOS.
 ### DD-PPO Training Starter Code
 In this example, we will evaluate an end-to-end policy trained with DD-PPO. Follow these next steps to train and evaluate the DD-PPO baseline.
 
-1. Install Habitat-Sim via [these instructions](https://github.com/facebookresearch/habitat-challenge/tree/rearrangement-challenge-2022#installing-habitat-sim). You will run all the subsequent steps from the `habitat` conda environment.
+1. Make sure Habitat-Sim is installed via [these instructions](https://github.com/facebookresearch/habitat-challenge/tree/rearrangement-challenge-2022#installing-habitat-sim). You will run all the subsequent steps from the `habitat` conda environment.
 
 1. Install [Habitat-Lab](https://github.com/facebookresearch/habitat-lab/) - Use the `challenge_tasks` branch in our Github repo, which can be cloned using: 
     ```
