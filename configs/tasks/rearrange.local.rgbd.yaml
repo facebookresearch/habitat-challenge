@@ -11,7 +11,7 @@ GYM:
     - is_holding
     - relative_resting_position
 ENVIRONMENT:
-    MAX_EPISODE_STEPS: 1000
+    MAX_EPISODE_STEPS: 3000
 DATASET:
     TYPE: RearrangeDataset-v0
     SPLIT: minival

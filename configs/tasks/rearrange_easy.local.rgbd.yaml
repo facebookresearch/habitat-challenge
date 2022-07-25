@@ -11,10 +11,10 @@ GYM:
     - is_holding
     - relative_resting_position
 ENVIRONMENT:
-    MAX_EPISODE_STEPS: 500
+    MAX_EPISODE_STEPS: 1500
 DATASET:
     TYPE: RearrangeDataset-v0
-    SPLIT: train
+    SPLIT: minival
     DATA_PATH: data/datasets/replica_cad/rearrange/v1/{split}/rearrange_easy.json.gz
     SCENES_DIR: data/replica_cad/
 TASK:

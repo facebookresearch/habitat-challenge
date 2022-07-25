@@ -91,28 +91,7 @@ Note: only supports Linux; no Windows or MacOS.
     ```
     Note: this same command will be run to evaluate your agent for the leaderboard. **Please submit your docker for remote evaluation (below) only if it runs successfully on your local setup.**
 
-### Online submission (NOT READY YET)
-
-> Follow instructions in the `submit` tab of the [EvalAI challenge page](https://eval.ai/web/challenges/challenge-page/1615/submission) to submit your docker image. Note that you will need a version of EvalAI `>= 1.3.13`. Pasting those instructions here for convenience:
-> 
-> ```bash
-> # Installing EvalAI Command Line Interface
-> pip install "evalai>=1.3.13"
-> 
-> # Set EvalAI account token
-> evalai set_token <your EvalAI participant token>
-> 
-> # Push docker image to EvalAI docker registry
-> evalai push objectnav_submission:latest --phase <phase-name>
-> ```
-> 
-> Valid phase names are `habitat-objectnav-{minival, test-standard, test-challenge}-2022-1615`. The challenge consists of the following phases:
-> 
-> 1. **Minival phase**: This split is same as the one used in `./test_locally_objectnav_rgbd.sh`. The purpose of this phase/split is sanity checking -- to confirm that our remote evaluation reports the same result as the one you’re seeing locally. Each team is allowed maximum of 100 submissions per day for this phase, but please use them judiciously. We will block and disqualify teams that spam our servers.
-> 1. **Test Standard phase**: The purpose of this phase/split is to serve as the public leaderboard establishing the state of the art; this is what should be used to report results in papers. Each team is allowed maximum of 10 submissions per day for this phase, but again, please use them judiciously. Don’t overfit to the test set.
-> 1. **Test Challenge phase**: This phase/split will be used to decide challenge winners. Each team is allowed a total of 5 submissions until the end of challenge submission phase. The highest performing of these 5 will be automatically chosen. 
-> 
-> Note: Your agent will be evaluated on 1000 episodes and will have a total available time of 48 hours to finish. Your submissions will be evaluated on AWS EC2 p3.2xlarge instance which has a V100 GPU (16 GB Memory), 8 vCPU cores, and 61 GB RAM. If you need more time/resources for evaluation of your submission please get in touch. If you face any issues or have questions you can ask them by opening an issue on this repository.
+### Online submission (COMING SOON)
 
 
 ### Installing Habitat-Sim
@@ -126,7 +105,7 @@ Note: only supports Linux; no Windows or MacOS.
 
 1. Install Habitat-Sim using our custom Conda package for habitat challenge 2022 with: (THIS WILL CHANGE TO CHALLENGE TAGGED VERSION SOON)
     ```
-    conda install habitat-sim withbullet  headless -c conda-forge -c aihabitat-nightly
+    conda install -y habitat-sim-rearrange-challenge-2022  withbullet  headless -c conda-forge -c aihabitat
     ```
     **On MacOS, omit the `headless` argument**.
     In case you face any issues related to the `GLIBCXX` version after conda installation, please uninstall this conda package and install the habitat-sim repository from source (more information [here](https://github.com/facebookresearch/habitat-sim/blob/main/BUILD_FROM_SOURCE.md#build-from-source)). Make sure that you are using the `challenge-2022` tag and not the `stable` branch for your installation. If you are on MacOS, exclude the `headless` flag.
@@ -235,10 +214,7 @@ First, you will need to train individual skill policies with RL. In this example
 
     1. Train the Pick skill. From the Habitat Lab directory, run 
     ```bash
-    python -u -m torch.distributed.launch \
-        --use_env \
-        --nproc_per_node 1 \
-        habitat_baselines/run.py \
+    python habitat_baselines/run.py \
         --exp-config habitat_baselines/config/rearrange/ddppo_pick.yaml \
         --run-type train \
         TENSORBOARD_DIR ./pick_tb/ \
@@ -251,10 +227,11 @@ First, you will need to train individual skill policies with RL. In this example
 
 1. Instead of training the skills, you can also use the pre-trained skills located at [this Google Drive link.](https://drive.google.com/drive/folders/1F-T5zJvz-EIzh9waDvMnuwCmkxztvaFG?usp=sharing)
 
-1. Evaluate on the minival dataset for the `rearrange_easy` task from the command line via. First enter the `habitat-challenge` directory. Ensure, you have the datasets installed in this directory as well. If not, run `python -m habitat_sim.utils.datasets_download --uids rearrange_task_assets`.
+1. Finally, evaluate the combined policies on the minival dataset for the `rearrange_easy` task from the command line. First enter the `habitat-challenge` directory. Ensure, you have the datasets installed in this directory as well. If not, run `python -m habitat_sim.utils.datasets_download --uids rearrange_task_assets`.
     ```bash
     CHALLENGE_CONFIG_FILE=configs/tasks/rearrange_easy.local.rgbd.yaml python agents/habitat_baselines_agent.py --evaluation local --input-type depth --cfg-path configs/methods/tp_srl.yaml
     ```
+    Using the pre-trained skills from the Google Drive, you should see around a `20%` success rate.
 
 
 ## Citing Habitat Challenge 2022

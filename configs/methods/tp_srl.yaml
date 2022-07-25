@@ -24,6 +24,7 @@ EVAL_KEYS_TO_INCLUDE_IN_NAME: ['reward', 'force', 'composite_success']
 EVAL:
   USE_CKPT_CONFIG: False
   SHOULD_LOAD_CKPT: False
+  SPLIT: 'minival'
 
 RL:
   POLICY:
@@ -109,6 +110,7 @@ RL:
         place: "NN_PLACE"
         nav: "NN_NAV"
         nav_to_receptacle: "NN_NAV"
+        wait: "WAIT_SKILL"
         reset_arm: "RESET_ARM_SKILL"
 
   PPO:
@@ -132,11 +134,6 @@ RL:
     use_normalized_advantage: False
 
     hidden_size: 512
-
-    # Use double buffered sampling, typically helps
-    # when environment time is similar or large than
-    # policy inference time during rollout generation
-    use_double_buffered_sampler: False
 
   DDPPO:
     sync_frac: 0.6
