@@ -103,12 +103,12 @@ Note: only supports Linux; no Windows or MacOS.
     conda activate habitat
     ```
 
-1. Install Habitat-Sim using our custom Conda package for habitat challenge 2022 with: (THIS WILL CHANGE TO CHALLENGE TAGGED VERSION SOON)
+1. Install Habitat-Sim using our custom Conda package for habitat challenge 2022 with: 
     ```
     conda install -y habitat-sim-rearrange-challenge-2022  withbullet  headless -c conda-forge -c aihabitat
     ```
     **On MacOS, omit the `headless` argument**.
-    In case you face any issues related to the `GLIBCXX` version after conda installation, please uninstall this conda package and install the habitat-sim repository from source (more information [here](https://github.com/facebookresearch/habitat-sim/blob/main/BUILD_FROM_SOURCE.md#build-from-source)). Make sure that you are using the `challenge-2022` tag and not the `stable` branch for your installation. If you are on MacOS, exclude the `headless` flag.
+    In case you face any issues related to the `GLIBCXX` version after conda installation, please uninstall this conda package and install the habitat-sim repository from source (more information [here](https://github.com/facebookresearch/habitat-sim/blob/main/BUILD_FROM_SOURCE.md#build-from-source)). Make sure that you are using the `hab2_challenge_2022` tag and not the `stable` branch for your installation. If you are on MacOS, exclude the `headless` flag.
 
 ### DD-PPO Training Starter Code
 In this example, we will evaluate an end-to-end policy trained with DD-PPO. Follow these next steps to train and evaluate the DD-PPO baseline.
