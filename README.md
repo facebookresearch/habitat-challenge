@@ -6,19 +6,38 @@
 
 # Habitat Rearrange Challenge 2022
 
-This repository contains the starter code for the 2022 challenge, and training and evaluation setups. For an overview of habitat-challenge, visit [aihabitat.org/challenge/rearrange_2022](https://aihabitat.org/challenge/rearrange_2022).
+This repository contains the starter code for the Habitat 2022 rearrangement challenge, and training and evaluation setups. For an overview of habitat-challenge, visit [aihabitat.org/challenge/rearrange_2022](https://aihabitat.org/challenge/rearrange_2022).
 
 ## Task: Object Rearrangement
 
 In the object rearrangement task, a Fetch robot is randomly spawned in an unseen environment and asked to rearrange a list of objects from initial to desired positions – picking/placing objects from receptacles (counter, sink, sofa, table), opening/closing containers (drawers, fridges) as necessary. A map of the environment is not provided and the agent must only use its sensory input to navigate and rearrange.
 
-The agent is equipped with an RGB-D camera on the Robot's head and a (noiseless) GPS+Compass sensor. GPS+Compass sensor provides the agent’s current location and orientation information relative to the start of the episode. 
+The Fetch robot is equipped with an egocentric 256x256 90-degree FoV RGBD camera on the robot head. 
+The agent also has access to idealized base-egomotion giving the relative displacement and angle of the base since the start of the episode. 
+Additionally, the robot has proprioceptive joint sensing providing access to the current robot joint angles.
 
 For details about the agent, dataset, and evaluation, see the challenge website: [aihabitat.org/challenge/rearrange_2022](https://aihabitat.org/challenge/rearrange_2022/).
 
 ## Participation Guidelines
 
-Participate in the contest by registering on the [EvalAI challenge page](https://eval.ai/web/challenges/challenge-page/1615/overview) and creating a team. Participants will upload docker containers with their agents that are evaluated on an AWS GPU-enabled instance. Before pushing the submissions for remote evaluation, participants should test the submission docker locally to ensure it is working. Instructions for training, local evaluation, and online submission are provided below.
+Participate in the contest by registering on the in the soon to be released EvalAI page and creating a team. Participants will upload docker containers with their agents that are evaluated on an AWS GPU-enabled instance. Before pushing the submissions for remote evaluation, participants should test the submission docker locally to ensure it is working. Instructions for training, local evaluation, and online submission are provided below.
+
+### Installing Habitat-Sim
+First setup Habitat Sim in a new conda environment so you can download the datasets to evaluate your models locally.
+
+1. Prepare your [conda](https://docs.conda.io/projects/conda/en/latest/user-guide/install/) env:
+    ```bash
+    # We require python>=3.7 and cmake>=3.10
+    conda create -n habitat python=3.7 cmake=3.14.0
+    conda activate habitat
+    ```
+
+1. Install Habitat-Sim using our custom Conda package for habitat challenge 2022 with: 
+    ```
+    conda install -y habitat-sim-rearrange-challenge-2022  withbullet  headless -c conda-forge -c aihabitat
+    ```
+    **On MacOS, omit the `headless` argument**.
+    In case you face any issues related to the `GLIBCXX` version after conda installation, please uninstall this conda package and install the habitat-sim repository from source (more information [here](https://github.com/facebookresearch/habitat-sim/blob/main/BUILD_FROM_SOURCE.md#build-from-source)). Make sure that you are using the `hab2_challenge_2022` tag and not the `stable` branch for your installation. If you are on MacOS, exclude the `headless` flag.
 
 ### Local Docker Evaluation
 In these steps, we will evaluate a sample agent in Docker. We evaluate in Docker because EvalAI requires submitting a Docker image to run your agent on the leaderboard. **Since these steps depend on [nvidia-docker v2](https://github.com/NVIDIA/nvidia-docker), they will only run on Linux**; no Windows or MacOS.
@@ -32,7 +51,7 @@ In these steps, we will evaluate a sample agent in Docker. We evaluate in Docker
 
 1. Implement your own agent or try one of ours. We provide an agent in `agents/random_agent.py` that takes random actions.
 
-    [Optional] Modify submission.sh file if your agent needs any custom modifications (e.g. command-line arguments). Otherwise, nothing to do. Default submission.sh is simply a call to `RandomAgent` agent in `agent.py`.
+    [Optional] Modify submission.sh file if your agent needs any custom modifications (e.g. command-line arguments). Otherwise, nothing to do. Default submission.sh is simply a call to `RandomAgent` agent in `agents/random_agent.py`.
 
 1. Install [nvidia-docker v2](https://github.com/NVIDIA/nvidia-docker) following instructions here: [https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html#docker](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html#docker).
 Note: only supports Linux; no Windows or MacOS.
@@ -94,22 +113,6 @@ Note: only supports Linux; no Windows or MacOS.
 ### Online submission (COMING SOON)
 
 Online submission on EvalAI will be announced soon!
-
-### Installing Habitat-Sim
-
-1. Prepare your [conda](https://docs.conda.io/projects/conda/en/latest/user-guide/install/) env:
-    ```bash
-    # We require python>=3.7 and cmake>=3.10
-    conda create -n habitat python=3.7 cmake=3.14.0
-    conda activate habitat
-    ```
-
-1. Install Habitat-Sim using our custom Conda package for habitat challenge 2022 with: 
-    ```
-    conda install -y habitat-sim-rearrange-challenge-2022  withbullet  headless -c conda-forge -c aihabitat
-    ```
-    **On MacOS, omit the `headless` argument**.
-    In case you face any issues related to the `GLIBCXX` version after conda installation, please uninstall this conda package and install the habitat-sim repository from source (more information [here](https://github.com/facebookresearch/habitat-sim/blob/main/BUILD_FROM_SOURCE.md#build-from-source)). Make sure that you are using the `hab2_challenge_2022` tag and not the `stable` branch for your installation. If you are on MacOS, exclude the `headless` flag.
 
 ### DD-PPO Training Starter Code
 In this example, we will evaluate an end-to-end policy trained with DD-PPO. Follow these next steps to train and evaluate the DD-PPO baseline.
