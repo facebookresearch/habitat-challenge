@@ -18,6 +18,8 @@ Additionally, the robot has proprioceptive joint sensing providing access to the
 
 For details about the agent, dataset, and evaluation, see the challenge website: [aihabitat.org/challenge/rearrange_2022](https://aihabitat.org/challenge/rearrange_2022/).
 
+If you have any issues, open a GitHub issue on this repository.
+
 ## Participation Guidelines
 
 Participate in the contest by registering on the in the soon to be released EvalAI page and creating a team. Participants will upload docker containers with their agents that are evaluated on an AWS GPU-enabled instance. Before pushing the submissions for remote evaluation, participants should test the submission docker locally to ensure it is working. Instructions for training, local evaluation, and online submission are provided below.
@@ -239,13 +241,24 @@ First, you will need to train individual skill policies with RL. In this example
 
 
 ## Citing Habitat Challenge 2022
-Please cite [the following paper](https://arxiv.org/abs/2006.13171) for details about the 2022 ObjectNav challenge:
+Please cite the challenge and [the following paper](https://arxiv.org/abs/2006.13171) for details about the 2022 Rearrangement challenge:
 ```
 @misc{habitatrearrangechallenge2022,
   title         =     Habitat Rearrangement Challenge 2022,
   author        =     {Andrew Szot, Karmesh Yadav, Alex Clegg, Vincent-Pierre Berges, Aaron Gokaslan, Angel Chang, Manolis Savva, Zsolt Kira, Dhruv Batra},
   howpublished  =     {\url{https://aihabitat.org/challenge/rearrange_2022}},
   year          =     {2022}
+}
+```
+
+```
+@article{szot2021habitat,
+  title={Habitat 2.0: Training home assistants to rearrange their habitat},
+  author={Szot, Andrew and Clegg, Alexander and Undersander, Eric and Wijmans, Erik and Zhao, Yili and Turner, John and Maestre, Noah and Mukadam, Mustafa and Chaplot, Devendra Singh and Maksymets, Oleksandr and others},
+  journal={Advances in Neural Information Processing Systems},
+  volume={34},
+  pages={251--266},
+  year={2021}
 }
 ```
 
