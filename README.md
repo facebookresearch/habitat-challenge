@@ -38,8 +38,7 @@ First setup Habitat Sim in a new conda environment so you can download the datas
     ```
     conda install -y habitat-sim-rearrange-challenge-2022  withbullet  headless -c conda-forge -c aihabitat
     ```
-    **On MacOS, omit the `headless` argument**.
-    
+    **On MacOS, omit the `headless` argument**.    
     Note: If you face any issues related to the `GLIBCXX` version after conda installation, please uninstall this conda package and install the habitat-sim repository from source (more information [here](https://github.com/facebookresearch/habitat-sim/blob/main/BUILD_FROM_SOURCE.md#build-from-source)). Make sure that you are using the `hab2_challenge_2022` tag and not the `stable` branch for your installation. 
 
 1. Clone the challenge repository:
@@ -132,9 +131,9 @@ Online submission on EvalAI will be announced soon!
 ### DD-PPO Training Starter Code
 In this example, we will train and evaluate an end-to-end policy trained with DD-PPO. You will run all the subsequent steps from the `habitat` conda environment.
 
-1. Install [Habitat-Lab](https://github.com/facebookresearch/habitat-lab/) - Use the `challenge_tasks` branch in our Github repo, which can be cloned using: 
+1. Install [Habitat-Lab](https://github.com/facebookresearch/habitat-lab/) - Use the `rearrange_challenge_2022` branch in our Github repo, which can be cloned using: 
     ```
-    git clone --branch challenge_tasks https://github.com/facebookresearch/habitat-lab.git
+    git clone --branch rearrange_challenge_2022 https://github.com/facebookresearch/habitat-lab.git
     ``` 
     Install Habitat Lab along with the included RL trainer code by first entering the `habitat-lab` directory, activating the `habitat` conda environment from step 1, and then running `pip install -r requirements.txt && python setup.py develop --all`. 
 
