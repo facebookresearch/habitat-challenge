@@ -39,7 +39,7 @@ First setup Habitat Sim in a new conda environment so you can download the datas
     conda install -y habitat-sim-rearrange-challenge-2022  withbullet  headless -c conda-forge -c aihabitat
     ```
     **On MacOS, omit the `headless` argument**.
-    In case you face any issues related to the `GLIBCXX` version after conda installation, please uninstall this conda package and install the habitat-sim repository from source (more information [here](https://github.com/facebookresearch/habitat-sim/blob/main/BUILD_FROM_SOURCE.md#build-from-source)). Make sure that you are using the `hab2_challenge_2022` tag and not the `stable` branch for your installation. If you are on MacOS, exclude the `headless` flag.
+    In case you face any issues related to the `GLIBCXX` version after conda installation, please uninstall this conda package and install the habitat-sim repository from source (more information [here](https://github.com/facebookresearch/habitat-sim/blob/main/BUILD_FROM_SOURCE.md#build-from-source)). Make sure that you are using the `rearrange-challenge-2022 ` tag and not the `stable` branch for your installation. If you are on MacOS, exclude the `headless` flag.
 
 ### Local Docker Evaluation
 In these steps, we will evaluate a sample agent in Docker. We evaluate in Docker because EvalAI requires submitting a Docker image to run your agent on the leaderboard. **Since these steps depend on [nvidia-docker v2](https://github.com/NVIDIA/nvidia-docker), they will only run on Linux**; no Windows or MacOS.
@@ -121,9 +121,9 @@ In this example, we will evaluate an end-to-end policy trained with DD-PPO. Foll
 
 1. Make sure Habitat-Sim is installed via [these instructions](https://github.com/facebookresearch/habitat-challenge/tree/rearrangement-challenge-2022#installing-habitat-sim). You will run all the subsequent steps from the `habitat` conda environment.
 
-1. Install [Habitat-Lab](https://github.com/facebookresearch/habitat-lab/) - Use the `challenge_tasks` branch in our Github repo, which can be cloned using: 
+1. Install [Habitat-Lab](https://github.com/facebookresearch/habitat-lab/) - Use the `rearrange_challenge_2022` branch in our Github repo, which can be cloned using: 
     ```
-    git clone --branch challenge_tasks https://github.com/facebookresearch/habitat-lab.git
+    git clone --branch rearrange_challenge_2022 https://github.com/facebookresearch/habitat-lab.git
     ``` 
     Install Habitat Lab along with the included RL trainer code by first entering the `habitat-lab` directory, activating the `habitat` conda environment from step 1, and then running `pip install -r requirements.txt && python setup.py develop --all`. 
 
