@@ -6,7 +6,7 @@
 
 # Habitat Rearrange Challenge 2022
 
-This repository contains the starter code for the Habitat 2022 rearrangement challenge, and training and evaluation setups. For an overview of habitat-challenge, visit [aihabitat.org/challenge/rearrange_2022](https://aihabitat.org/challenge/rearrange_2022).
+This repository contains the starter code for the Habitat 2022 rearrangement challenge, and training and evaluation setups. For an overview of habitat-challenge, visit [aihabitat.org/challenge/2022_rearrange](https://aihabitat.org/challenge/2022_rearrange).
 
 ## Task: Object Rearrangement
 
@@ -16,7 +16,7 @@ The Fetch robot is equipped with an egocentric 256x256 90-degree FoV RGBD camera
 The agent also has access to idealized base-egomotion giving the relative displacement and angle of the base since the start of the episode. 
 Additionally, the robot has proprioceptive joint sensing providing access to the current robot joint angles.
 
-For details about the agent, dataset, and evaluation, see the challenge website: [aihabitat.org/challenge/rearrange_2022](https://aihabitat.org/challenge/rearrange_2022/).
+For details about the agent, dataset, and evaluation, see the challenge website: [aihabitat.org/challenge/2022_rearrange](https://aihabitat.org/challenge/2022_rearrange/).
 
 If you have any issues, open a GitHub issue on this repository.
 
@@ -252,7 +252,7 @@ Please cite the challenge and [the following paper](https://arxiv.org/abs/2006.1
 @misc{habitatrearrangechallenge2022,
   title         =     Habitat Rearrangement Challenge 2022,
   author        =     {Andrew Szot, Karmesh Yadav, Alex Clegg, Vincent-Pierre Berges, Aaron Gokaslan, Angel Chang, Manolis Savva, Zsolt Kira, Dhruv Batra},
-  howpublished  =     {\url{https://aihabitat.org/challenge/rearrange_2022}},
+  howpublished  =     {\url{https://aihabitat.org/challenge/2022_rearrange}},
   year          =     {2022}
 }
 ```
