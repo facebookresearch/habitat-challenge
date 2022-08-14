@@ -149,9 +149,7 @@ class PPOAgent(Agent):
             del obs_space.spaces["robot_head_depth"]
 
         self.obs_transforms = get_active_obs_transforms(config)
-        obs_space = apply_obs_transforms_obs_space(
-            obs_space, self.obs_transforms
-        )
+        obs_space = apply_obs_transforms_obs_space(obs_space, self.obs_transforms)
 
         self.device = (
             torch.device("cuda:{}".format(config.PTH_GPU_ID))
@@ -206,9 +204,7 @@ class PPOAgent(Agent):
             self.hidden_size,
             device=self.device,
         )
-        self.not_done_masks = torch.zeros(
-            1, 1, device=self.device, dtype=torch.bool
-        )
+        self.not_done_masks = torch.zeros(1, 1, device=self.device, dtype=torch.bool)
         self.prev_actions = torch.zeros(
             1,
             get_num_actions(self.action_space),
@@ -221,12 +217,7 @@ class PPOAgent(Agent):
         batch = batch_obs([observations], device=self.device)
         batch = apply_obs_transforms_batch(batch, self.obs_transforms)
         with torch.no_grad():
-            (
-                _,
-                actions,
-                _,
-                self.test_recurrent_hidden_states,
-            ) = self.actor_critic.act(
+            (_, actions, _, self.test_recurrent_hidden_states,) = self.actor_critic.act(
                 batch,
                 self.test_recurrent_hidden_states,
                 self.prev_actions,
@@ -260,9 +251,7 @@ def main():
     parser.add_argument("--model-path", default="", type=str)
     args = parser.parse_args()
 
-    config = get_config(
-        args.cfg_path, ["BASE_TASK_CONFIG_PATH", config_paths]
-    ).clone()
+    config = get_config(args.cfg_path, ["BASE_TASK_CONFIG_PATH", config_paths]).clone()
     config.defrost()
     config.PTH_GPU_ID = 0
     config.INPUT_TYPE = args.input_type
