@@ -10,16 +10,17 @@ import os
 import random
 from typing import Dict, Optional
 
-import gym.spaces as spaces
 import numba
 import numpy as np
 import torch
 
+import gym.spaces as spaces
 import habitat
 from habitat.config import Config
 from habitat.core.agent import Agent
 from habitat.core.simulator import Observations
 from habitat.core.spaces import ActionSpace, EmptySpace
+from habitat.utils.gym_adapter import continuous_vector_action_to_hab_dict
 from habitat_baselines.common.baseline_registry import baseline_registry
 from habitat_baselines.common.obs_transformers import (
     apply_obs_transforms_batch,
@@ -28,11 +29,7 @@ from habitat_baselines.common.obs_transformers import (
 )
 from habitat_baselines.config.default import get_config
 from habitat_baselines.rl.ddppo.policy import PointNavResNetPolicy
-from habitat_baselines.utils.common import (
-    batch_obs,
-    get_num_actions,
-)
-from habitat.utils.gym_adapter import continuous_vector_action_to_hab_dict
+from habitat_baselines.utils.common import batch_obs, get_num_actions
 
 random_generator = np.random.RandomState()
 
