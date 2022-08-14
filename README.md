@@ -4,7 +4,7 @@
 
 --------------------------------------------------------------------------------
 
-# Habitat Rearrange Challenge 2022
+# Habitat Rearrangement Challenge 2022
 
 This repository contains the starter code for the Habitat 2022 rearrangement challenge, and training and evaluation setups. For an overview of habitat-challenge, visit [aihabitat.org/challenge/2022_rearrange](https://aihabitat.org/challenge/2022_rearrange).
 
@@ -217,7 +217,7 @@ In this example, we will train and evaluate an end-to-end policy trained with DD
     ```bash
     docker build . --file docker/hab2_monolithic.Dockerfile.Dockerfile -t rearrange_submission
     ```
-1. To test locally simple run the `scripts/test_local.sh` script. If the docker runs your code without errors, it should work on Eval-AI. The instructions for submitting the Docker to EvalAI are listed above.
+1. To test locally simply run the `scripts/test_local.sh` script. If the docker runs your code without errors, it should work on Eval-AI. The instructions for submitting the Docker to EvalAI are listed above.
 
 ### Hierarchical RL Starter Code
 First, you will need to train individual skill policies with RL. In this example we will approach the `rearrange_easy` task by training a Pick, Place, and Navigation policy and then plug them into a hard-coded high-level controller.
@@ -246,8 +246,8 @@ First, you will need to train individual skill policies with RL. In this example
     Using the pre-trained skills from the Google Drive, you should see around a `30%` success rate.
 
 
-## Citing Habitat Challenge 2022
-Please cite the challenge and [the following paper](https://arxiv.org/abs/2006.13171) for details about the 2022 Rearrangement challenge:
+## Citing Habitat Rearrangement Challenge 2022
+Please cite the challenge and [the following paper](https://arxiv.org/abs/2106.14405) for details about the 2022 Rearrangement challenge:
 ```
 @misc{habitatrearrangechallenge2022,
   title         =     Habitat Rearrangement Challenge 2022,
