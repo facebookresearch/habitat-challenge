@@ -10,11 +10,11 @@ import os
 import random
 from typing import Dict, Optional
 
+import gym.spaces as spaces
 import numba
 import numpy as np
 import torch
 
-import gym.spaces as spaces
 import habitat
 from habitat.config import Config
 from habitat.core.agent import Agent
