@@ -71,7 +71,7 @@ In these steps, we will evaluate a sample agent in Docker. We evaluate in Docker
 1. Install [nvidia-docker v2](https://github.com/NVIDIA/nvidia-docker) following instructions here: [https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html#docker](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html#docker).
 Note: only supports Linux; no Windows or MacOS.
 
-1. Modify the provided Dockerfile if you need custom modifications. Let’s say your code needs `pytorch==1.9.0`, these dependencies should be pip installed inside the Docker conda environment called `habitat`. Below is an example Dockerfile with pip installing custom dependencies. 
+1. Modify the [provided Dockerfile](https://github.com/facebookresearch/habitat-challenge/blob/rearrangement-challenge-2022/docker/hab2.Dockerfile) if you need custom modifications. Let’s say your code needs `pytorch==1.9.0`, these dependencies should be pip installed inside the Docker conda environment called `habitat`. Below is an example Dockerfile with pip installing custom dependencies. 
 
     ```dockerfile
     FROM fairembodied/habitat-challenge:habitat_rearrangement_2022_base_docker
@@ -220,7 +220,7 @@ In this example, we will train and evaluate an end-to-end policy trained with DD
 
 ### Hierarchical RL Starter Code
 First, you will need to train individual skill policies with RL. In this example we will approach the `rearrange_easy` task by training a Pick, Place, and Navigation policy and then plug them into a hard-coded high-level controller.
-1. Follow steps 1,2,3 of [the DD-PPO section](https://github.com/facebookresearch/habitat-challenge/tree/rearrangement-challenge-2022#dd-ppo-training-starter-code) to install Habitat-Sim, install Habitat-Lab, and download the datasets.
+1. Follow steps 1 of [the DD-PPO section](https://github.com/facebookresearch/habitat-challenge/tree/rearrangement-challenge-2022#dd-ppo-training-starter-code) to install Habitat-Lab and download the datasets.
 1. Steps to train the skills from scratch:
 
     1. Train the Pick skill. From the Habitat Lab directory, run 
