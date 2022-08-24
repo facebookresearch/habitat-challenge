@@ -56,7 +56,6 @@ First setup Habitat Sim in a new conda environment so you can download the datas
 
 1. Now, create a symlink to the downloaded data in your habitat-challenge repository:
     ```
-    mkdir -p data
     ln -s <absolute path to download folder> data
     ```
 
