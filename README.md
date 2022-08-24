@@ -48,7 +48,7 @@ First setup Habitat Sim in a new conda environment so you can download the datas
     cd habitat-challenge
     ```
 
-1. Download the dataset with 
+1. Download the episode datasets, scenes, and all other assets with 
     ```
     python -m habitat_sim.utils.datasets_download --uids rearrange_task_assets --data-path <path to download folder>
     ```
