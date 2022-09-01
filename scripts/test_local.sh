@@ -23,6 +23,6 @@ docker run \
     -v $(realpath data/versioned_data):/data/versioned_data \
     --runtime=nvidia \
     -e "AGENT_EVALUATION_TYPE=local" \
-    -e "TRACK_CONFIG_FILE=/configs/tasks/rearrange.local.rgbd.yaml" \
+    -e "TRACK_CONFIG_FILE=/configs/tasks/rearrange_easy.local.rgbd.yaml" \
     ${DOCKER_NAME}\
 

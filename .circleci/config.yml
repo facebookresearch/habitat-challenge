@@ -85,19 +85,10 @@ jobs:
               # Set EvalAI account token
               evalai set_token $EVALAI_TOKEN
 
-              # DDPPO baseline ObjectNav
-              wget https://dl.fbaipublicfiles.com/habitat/data/baselines/v1/ddppo_objectnav_habitat2022_challenge_baseline_v1.pth
-              docker build . --file Objectnav_DDPPO_baseline.Dockerfile -t ddppo_objectnav_submission
+              docker build . --file docker/hab2.Dockerfile  -t rearrange_submission
 
               # Push docker image to EvalAI docker registry
-              evalai push ddppo_objectnav_submission:latest --phase habitat-objectnav-minival-2022-1615 --private
-
-              # Random agent baseline
-              docker build . --file Objectnav.Dockerfile -t objectnav_submission
-
-              # Push docker image to EvalAI docker registry
-              evalai push objectnav_submission:latest --phase habitat-objectnav-minival-2022-1615 --private
-
+              evalai push rearrange_submission:latest --phase habitat-rearrange-minival-2022-1820 --private
 
 workflows:
   version: 2

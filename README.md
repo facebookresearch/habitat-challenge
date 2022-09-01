@@ -198,20 +198,19 @@ In this example, we will evaluate an end-to-end policy trained with DD-PPO. Foll
         ```dockerfile
         RUN /bin/bash -c ". activate habitat; pip install ifcfg torchvision tensorboard"
         ```
-    1. You change which `agent.py` and which `submission.sh` script is used in the Docker, modify the following lines and replace the first agent.py or submission.sh with your new files.:
+    1. You change which `agent.py` is used in the Docker, modify the following lines and replace the first agent.py or submission.sh with your new files.:
         ```dockerfile
         ADD agent.py agent.py
-        ADD submission.sh submission.sh
         ```
     1. Do not forget to add any other files you may need in the Docker, for example, we add the `demo.ckpt.pth` file which is the saved weights from the DD-PPO example code.
 
-    1. Finally, modify the submission.sh script to run the appropriate command to test your agents. The scaffold for this code can be found `agents/random_agent.py` and the code for policies trained with Habitat Baselines can be found in `agents/habitat_baselines_agent.py`. In this example, we only modify the final command of the docker: by adding the following args to submission.sh `--model-path demo.ckpt.pth --input-type rgbd`. The default submission.sh script will pass these args to the python script. You may also replace the submission.sh.
+    1. The scaffold for this code can be found `agents/random_agent.py` and the code for policies trained with Habitat Baselines can be found in `agents/habitat_baselines_agent.py`. In this example, we only modify the final command of the docker: by adding the following args to submission.sh `--model-path demo.ckpt.pth --input-type rgbd`. The default submission.sh script will pass these args to the python script. You may also replace the submission.sh.
 
 1. Once your Dockerfile and other code is modified to your satisfaction, build it with the following command.
     ```bash
-    docker build . --file docker/hab2_monolithic.Dockerfile.Dockerfile -t rearrange_submission
+    docker build . --file docker/hab2_monolithic.Dockerfile -t rearrange_submission
     ```
-1. To test locally simple run the `scripts/test_local.sh` script. If the docker runs your code without errors, it should work on Eval-AI. The instructions for submitting the Docker to EvalAI are listed above.
+1. To test locally simply run the `bash scripts/test_local.sh --docker-name rearrange_submission` script. If the docker runs your code without errors, it should work on Eval-AI. The instructions for submitting the Docker to EvalAI are listed above.
 
 ### Hierarchical RL Starter Code
 First, you will need to train individual skill policies with RL. In this example we will approach the `rearrange_easy` task by training a Pick, Place, and Navigation policy and then plug them into a hard-coded high-level controller.
@@ -238,6 +237,8 @@ First, you will need to train individual skill policies with RL. In this example
     CHALLENGE_CONFIG_FILE=configs/tasks/rearrange_easy.local.rgbd.yaml python agents/habitat_baselines_agent.py --evaluation local --input-type depth --cfg-path configs/methods/tp_srl.yaml
     ```
     Using the pre-trained skills from the Google Drive, you should see around a `30%` success rate.
+
+1. Just like with the DD-PPO baseline, we provide a Dockerfile ready to use in `docker/tpsrl_monolithic.Dockerfile`. See the instructions in the [DD-PPO section](https://github.com/facebookresearch/habitat-challenge/tree/rearrangement-challenge-2022#dd-ppo-training-starter-code) for how to modify Dockerfile, build it, and test it.
 
 
 ## Citing Habitat Challenge 2022
