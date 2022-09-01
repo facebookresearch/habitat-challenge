@@ -198,7 +198,7 @@ In this example, we will evaluate an end-to-end policy trained with DD-PPO. Foll
         ```dockerfile
         RUN /bin/bash -c ". activate habitat; pip install ifcfg torchvision tensorboard"
         ```
-    1. You change which `agent.py` is used in the Docker, modify the following lines and replace the first agent.py or submission.sh with your new files.:
+    1. You change which `agent.py` is used in the Docker, modify the following lines and replace the agent.py file with your new file:
         ```dockerfile
         ADD agent.py agent.py
         ```
