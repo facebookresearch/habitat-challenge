@@ -89,6 +89,7 @@ jobs:
 
               # Push docker image to EvalAI docker registry
               evalai push rearrange_submission:latest --phase habitat-rearrange-minival-2022-1820 --private
+              evalai push rearrange_submission:latest --phase habitat-rearrange-easy-minival-2022-1820 --private
 
 workflows:
   version: 2
