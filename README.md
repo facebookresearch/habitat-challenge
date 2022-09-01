@@ -66,8 +66,6 @@ In these steps, we will evaluate a sample agent in Docker. We evaluate in Docker
 
 1. Implement your own agent or try one of ours. We provide an agent in `agents/random_agent.py` that takes random actions.
 
-    [Optional] Modify submission.sh file if your agent needs any custom modifications (e.g. command-line arguments). Otherwise, nothing to do. Default submission.sh is simply a call to `RandomAgent` agent in `agents/random_agent.py`.
-
 1. Install [nvidia-docker v2](https://github.com/NVIDIA/nvidia-docker) following instructions here: [https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html#docker](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html#docker).
 Note: only supports Linux; no Windows or MacOS.
 
@@ -80,7 +78,6 @@ Note: only supports Linux; no Windows or MacOS.
     RUN /bin/bash -c ". activate habitat; pip install torch==1.9.0"
 
     ADD agent.py /agent.py
-    ADD submission.sh /submission.sh
     ```
     Build your docker container using: 
     ```bash
@@ -216,7 +213,7 @@ In this example, we will train and evaluate an end-to-end policy trained with DD
         ```
     1. Do not forget to add any other files you may need in the Docker, for example, we add the `demo.ckpt.pth` file which is the saved weights from the DD-PPO example code.
 
-    1. The scaffold for this code can be found `agents/random_agent.py` and the code for policies trained with Habitat Baselines can be found in `agents/habitat_baselines_agent.py`. In this example, we only modify the final command of the docker: by adding the following args to submission.sh `--model-path demo.ckpt.pth --input-type rgbd`. The default submission.sh script will pass these args to the python script. You may also replace the submission.sh.
+    1. The scaffold for this code can be found `agents/random_agent.py` and the code for policies trained with Habitat Baselines can be found in `agents/habitat_baselines_agent.py`. 
 
 1. Once your Dockerfile and other code is modified to your satisfaction, build it with the following command.
     ```bash
