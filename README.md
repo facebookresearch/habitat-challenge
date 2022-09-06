@@ -211,7 +211,7 @@ In this example, we will train and evaluate an end-to-end policy trained with DD
         ```dockerfile
         ADD agent.py agent.py
         ```
-    1. Do not forget to add any other files you may need in the Docker, for example, we add the `demo.ckpt.pth` file which is the saved weights from the DD-PPO example code.
+    1. Do not forget to add any other files you may need in the Docker, for example, we add the `data/models/rearrange_easy.pth` file which is the saved weights from the DD-PPO example code.
 
     1. The scaffold for this code can be found `agents/random_agent.py` and the code for policies trained with Habitat Baselines can be found in `agents/habitat_baselines_agent.py`. 
 

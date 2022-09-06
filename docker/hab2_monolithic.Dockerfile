@@ -7,6 +7,6 @@ ENV AGENT_EVALUATION_TYPE remote
 ENV TRACK_CONFIG_FILE "/configs/tasks/rearrange.local.rgbd.yaml"
 
 RUN /bin/bash -c ". activate habitat; pip install ifcfg torchvision tensorboard"
-CMD ["/bin/bash", "-c", "source activate habitat && export PYTHONPATH=/evalai-remote-evaluation:$PYTHONPATH && export CHALLENGE_CONFIG_FILE=$TRACK_CONFIG_FILE && python agent.py --evaluation $AGENT_EVALUATION_TYPE --model-path demo.ckpt.pth --input-type rgbd --cfg-path configs/methods/ddppo_monolithic.yaml"]
+CMD ["/bin/bash", "-c", "source activate habitat && export PYTHONPATH=/evalai-remote-evaluation:$PYTHONPATH && export CHALLENGE_CONFIG_FILE=$TRACK_CONFIG_FILE && python agent.py --evaluation $AGENT_EVALUATION_TYPE --model-path demo.ckpt.pth --input-type depth --cfg-path configs/methods/ddppo_monolithic.yaml"]
 
 
