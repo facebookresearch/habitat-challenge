@@ -250,6 +250,8 @@ First, you will need to train individual skill policies with RL. In this example
 
 1. Just like with the DD-PPO baseline, we provide a Dockerfile ready to use in `docker/tpsrl_monolithic.Dockerfile`. See the instructions in the [DD-PPO section](https://github.com/facebookresearch/habitat-challenge/tree/rearrangement-challenge-2022#dd-ppo-training-starter-code) for how to modify Dockerfile, build it, and test it.
 
+## Change Log
+* Sept 7, 2022: Fixed problem with collision threshold and concurrent rendering in the configuration files.
 
 ## Citing Habitat Rearrangement Challenge 2022
 Please cite the challenge and [the following paper](https://arxiv.org/abs/2106.14405) for details about the 2022 Rearrangement challenge:
