@@ -66,8 +66,6 @@ In these steps, we will evaluate a sample agent in Docker. We evaluate in Docker
 
 1. Implement your own agent or try one of ours. We provide an agent in `agents/random_agent.py` that takes random actions.
 
-    [Optional] Modify submission.sh file if your agent needs any custom modifications (e.g. command-line arguments). Otherwise, nothing to do. Default submission.sh is simply a call to `RandomAgent` agent in `agents/random_agent.py`.
-
 1. Install [nvidia-docker v2](https://github.com/NVIDIA/nvidia-docker) following instructions here: [https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html#docker](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html#docker).
 Note: only supports Linux; no Windows or MacOS.
 
@@ -80,7 +78,6 @@ Note: only supports Linux; no Windows or MacOS.
     RUN /bin/bash -c ". activate habitat; pip install torch==1.9.0"
 
     ADD agent.py /agent.py
-    ADD submission.sh /submission.sh
     ```
     Build your docker container using: 
     ```bash
@@ -123,9 +120,16 @@ Note: only supports Linux; no Windows or MacOS.
     ```
     Note: this same command will be run to evaluate your agent for the leaderboard. **Please submit your docker for remote evaluation (below) only if it runs successfully on your local setup.**
 
-### Online submission (COMING SOON)
+### Online submission 
+Follow instructions in the [submit tab of the EvalAI challenge page](https://eval.ai/web/challenges/challenge-page/1820/submission) to submit your docker image. Note that you will need a version of EvalAI >= 1.2.3. The challenge consists of the following phases:
 
-Online submission on EvalAI will be announced soon!
+1. *Minival phase*: This split is used in the local evaluation scripts in this repository. The purpose of this phase/split is sanity checking -- to confirm that our remote evaluation reports the same result as the one you’re seeing locally.
+
+1. *Test Standard phase*: The purpose of this phase/split is to serve as the public leaderboard establishing the state of the art; this is what should be used to report results in papers. Each team is allowed maximum of 10 submissions per day for this phase, but again, please use them judiciously. Don’t overfit to the test set.
+
+1. *Test Challenge phase*: This phase/split will be used to decide challenge winners. Each team is allowed a total of 5 submissions until the end of challenge submission phase. The highest performing of these 5 will be automatically chosen. Results on this split will not be made public until the announcement of final results at NeurIPS 2022.
+
+Note: Your agent will be evaluated on 1000 episodes and will have a total available time of 48 hours to finish. Your submissions will be evaluated on AWS EC2 p2.xlarge instance which has a Tesla K80 GPU (12 GB Memory), 4 CPU cores, and 61 GB RAM. If you need more time/resources for evaluation of your submission please get in touch. If you face any issues or have questions you can ask them by opening an issue on this repository.
 
 ### DD-PPO Training Starter Code
 In this example, we will train and evaluate an end-to-end policy trained with DD-PPO. You will run all the subsequent steps from the `habitat` conda environment.
@@ -203,24 +207,24 @@ In this example, we will train and evaluate an end-to-end policy trained with DD
         ```dockerfile
         RUN /bin/bash -c ". activate habitat; pip install ifcfg torchvision tensorboard"
         ```
-    1. You change which `agent.py` and which `submission.sh` script is used in the Docker, modify the following lines and replace the first agent.py or submission.sh with your new files.:
+    1. You change which `agent.py` is used in the Docker, modify the following lines and replace the agent.py file with your new file:
         ```dockerfile
         ADD agent.py agent.py
-        ADD submission.sh submission.sh
         ```
     1. Do not forget to add any other files you may need in the Docker, for example, we add the `demo.ckpt.pth` file which is the saved weights from the DD-PPO example code.
 
-    1. Finally, modify the submission.sh script to run the appropriate command to test your agents. The scaffold for this code can be found `agents/random_agent.py` and the code for policies trained with Habitat Baselines can be found in `agents/habitat_baselines_agent.py`. In this example, we only modify the final command of the docker: by adding the following args to submission.sh `--model-path demo.ckpt.pth --input-type rgbd`. The default submission.sh script will pass these args to the python script. You may also replace the submission.sh.
+    1. The scaffold for this code can be found `agents/random_agent.py` and the code for policies trained with Habitat Baselines can be found in `agents/habitat_baselines_agent.py`. 
 
 1. Once your Dockerfile and other code is modified to your satisfaction, build it with the following command.
     ```bash
-    docker build . --file docker/hab2_monolithic.Dockerfile.Dockerfile -t rearrange_submission
+    docker build . --file docker/hab2_monolithic.Dockerfile -t rearrange_submission
     ```
-1. To test locally simply run the `scripts/test_local.sh` script. If the docker runs your code without errors, it should work on Eval-AI. The instructions for submitting the Docker to EvalAI are listed above.
+1. To test locally simply run the `bash scripts/test_local.sh --docker-name rearrange_submission` script. If the docker runs your code without errors, it should work on Eval-AI. The instructions for submitting the Docker to EvalAI are listed above.
 
 ### Hierarchical RL Starter Code
 First, you will need to train individual skill policies with RL. In this example we will approach the `rearrange_easy` task by training a Pick, Place, and Navigation policy and then plug them into a hard-coded high-level controller.
-1. Follow steps 1 of [the DD-PPO section](https://github.com/facebookresearch/habitat-challenge/tree/rearrangement-challenge-2022#dd-ppo-training-starter-code) to install Habitat-Lab and download the datasets.
+1. Follow step 1 of [the DD-PPO section](https://github.com/facebookresearch/habitat-challenge/tree/rearrangement-challenge-2022#dd-ppo-training-starter-code) to install install Habitat-Lab, and download the datasets.
+
 1. Steps to train the skills from scratch:
 
     1. Train the Pick skill. From the Habitat Lab directory, run 
@@ -243,6 +247,8 @@ First, you will need to train individual skill policies with RL. In this example
     CHALLENGE_CONFIG_FILE=configs/tasks/rearrange_easy.local.rgbd.yaml python agents/habitat_baselines_agent.py --evaluation local --input-type depth --cfg-path configs/methods/tp_srl.yaml
     ```
     Using the pre-trained skills from the Google Drive, you should see around a `30%` success rate.
+
+1. Just like with the DD-PPO baseline, we provide a Dockerfile ready to use in `docker/tpsrl_monolithic.Dockerfile`. See the instructions in the [DD-PPO section](https://github.com/facebookresearch/habitat-challenge/tree/rearrangement-challenge-2022#dd-ppo-training-starter-code) for how to modify Dockerfile, build it, and test it.
 
 
 ## Citing Habitat Rearrangement Challenge 2022
