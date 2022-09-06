@@ -195,7 +195,7 @@ In this example, we will train and evaluate an end-to-end policy trained with DD
 
 1. Evaluate on the minival dataset for the `rearrange_easy` task from the command line via. First enter the `habitat-challenge` directory. Ensure, you have the datasets installed in this directory as well. If not, run `python -m habitat_sim.utils.datasets_download --uids rearrange_task_assets`.
     ```bash
-    CHALLENGE_CONFIG_FILE=configs/tasks/rearrange_easy.local.rgbd.yaml python agents/habitat_baselines_agent.py --evaluation local --input-type depth --cfg-path configs/methods/ddppo_monolithic.yaml
+    CHALLENGE_CONFIG_FILE=configs/tasks/rearrange_easy.local.rgbd.yaml python agents/habitat_baselines_agent.py --evaluation local --input-type depth --cfg-path configs/methods/ddppo_monolithic.yaml --model-path data/models/rearrange_easy.pth
     ```
 
 1. We provide Dockerfiles ready to use with the DD-PPO baselines in `docker/hab2_monolithic.Dockerfile`. For the sake of completeness, we describe how you can make your own Dockerfile below. If you just want to test the baseline code, feel free to skip this bullet because  `hab2_DDPPO_baseline.Dockerfile` is ready to use.
