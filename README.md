@@ -240,7 +240,7 @@ First, you will need to train individual skill policies with RL. In this example
     1. Train the Navigation skill. Use the exact same command as the above, but replace every instance of "pick" with "nav_to_obj".
     1. Copy the checkpoints for the different skills to the `data/models` directory in the Habitat Challenge directory. There should now be three files `data/models/[nav,pick,place].pth`.
 
-1. Instead of training the skills, you can also use the pre-trained skills located at [this Google Drive link.](https://drive.google.com/drive/folders/1F-T5zJvz-EIzh9waDvMnuwCmkxztvaFG?usp=sharing)
+1. Instead of training the skills, you can also use the provided pre-trained skills. Download the skills via `wget https://dl.fbaipublicfiles.com/habitat/data/baselines/v1/rearrange_habitat2022_challenge_baseline_v1.zip && unzip rearrange_habitat2022_challenge_baseline_v1.zip`.
 
 1. Finally, evaluate the combined policies on the minival dataset for the `rearrange_easy` task from the command line. First enter the `habitat-challenge` directory. Ensure, you have the datasets installed in this directory as well. If not, run `python -m habitat_sim.utils.datasets_download --uids rearrange_task_assets`.
     ```bash
