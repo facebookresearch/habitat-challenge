@@ -199,7 +199,7 @@ In this example, we will train and evaluate an end-to-end policy trained with DD
 
 1. Evaluate on the minival dataset for the `rearrange_easy` task from the command line via. First enter the `habitat-challenge` directory. Ensure, you have the datasets installed in this directory as well. If not, run `python -m habitat_sim.utils.datasets_download --uids rearrange_task_assets`.
     ```bash
-    CHALLENGE_CONFIG_FILE=configs/tasks/rearrange_easy.local.rgbd.yaml python agents/habitat_baselines_agent.py --evaluation local --input-type depth --cfg-path configs/methods/ddppo_monolithic.yaml
+    CHALLENGE_CONFIG_FILE=configs/tasks/rearrange_easy.local.rgbd.yaml python agents/habitat_baselines_agent.py --evaluation local --input-type depth --cfg-path configs/methods/ddppo_monolithic.yaml --model-path data/models/rearrange_easy.pth
     ```
 
 1. We provide Dockerfiles ready to use with the DD-PPO baselines in `docker/hab2_monolithic.Dockerfile`. For the sake of completeness, we describe how you can make your own Dockerfile below. If you just want to test the baseline code, feel free to skip this bullet because  `hab2_DDPPO_baseline.Dockerfile` is ready to use.
@@ -211,7 +211,7 @@ In this example, we will train and evaluate an end-to-end policy trained with DD
         ```dockerfile
         ADD agent.py agent.py
         ```
-    1. Do not forget to add any other files you may need in the Docker, for example, we add the `demo.ckpt.pth` file which is the saved weights from the DD-PPO example code.
+    1. Do not forget to add any other files you may need in the Docker, for example, we add the `data/models/rearrange_easy.pth` file which is the saved weights from the DD-PPO example code.
 
     1. The scaffold for this code can be found `agents/random_agent.py` and the code for policies trained with Habitat Baselines can be found in `agents/habitat_baselines_agent.py`. 
 
@@ -240,7 +240,7 @@ First, you will need to train individual skill policies with RL. In this example
     1. Train the Navigation skill. Use the exact same command as the above, but replace every instance of "pick" with "nav_to_obj".
     1. Copy the checkpoints for the different skills to the `data/models` directory in the Habitat Challenge directory. There should now be three files `data/models/[nav,pick,place].pth`.
 
-1. Instead of training the skills, you can also use the pre-trained skills located at [this Google Drive link.](https://drive.google.com/drive/folders/1F-T5zJvz-EIzh9waDvMnuwCmkxztvaFG?usp=sharing)
+1. Instead of training the skills, you can also use the provided pre-trained skills. Download the skills via `wget https://dl.fbaipublicfiles.com/habitat/data/baselines/v1/rearrange_habitat2022_challenge_baseline_v1.zip && unzip rearrange_habitat2022_challenge_baseline_v1.zip`.
 
 1. Finally, evaluate the combined policies on the minival dataset for the `rearrange_easy` task from the command line. First enter the `habitat-challenge` directory. Ensure, you have the datasets installed in this directory as well. If not, run `python -m habitat_sim.utils.datasets_download --uids rearrange_task_assets`.
     ```bash
@@ -250,6 +250,8 @@ First, you will need to train individual skill policies with RL. In this example
 
 1. Just like with the DD-PPO baseline, we provide a Dockerfile ready to use in `docker/tpsrl_monolithic.Dockerfile`. See the instructions in the [DD-PPO section](https://github.com/facebookresearch/habitat-challenge/tree/rearrangement-challenge-2022#dd-ppo-training-starter-code) for how to modify Dockerfile, build it, and test it.
 
+## Change Log
+* Sept 7, 2022: Fixed problem with collision threshold and concurrent rendering in the configuration files.
 
 ## Citing Habitat Rearrangement Challenge 2022
 Please cite the challenge and [the following paper](https://arxiv.org/abs/2106.14405) for details about the 2022 Rearrangement challenge:
