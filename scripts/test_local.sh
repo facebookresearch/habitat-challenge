@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-DOCKER_NAME="objectnav_submission"
+DOCKER_NAME="rearrange_submission"
 
 while [[ $# -gt 0 ]]
 do
@@ -19,10 +19,10 @@ case $key in
 esac
 done
 
-docker run -v $(pwd)/habitat-challenge-data:/habitat-challenge-data \
-    -v $(realpath habitat-challenge-data/data/scene_datasets/hm3d):/habitat-challenge-data/data/scene_datasets/hm3d \
+docker run \
+    -v $(realpath data/versioned_data):/data/versioned_data \
     --runtime=nvidia \
     -e "AGENT_EVALUATION_TYPE=local" \
-    -e "TRACK_CONFIG_FILE=/challenge_objectnav2022.local.rgbd.yaml" \
+    -e "TRACK_CONFIG_FILE=/configs/tasks/rearrange_easy.local.rgbd.yaml" \
     ${DOCKER_NAME}\
 

@@ -10,17 +10,17 @@ import os
 import random
 from typing import Dict, Optional
 
+import gym.spaces as spaces
 import numba
 import numpy as np
 import torch
-from gym.spaces import Box
-from gym.spaces import Dict as SpaceDict
-from gym.spaces import Discrete
 
 import habitat
 from habitat.config import Config
 from habitat.core.agent import Agent
 from habitat.core.simulator import Observations
+from habitat.core.spaces import ActionSpace, EmptySpace
+from habitat.utils.gym_adapter import continuous_vector_action_to_hab_dict
 from habitat_baselines.common.baseline_registry import baseline_registry
 from habitat_baselines.common.obs_transformers import (
     apply_obs_transforms_batch,
@@ -29,9 +29,12 @@ from habitat_baselines.common.obs_transformers import (
 )
 from habitat_baselines.config.default import get_config
 from habitat_baselines.rl.ddppo.policy import PointNavResNetPolicy
-from habitat_baselines.utils.common import batch_obs
+from habitat_baselines.utils.common import batch_obs, get_num_actions
 
 random_generator = np.random.RandomState()
+
+CAMERA_HEIGHT = 256
+CAMERA_WIDTH = 256
 
 
 @numba.njit
@@ -53,54 +56,97 @@ def sample_random_seed():
 
 class PPOAgent(Agent):
     def __init__(self, config: Config) -> None:
-        image_size = config.RL.POLICY.OBS_TRANSFORMS.CENTER_CROPPER
-        if "ObjectNav" in config.TASK_CONFIG.TASK.TYPE:
-            OBJECT_CATEGORIES_NUM = 5
-            spaces = {
-                "objectgoal": Box(
-                    low=0, high=OBJECT_CATEGORIES_NUM, shape=(1,), dtype=np.int64
+        obs_space = spaces.Dict(
+            {
+                "robot_head_depth": spaces.Box(
+                    low=0,
+                    high=1,
+                    shape=(CAMERA_HEIGHT, CAMERA_WIDTH, 1),
+                    dtype=np.float32,
                 ),
-                "compass": Box(low=-np.pi, high=np.pi, shape=(1,), dtype=np.float32),
-                "gps": Box(
+                "robot_head_rgb": spaces.Box(
+                    low=0,
+                    high=255,
+                    shape=(CAMERA_HEIGHT, CAMERA_WIDTH, 1),
+                    dtype=np.float32,
+                ),
+                "obj_start_sensor": spaces.Box(
+                    low=np.finfo(np.float32).min,
+                    high=np.finfo(np.float32).max,
+                    shape=(3,),
+                    dtype=np.float32,
+                ),
+                "obj_goal_sensor": spaces.Box(
+                    low=np.finfo(np.float32).min,
+                    high=np.finfo(np.float32).max,
+                    shape=(3,),
+                    dtype=np.float32,
+                ),
+                "obj_start_gps_compass": spaces.Box(
                     low=np.finfo(np.float32).min,
                     high=np.finfo(np.float32).max,
                     shape=(2,),
                     dtype=np.float32,
                 ),
-            }
-        else:
-            spaces = {
-                "pointgoal": Box(
+                "obj_goal_gps_compass": spaces.Box(
                     low=np.finfo(np.float32).min,
                     high=np.finfo(np.float32).max,
                     shape=(2,),
                     dtype=np.float32,
-                )
+                ),
+                "joint": spaces.Box(
+                    low=np.finfo(np.float32).min,
+                    high=np.finfo(np.float32).max,
+                    shape=(7,),
+                    dtype=np.float32,
+                ),
+                "is_holding": spaces.Box(
+                    low=np.finfo(np.float32).min,
+                    high=np.finfo(np.float32).max,
+                    shape=(1,),
+                    dtype=np.float32,
+                ),
+                "relative_resting_position": spaces.Box(
+                    low=np.finfo(np.float32).min,
+                    high=np.finfo(np.float32).max,
+                    shape=(3,),
+                    dtype=np.float32,
+                ),
             }
-
-        if config.INPUT_TYPE in ["depth", "rgbd"]:
-            spaces["depth"] = Box(
-                low=0,
-                high=1,
-                shape=(image_size.HEIGHT, image_size.WIDTH, 1),
-                dtype=np.float32,
-            )
-
-        if config.INPUT_TYPE in ["rgb", "rgbd"]:
-            spaces["rgb"] = Box(
-                low=0,
-                high=255,
-                shape=(image_size.HEIGHT, image_size.WIDTH, 3),
-                dtype=np.uint8,
-            )
-        observation_spaces = SpaceDict(spaces)
-        action_spaces = (
-            Discrete(6) if "ObjectNav" in config.TASK_CONFIG.TASK.TYPE else Discrete(4)
         )
+        self.action_space = ActionSpace(
+            {
+                "ARM_ACTION": spaces.Dict(
+                    {
+                        "arm_action": spaces.Box(
+                            low=-1.0, high=1.0, shape=(7,), dtype=np.float32
+                        ),
+                        "grip_action": spaces.Box(
+                            low=-1.0, high=1.0, shape=(1,), dtype=np.float32
+                        ),
+                    }
+                ),
+                "BASE_VELOCITY": spaces.Dict(
+                    {
+                        "base_vel": spaces.Box(
+                            low=-20.0, high=20.0, shape=(2,), dtype=np.float32
+                        )
+                    }
+                ),
+                "REARRANGE_STOP": EmptySpace(),
+            }
+        )
+
+        if config.INPUT_TYPE == "blind":
+            del obs_space.spaces["robot_head_depth"]
+            del obs_space.spaces["robot_head_rgb"]
+        elif config.INPUT_TYPE == "depth":
+            del obs_space.spaces["robot_head_rgb"]
+        elif config.INPUT_TYPE == "rgb":
+            del obs_space.spaces["robot_head_depth"]
+
         self.obs_transforms = get_active_obs_transforms(config)
-        observation_spaces = apply_obs_transforms_obs_space(
-            observation_spaces, self.obs_transforms
-        )
+        obs_space = apply_obs_transforms_obs_space(obs_space, self.obs_transforms)
 
         self.device = (
             torch.device("cuda:{}".format(config.PTH_GPU_ID))
@@ -115,7 +161,15 @@ class PPOAgent(Agent):
 
         policy = baseline_registry.get_policy(config.RL.POLICY.name)
         self.actor_critic = policy.from_config(
-            config, observation_spaces, action_spaces
+            config,
+            obs_space,
+            spaces.Box(
+                shape=(get_num_actions(self.action_space),),
+                low=-1,
+                high=1,
+                dtype=np.float32,
+            ),
+            orig_action_space=self.action_space,
         )
 
         self.actor_critic.to(self.device)
@@ -133,7 +187,7 @@ class PPOAgent(Agent):
 
         else:
             habitat.logger.error(
-                "Model checkpoint wasn't loaded, evaluating " "a random model."
+                "Model checkpoint wasn't loaded, evaluating a random model."
             )
 
         self.test_recurrent_hidden_states: Optional[torch.Tensor] = None
@@ -143,19 +197,24 @@ class PPOAgent(Agent):
     def reset(self) -> None:
         self.test_recurrent_hidden_states = torch.zeros(
             1,
-            self.actor_critic.net.num_recurrent_layers,
+            self.actor_critic.num_recurrent_layers,
             self.hidden_size,
             device=self.device,
         )
         self.not_done_masks = torch.zeros(1, 1, device=self.device, dtype=torch.bool)
-        self.prev_actions = torch.zeros(1, 1, dtype=torch.long, device=self.device)
+        self.prev_actions = torch.zeros(
+            1,
+            get_num_actions(self.action_space),
+            dtype=torch.float32,
+            device=self.device,
+        )
 
     def act(self, observations: Observations) -> Dict[str, int]:
         sample_random_seed()
         batch = batch_obs([observations], device=self.device)
         batch = apply_obs_transforms_batch(batch, self.obs_transforms)
         with torch.no_grad():
-            (_, actions, _, self.test_recurrent_hidden_states) = self.actor_critic.act(
+            (_, actions, _, self.test_recurrent_hidden_states,) = self.actor_critic.act(
                 batch,
                 self.test_recurrent_hidden_states,
                 self.prev_actions,
@@ -166,24 +225,30 @@ class PPOAgent(Agent):
             self.not_done_masks.fill_(True)
             self.prev_actions.copy_(actions)  # type: ignore
 
-        return {"action": actions[0][0].item()}
+        step_action = continuous_vector_action_to_hab_dict(
+            self.action_space, None, actions[0].cpu().numpy()
+        )
+
+        return step_action
 
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--input-type", default="blind", choices=["blind", "rgb", "depth", "rgbd"]
+        "--input-type",
+        default="blind",
+        choices=["blind", "rgb", "depth", "rgbd"],
     )
     parser.add_argument(
         "--evaluation", type=str, required=True, choices=["local", "remote"]
     )
+    parser.add_argument("--cfg-path", type=str, required=True)
+
     config_paths = os.environ["CHALLENGE_CONFIG_FILE"]
     parser.add_argument("--model-path", default="", type=str)
     args = parser.parse_args()
 
-    config = get_config(
-        "configs/ddppo_objectnav.yaml", ["BASE_TASK_CONFIG_PATH", config_paths]
-    ).clone()
+    config = get_config(args.cfg_path, ["BASE_TASK_CONFIG_PATH", config_paths]).clone()
     config.defrost()
     config.PTH_GPU_ID = 0
     config.INPUT_TYPE = args.input_type
