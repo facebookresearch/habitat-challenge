@@ -22,7 +22,7 @@ If you have any issues, open a GitHub issue on this repository.
 
 ## Participation Guidelines
 
-Participate in the contest by registering on the in the soon to be released EvalAI page and creating a team. Participants will upload docker containers with their agents that are evaluated on an AWS GPU-enabled instance. Before pushing the submissions for remote evaluation, participants should test the submission docker locally to ensure it is working. Instructions for training, local evaluation, and online submission are provided below.
+Participate in the contest by registering on the [EvalAI page](https://eval.ai/web/challenges/challenge-page/1820) and creating a team. Participants will upload docker containers with their agents that are evaluated on an AWS GPU-enabled instance. Before pushing the submissions for remote evaluation, participants should test the submission docker locally to ensure it is working. Instructions for training, local evaluation, and online submission are provided below.
 
 ### Installing Habitat-Sim and Downloading data
 First setup Habitat Sim in a new conda environment so you can download the datasets to evaluate your models locally.
