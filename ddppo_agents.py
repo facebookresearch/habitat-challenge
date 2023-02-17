@@ -32,6 +32,8 @@ from habitat_baselines.rl.ddppo.policy import PointNavResNetPolicy
 from habitat_baselines.utils.common import batch_obs
 
 
+from clip_policy import PointNavResNetPolicy
+
 @numba.njit
 def _seed_numba(seed: int):
     random.seed(seed)
@@ -42,7 +44,7 @@ class PPOAgent(Agent):
     def __init__(self, config: Config) -> None:
         image_size = config.RL.POLICY.OBS_TRANSFORMS.CENTER_CROPPER
         if "ObjectNav" in config.TASK_CONFIG.TASK.TYPE:
-            OBJECT_CATEGORIES_NUM = 20
+            OBJECT_CATEGORIES_NUM = 5 # 5+1 will be used internally
             spaces = {
                 "objectgoal": Box(
                     low=0, high=OBJECT_CATEGORIES_NUM, shape=(1,), dtype=np.int64
@@ -104,8 +106,21 @@ class PPOAgent(Agent):
             torch.backends.cudnn.deterministic = True  # type: ignore
 
         policy = baseline_registry.get_policy(config.RL.POLICY.name)
-        self.actor_critic = policy.from_config(
-            config, observation_spaces, action_spaces
+        
+        # self.actor_critic = policy.from_config(
+        #     config, observation_spaces, action_spaces
+        # )
+
+        self.actor_critic = PointNavResNetPolicy(
+            observation_space=observation_spaces,
+            action_space=action_spaces,
+            hidden_size=config.RL.PPO.hidden_size,
+            rnn_type=config.RL.DDPPO.rnn_type,
+            num_recurrent_layers=config.RL.DDPPO.num_recurrent_layers,
+            backbone=config.RL.DDPPO.backbone,
+            normalize_visual_inputs="rgb" in observation_spaces.spaces,
+            force_blind_policy=config.FORCE_BLIND_POLICY,
+            policy_config=config.RL.POLICY,
         )
 
         self.actor_critic.to(self.device)
@@ -171,7 +186,7 @@ def main():
     args = parser.parse_args()
 
     config = get_config(
-        "configs/ddppo_pointnav.yaml", ["BASE_TASK_CONFIG_PATH", config_paths]
+        "configs/ddppo_objectnav.yaml", ["BASE_TASK_CONFIG_PATH", config_paths]
     ).clone()
     config.defrost()
     config.PTH_GPU_ID = 0

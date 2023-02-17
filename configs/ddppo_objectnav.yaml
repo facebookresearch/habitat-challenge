@@ -10,7 +10,7 @@ VIDEO_DIR: "video_dir"
 TEST_EPISODE_COUNT: -1
 EVAL_CKPT_PATH_DIR: "habitat-challenge-data"
 NUM_ENVIRONMENTS: 4
-SENSORS: ["DEPTH_SENSOR", "RGB_SENSOR"]
+SENSORS: ["RGB_SENSOR"]
 CHECKPOINT_FOLDER: "habitat-challenge-data"
 NUM_UPDATES: 270000
 LOG_INTERVAL: 10
@@ -68,6 +68,6 @@ RL:
     reset_critic: True
 
     # Model parameters
-    backbone: resnet50
+    backbone: resnet50_clip_avgpool
     rnn_type: LSTM
     num_recurrent_layers: 2
