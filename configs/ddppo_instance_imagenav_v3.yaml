@@ -2,7 +2,7 @@
 
 defaults:
   - /habitat_baselines: habitat_baselines_rl_config_base
-  - /benchmark/nav/objectnav: objectnav_challenge.local.rgbd
+  - /benchmark/nav/instance_imagenav: instance_imagenav_hm3d_v3
   - /habitat_baselines/rl/policy/obs_transforms:
     - center_cropper_base
     - resize_shortest_edge_base
@@ -18,14 +18,15 @@ habitat:
 
 habitat_baselines:
   torch_gpu_id: 0
-  tensorboard_dir: "tb"
-  video_dir: "video_dir"
+  tensorboard_dir: tb
+  video_dir: video_dir
   test_episode_count: -1
-  eval_ckpt_path_dir: "data/new_checkpoints"
+  eval_ckpt_path_dir: data/new_checkpoints
   num_environments: 4
-  checkpoint_folder: "data/new_checkpoints"
-  trainer_name: "ddppo"
-  num_updates: 270000
+  checkpoint_folder: data/new_checkpoints
+  trainer_name: ddppo
+  num_updates: -1
+  total_num_steps: 2.5e9
   log_interval: 10
   num_checkpoints: 100
   # Force PyTorch to be single threaded as
@@ -33,12 +34,16 @@ habitat_baselines:
   force_torch_single_threaded: True
 
   eval:
-    split: "val"
+    split: val
 
   rl:
 
     policy:
-      name: "PointNavResNetPolicy"
+      name: PointNavResNetPolicy
+      action_distribution_type: gaussian
+      obs_transforms:
+        resize_shortest_edge:
+          trans_keys: [rgb, depth, semantic, instance_imagegoal]
 
     ppo:
       # ppo params
@@ -72,9 +77,9 @@ habitat_baselines:
       pretrained: False
       # Initialize just the visual encoder backbone with pretrained weights
       pretrained_encoder: False
-      # Whether or not the visual encoder backbone will be trained.
+      # Whether the visual encoder backbone will be trained.
       train_encoder: True
-      # Whether or not to reset the critic linear layer
+      # Whether to reset the critic linear layer
       reset_critic: True
 
       # Model parameters
