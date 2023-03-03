@@ -1,9 +1,11 @@
 FROM fairembodied/habitat-challenge:habitat_navigation_2023_base_docker
-ADD agents/random_agent.py agent.py
-ADD configs/ /configs/
-ENV AGENT_EVALUATION_TYPE remote
 
-ENV TRACK_CONFIG_FILE "/configs/tasks/objectnav.local.rgbd.yaml"
+ADD agents/agent.py agent.py
+ADD configs/ /configs/
+ADD submission.sh /submission.sh
+
+ENV AGENT_EVALUATION_TYPE remote
+ENV TRACK_CONFIG_FILE "/configs/benchmark/nav/objectnav/objectnav_v2_hm3d_stretch_challenge.yaml"
 
 CMD [ \
     "/bin/bash", \

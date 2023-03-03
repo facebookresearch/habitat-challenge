@@ -20,9 +20,9 @@ esac
 done
 
 docker run \
-    -v $(realpath data/versioned_data):/data/versioned_data \
+    -v $(pwd)/habitat-challenge-data:/habitat-challenge-data  \
     --runtime=nvidia \
     -e "AGENT_EVALUATION_TYPE=local" \
-    -e "TRACK_CONFIG_FILE=/configs/tasks/imagenav.yaml" \
+    -e "TRACK_CONFIG_FILE=/configs/benchmark/nav/instance_imagenav/instance_imagenav_hm3d_v3_challenge.yaml" \
     ${DOCKER_NAME}\
 

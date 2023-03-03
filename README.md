@@ -76,7 +76,7 @@ For your convenience, please check our [Habitat Challenge video tutorial](https:
     cd habitat-challenge
     ```
 
-1. Implement your own agent or try one of ours. We provide an agent in `agent.py` that takes random actions:
+1. Implement your own agent or try one of ours. We provide an agent in `agents/agent.py` that takes random actions:
     ```python
     import habitat
 
@@ -104,6 +104,7 @@ For your convenience, please check our [Habitat Challenge video tutorial](https:
         challenge.submit(agent)
     ```
 
+
 1. Install [nvidia-docker v2](https://github.com/NVIDIA/nvidia-docker) following instructions here: [https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html#docker](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html#docker).
 Note: only supports Linux; no Windows or MacOS.
 
@@ -115,14 +116,15 @@ Note: only supports Linux; no Windows or MacOS.
     # install dependencies in the habitat conda environment
     RUN /bin/bash -c ". activate habitat; pip install torch"
 
-    ADD agents/random_agent.py /agent.py
+    ADD agents/agent.py /agent.py
+    ADD submission.sh /submission.sh
     ```
     Build your docker container using: `docker build . --file docker/ObjectNav_random_baseline.Dockerfile -t objectnav_submission`. (Note: you may need `sudo` priviliges to run this command.)
 
-    [Optional] Modify the command in the dockerfile if your agent needs any custom modifications (e.g. command-line arguments). Otherwise, nothing to do. Default command is simply a call to `RandomAgent` agent in `agents/random_agent.py`.
+    [Optional] Modify submission.sh file if your agent needs any custom modifications (e.g. command-line arguments). Otherwise, nothing to do. Default submission.sh is simply a call to `RandomAgent` agent in `agent.py`
 
 
-1. b) ObjectNav: Download Habitat-Matterport3D Dataset scenes used for Habitat Challenge [here](https://matterport.com/partners/facebook). Place this data in: `habitat-challenge/habitat-challenge-data/data/scene_datasets/hm3d_v0.2`
+1. Scene Dataset: Download Habitat-Matterport3D Dataset scenes used for Habitat Challenge [here](https://matterport.com/partners/facebook). Place this data in: `habitat-challenge/habitat-challenge-data/data/scene_datasets/hm3d_v0.2`
 
     **Using Symlinks:**  If you used symlinks (i.e. `ln -s`) to link to an existing download of HM3D, there is an additional step. First, make sure there is only one level of symlink (instead of a symlink to a symlink link to a .... symlink) with
       ```bash
@@ -182,17 +184,17 @@ The challenge consists of the following phases:
 Note: Your agent will be evaluated on 1000 episodes and will have a total available time of 48 hours to finish. Your submissions will be evaluated on AWS EC2 p2.xlarge instance which has a Tesla K80 GPU (12 GB Memory), 4 CPU cores, and 61 GB RAM. If you need more time/resources for evaluation of your submission please get in touch. If you face any issues or have questions you can ask them by opening an issue on this repository.
 
 ### ObjectNav Baselines and DD-PPO Training Starter Code
-We have added a config in `configs/ddppo_objectnav.yaml` that includes a baseline using DD-PPO from Habitat-Lab.
+We have added a config in `configs/ddppo_objectnav_v2_hm3d_stretch.yaml` that includes a baseline using DD-PPO from Habitat-Lab.
 
 1. Install the [Habitat-Sim](https://github.com/facebookresearch/habitat-sim/) and [Habitat-Lab](https://github.com/facebookresearch/habitat-lab/) packages. You can install Habitat-Sim using our custom Conda package for habitat challenge 2023 with: ```conda install -c aihabitat habitat-sim-challenge-2023```. For Habitat-Lab, we have created the `habitat-challenge-2023` tag in our Github repo, which can be cloned using: ```git clone --branch challenge-2023 https://github.com/facebookresearch/habitat-lab.git```. Please ensure that both habitat-lab and habitat-baselines packages are installed using ```pip install -e habitat-lab``` and ```pip install -e habitat-baselines```. You will find further information for installation in the Github repositories. 
 
-1. Download the HM3D dataset following the instructions [here](https://matterport.com/partners/facebook). After downloading extract the dataset to folder `habitat-challenge/habitat-challenge-data/data/scene_datasets/hm3d/` folder (this folder should contain the `.glb` files from HM3D). Note that the `habitat-lab` folder is the [habitat-lab](https://github.com/facebookresearch/habitat-lab/) repository folder. The data also needs to be in the habitat-challenge-data/ in this repository.
+1. Download the HM3D scene dataset following the instructions [here](https://matterport.com/partners/facebook). After downloading extract the dataset to folder `habitat-lab/data/scene_datasets/hm3d_v0.2/` folder (this folder should contain the `.glb` files from HM3D). Note that the `habitat-lab` folder is the [habitat-lab](https://github.com/facebookresearch/habitat-lab/) repository folder. You could also just symlink to the path of the HM3D scenes downloaded in step-4 of local-evaluation under the `habitat-challenge/habitat-challenge-data/data/scene_datasets` folder. This can be done using `ln -s /path/to/habitat-challenge-data/data/scene_datasets /path/to/habitat-lab/data/scene_datasets/` (if on OSX or Linux).
 
-1. **Objectnav**: Download the episodes dataset for HM3D ObjectNav from [link](https://dl.fbaipublicfiles.com/habitat/data/datasets/objectnav/hm3d/v1/objectnav_hm3d_v1.zip) and place it in the folder `habitat-challenge/habitat-challenge-data/data/datasets/objectnav/hm3d`. If placed correctly, you should have the train and val splits at `habitat-challenge/habitat-challenge-data/data/datasets/objectnav/hm3d/v2/train/` and `habitat-challenge/habitat-challenge-data/data/datasets/objectnav/hm3d/v2/val/` respectively. Place HM3D scenes downloaded in step-4 of local-evaluation under the `habitat-challenge/habitat-challenge-data/data/scene_datasets` folder. If you have already downloaded thes files for the habitat-lab repo, you may simply symlink them using `ln -s $PATH_TO_SCENE_DATASETS habitat-challenge-data/data/scene_datasets` (if on OSX or Linux).
+1. **Objectnav**: Download the episodes dataset for HM3D ObjectNav from [link](https://dl.fbaipublicfiles.com/habitat/data/datasets/objectnav/hm3d/v2/objectnav_hm3d_v2.zip) and place it in the folder `habitat-challenge/habitat-challenge-data/data/datasets/objectnav/hm3d`. If placed correctly, you should have the train and val splits at `habitat-challenge/habitat-challenge-data/data/datasets/objectnav/hm3d/v2/train/` and `habitat-challenge/habitat-challenge-data/data/datasets/objectnav/hm3d/v2/val/` respectively.
 
 1. An example on how to train DD-PPO model can be found in [habitat-lab/habitat-baselines/habitat_baselines/rl/ddppo](https://github.com/facebookresearch/habitat-lab/tree/main/habitat-baselines/habitat_baselines/rl/ddppo). See the corresponding README in habitat-lab for how to adjust the various hyperparameters, save locations, visual encoders and other features.
 
-    1. To run on a single machine use the following script from `habitat-lab` directory:
+    1. To run on a single machine use the script [single_node.sh](https://github.com/facebookresearch/habitat-lab/blob/main/habitat-baselines/habitat_baselines/rl/ddppo/single_node.sh) from the `habitat-lab` directory:
         ```bash
         #/bin/bash
 
@@ -207,19 +209,19 @@ We have added a config in `configs/ddppo_objectnav.yaml` that includes a baselin
             habitat_baselines/run.py \
             --config-name=objectnav/ddppo_objectnav_v2_hm3d_stretch.yaml
         ```
-    1. There is also an example of running the code distributed on a cluster with SLURM. While this is not necessary, if you have access to a cluster, it can significantly speed up training. To run on multiple machines in a SLURM cluster run the following script: change ```#SBATCH --nodes $NUM_OF_MACHINES``` to the number of machines and ```#SBATCH --ntasks-per-node $NUM_OF_GPUS``` and ```$SBATCH --gres $NUM_OF_GPUS``` to specify the number of GPUS to use per requested machine.
+    1. There is also an example script named [multi_node_slurm.sh](https://github.com/facebookresearch/habitat-lab/blob/main/habitat-baselines/habitat_baselines/rl/ddppo/multi_node_slurm.sh) for running the code in distributed mode on a cluster with SLURM. While this is not necessary, if you have access to a cluster, it can significantly speed up training. To run on multiple machines in a SLURM cluster run the following script: change ```#SBATCH --nodes $NUM_OF_MACHINES``` to the number of machines and ```#SBATCH --ntasks-per-node $NUM_OF_GPUS``` and ```$SBATCH --gpus $NUM_OF_GPUS``` to specify the number of GPUS to use per requested machine.
         ```bash
         #!/bin/bash
         #SBATCH --job-name=ddppo
         #SBATCH --output=logs.ddppo.out
         #SBATCH --error=logs.ddppo.err
-        #SBATCH --gres gpu:1
+        #SBATCH --gpus 1
         #SBATCH --nodes 1
         #SBATCH --cpus-per-task 10
         #SBATCH --ntasks-per-node 1
         #SBATCH --mem=60GB
-        #SBATCH --time=12:00
-        #SBATCH --signal=USR1@600
+        #SBATCH --time=72:00:00
+        #SBATCH --signal=USR1@90
         #SBATCH --requeue
         #SBATCH --partition=dev
 
@@ -231,23 +233,21 @@ We have added a config in `configs/ddppo_objectnav.yaml` that includes a baselin
 
         set -x
         srun python -u -m habitat_baselines.run \
-            --config-name=objectnav/ddppo_objectnav_v2_hm3d_stretch.yaml
+            --config-name=configs/ddppo_objectnav_v2_hm3d_stretch.yaml
         ```
 
-    1. The preceding two scripts are based off ones found in the [habitat_baselines/rl/ddppo](https://github.com/facebookresearch/habitat-lab/tree/main/habitat-baselines/habitat_baselines/rl/ddppo).
-
-1. The checkpoint specified by ```$PATH_TO_CHECKPOINT ``` can evaluated by SPL and other measurements by running the following command:
+1. The checkpoint specified by ```$PATH_TO_CHECKPOINT ``` can evaluated based on the SPL and other measurements by running the following command:
 
     ```bash
     python -u -m habitat_baselines.run \
-        --exp-config ../habitat-challenge/configs/ddppo_objectnav.yaml \
-        --run-type eval \
-        EVAL_CKPT_PATH_DIR $PATH_TO_CHECKPOINT \
-        TASK_CONFIG.DATASET.SPLIT val
+        --config-name=configs/ddppo_objectnav_v2_hm3d_stretch.yaml \
+        habitat_baselines.evaluate=True \
+        habitat_baselines.eval_ckpt_path_dir=$PATH_TO_CHECKPOINT \
+        habitat.dataset.data_path.split=val
     ```
     The weights used for our DD-PPO Objectnav baseline for the Habitat-2023 challenge can be downloaded with the following command:
     ```bash
-    wget https://dl.fbaipublicfiles.com/habitat/data/baselines/v1/ddppo_objectnav_habitat2023_challenge_baseline_v1.pth
+    wget https://dl.fbaipublicfiles.com/habitat/data/baselines/v2/ddppo_objectnav_habitat2023_challenge_baseline_v1.pth
     ```
 
 1. To submit your entry via EvalAI, you will need to build a docker file. We provide Dockerfiles ready to use with the DD-PPO baselines in `docker/ObjectNav_ddppo_baseline.Dockerfile`. For the sake of completeness, we describe how you can make your own Dockerfile below. If you just want to test the baseline code, feel free to skip this bullet because  ```ObjectNav_ddppo_baseline.Dockerfile``` is ready to use.
@@ -255,20 +255,20 @@ We have added a config in `configs/ddppo_objectnav.yaml` that includes a baselin
         ```dockerfile
         RUN /bin/bash -c ". activate habitat; pip install ifcfg torch tensorboard"
         ```
-    1. You change which ```agent.py``` is used in the Docker, modify the following lines and replace the first agent.py with your new files.:
+    1. You change which ```agent.py``` and which ``submission.sh`` script is used in the Docker, modify the following lines and replace the first agent.py or submission.sh with your new files.:
         ```dockerfile
-        ADD agents/habitat_baselines_agent.py agent.py
+        ADD agents/agent.py agent.py
+        ADD submission.sh submission.sh
         ```
     1. Do not forget to add any other files you may need in the Docker, for example, we add the ```demo.ckpt.pth``` file which is the saved weights from the DD-PPO example code.
 
-    1. Finally, modify the submission.sh script to run the appropriate command to test your agents. The scaffold for this code can be found ```agent.py``` and the DD-PPO specific agent can be found in ```ddppo_agents.py```. In this example, we only modify the final command of the ObjectNav docker: by adding the following args to submission.sh ```--model-path demo.ckpt.pth --input-type rgbd```. The default submission.sh script will pass these args to the python script. You may also replace the submission.sh.
-        1. Please note that at this time, that habitat_baselines uses a slightly different config system, and the configs nodes for habitat are defined under TASK_CONFIG which is loaded at runtime from BASE_TASK_CONFIG_PATH. We manually overwrite this config using the opts args in our agent.py file.
+    1. Finally, modify the submission.sh script to run the appropriate command to test your agents. The scaffold for this code can be found ```agent.py``` and the DD-PPO specific agent can be found in ```habitat_baselines_agents.py```. In this example, we only modify the final command of the ObjectNav docker: by adding the following args to submission.sh ```--model-path demo.ckpt.pth --input-type rgbd```. The default submission.sh script will pass these args to the python script. You may also replace the submission.sh.
 
 1. Once your Dockerfile and other code is modified to your satisfaction, build it with the following command.
     ```bash
     docker build . --file docker/ObjectNav_ddppo_baseline.Dockerfile -t objectnav_submission
     ```
-1. To test locally simple run the ```test_local_objectnav.sh``` script. If the docker runs your code without errors, it should work on Eval-AI. The instructions for submitting the Docker to EvalAI are listed above.
+1. To test locally simple run the ```scripts/test_local_objectnav.sh``` script. If the docker runs your code without errors, it should work on Eval-AI. The instructions for submitting the Docker to EvalAI are listed above.
 1. Happy hacking!
 
 ## Citing Habitat Challenge 2023
