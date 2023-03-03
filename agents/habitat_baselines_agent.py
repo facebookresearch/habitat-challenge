@@ -94,7 +94,7 @@ class PPOAgent(Agent):
         if config.habitat.task.goal_sensor_uuid == "objectgoal":
             obs_space["objectgoal"] = spaces.Box(
                 low=0,
-                high=num_object_categories,
+                high=num_object_categories-1,
                 shape=(1,),
                 dtype=np.int64
             )
@@ -135,6 +135,11 @@ class PPOAgent(Agent):
                             high=np.array([1]),
                             dtype=np.float32,
                         ),
+                        "camera_pitch_velocity": spaces.Box(
+                        low=np.array([-1]),
+                        high=np.array([1]),
+                        dtype=np.float32,
+                    ),
                     }
                 )
                 self.continuous_actions_high.extend([1, 1])
@@ -145,6 +150,11 @@ class PPOAgent(Agent):
                         "xyt_waypoint": spaces.Box(
                             low=-np.ones(3),
                             high=np.ones(3),
+                            dtype=np.float32,
+                        ),
+                        "delta_camera_pitch_angle": spaces.Box(
+                            low=np.array([-1]),
+                            high=np.array([1]),
                             dtype=np.float32,
                         ),
                         "max_duration": spaces.Box(
@@ -291,7 +301,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--input-type",
-        default="rgb",
+        default="rgbd",
         choices=["blind", "rgb", "depth", "rgbd"],
     )
     parser.add_argument(
@@ -299,30 +309,49 @@ def main():
     )
     parser.add_argument("--model-path", default="", type=str)
     parser.add_argument("--task-config", type=str, required=True)
-
+    parser.add_argument(
+        "--action_space",
+        type=str,
+        default="velocity_controller",
+        choices=[
+            "velocity_controller",
+            "waypoint_controller",
+            "discrete_waypoint_controller"
+        ],
+        help="Action space to use for the agent",
+    )
+    parser.add_argument(
+        "overrides",
+        default=None,
+        nargs=argparse.REMAINDER,
+        help="Modify config options from command line",
+    )
     benchmark_config_path = os.environ["CHALLENGE_CONFIG_FILE"]
 
     args = parser.parse_args()
 
     register_hydra_plugin(HabitatChallengeConfigPlugin)
 
+    overrides = args.overrides + [
+        "benchmark/nav/objectnav=" + os.path.basename(benchmark_config_path),
+        "habitat/task/actions=" + args.action_space,
+        "+pth_gpu_id=0",
+        "+input_type=" + args.input_type,
+        "+model_path=" + args.model_path,
+        "+random_seed=7",
+    ]
+
     config = get_config(
         args.task_config,
-        [
-            "benchmark/nav/objectnav=" + os.path.basename(benchmark_config_path),
-            "+pth_gpu_id=0",
-            "+input_type=" + args.input_type,
-            "+model_path=" + args.model_path,
-            "+random_seed=7",
-        ],
+        overrides,
     )
     
     agent = PPOAgent(config)
     if args.evaluation == "local":
-        challenge = habitat.Challenge(eval_remote=False)
+        challenge = habitat.Challenge(eval_remote=False, action_space=args.action_space)
         challenge._env.seed(config.random_seed)
     else:
-        challenge = habitat.Challenge(eval_remote=True)
+        challenge = habitat.Challenge(eval_remote=True, action_space=args.action_space)
 
     challenge.submit(agent)
 

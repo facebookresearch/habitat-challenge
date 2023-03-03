@@ -4,5 +4,5 @@ defaults:
   - _self_
 
 type: InstanceImageNav-v1
-split: train
+split: minival
 data_path: data/datasets/instance_imagenav/hm3d/v3/{split}/{split}.json.gz

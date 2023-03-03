@@ -2,16 +2,17 @@
 
 defaults:
   - /habitat: habitat_config_base
-  - /habitat/task: instance_imagenav_v3
+  - /habitat/task: objectnav_v2_challenge
   - /habitat/simulator/agents@habitat.simulator.agents.main_agent: rgbd_agent
-  - /habitat/dataset/instance_imagenav: hm3d_v3
+  - /habitat/dataset/objectnav: hm3d_v2_challenge
   - _self_
 
 habitat:
   environment:
-    max_episode_seconds: 1000
+    max_episode_seconds: 500
+
   simulator:
-    action_space_config: velocitycontrol
+    action_space_config: "velocitycontrol"
     agents:
       main_agent:
         sim_sensors:
@@ -23,7 +24,7 @@ habitat:
           depth_sensor:
             width: 480
             height: 640
-            hfov: 58
+            hfov: 42
             min_depth: 0.5
             max_depth: 5.0
             position: [0, 1.31, 0]

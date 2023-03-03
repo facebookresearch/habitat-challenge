@@ -147,10 +147,14 @@ Note: only supports Linux; no Windows or MacOS.
     ```
     If the above command runs successfully you will get an output similar to:
     ```
-    2023-03-01 01:23:51,798 initializing sim Sim-v0
-    2023-03-01 01:23:52,820 initializing task Nav-v0
-    2023-03-01 01:23:56,339 distance_to_goal: 5.205519378185272
-    2023-03-01 01:23:56,339 spl: 0.0
+    2023-03-01 16:35:02,244 distance_to_goal: 6.446822468439738
+    2023-03-01 16:35:02,244 success: 0.0
+    2023-03-01 16:35:02,244 spl: 0.0
+    2023-03-01 16:35:02,244 soft_spl: 0.0014486297806195665
+    2023-03-01 16:35:02,244 num_steps: 1.0
+    2023-03-01 16:35:02,244 collisions/count: 0.0
+    2023-03-01 16:35:02,244 collisions/is_collision: 0.0
+    2023-03-01 16:35:02,244 distance_to_goal_reward: 0.0009365876515706381
     ```
     Note: this same command will be run to evaluate your agent for the leaderboard. **Please submit your docker for remote evaluation (below) only if it runs successfully on your local setup.**
 
