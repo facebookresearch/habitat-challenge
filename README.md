@@ -79,6 +79,7 @@ For your convenience, please check our [Habitat Challenge video tutorial](https:
 1. Implement your own agent or try one of ours. We provide an agent in `agents/agent.py` that takes random actions:
     ```python
     import habitat
+    from omegaconf import DictConfig
 
     class RandomAgent(habitat.Agent):
         def __init__(self, task_config: DictConfig):
@@ -132,14 +133,14 @@ Note: only supports Linux; no Windows or MacOS.
           habitat-challenge-data/data/scene_datasets/hm3d_v0.2
       ```
 
-    **UPDATE** Then modify the docker command in `scripts/test_local_objectnav.sh` file to mount the linked to location by adding `-v $(realpath habitat-challenge-data/data/scene_datasets/hm3d):/habitat-challenge-data/data/scene_datasets/hm3d`. The modified docker command would be
+    Then modify the docker command in `scripts/test_local_objectnav.sh` file to mount the linked to location by adding `-v $(realpath habitat-challenge-data/data/scene_datasets/hm3d_v0.2):/habitat-challenge-data/data/scene_datasets/hm3d_v0.2`. The modified docker command would be
      ```bash
     docker run \
           -v $(pwd)/habitat-challenge-data:/habitat-challenge-data \
-          -v $(realpath habitat-challenge-data/data/scene_datasets/hm3d):/habitat-challenge-data/data/scene_datasets/hm3d \
+          -v $(realpath habitat-challenge-data/data/scene_datasets/hm3d_v0.2):/habitat-challenge-data/data/scene_datasets/hm3d_v0.2 \
           --runtime=nvidia \
           -e "AGENT_EVALUATION_TYPE=local" \
-          -e "TRACK_CONFIG_FILE=/challenge_objectnav2023.local.rgbd.yaml" \
+          -e "TRACK_CONFIG_FILE=/configs/benchmark/nav/objectnav/objectnav_v2_hm3d_stretch_challenge.yaml" \
           ${DOCKER_NAME}
     ```
 

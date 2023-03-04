@@ -102,7 +102,7 @@ class PPOAgent(Agent):
             obs_space["instance_imagegoal"] = spaces.Box(
                 low=0,
                 high=255,
-                shape=(H, W, 3),
+                shape=(image_size.height, image_size.width, 3),
                 dtype=np.uint8
             )
         obs_space = spaces.Dict(obs_space)
@@ -308,6 +308,7 @@ def main():
         "--evaluation", type=str, required=True, choices=["local", "remote"]
     )
     parser.add_argument("--model-path", default="", type=str)
+    parser.add_argument("--task", required=True, type=str, choices=["objectnav", "instance_imagenav"])
     parser.add_argument("--task-config", type=str, required=True)
     parser.add_argument(
         "--action_space",
@@ -332,8 +333,10 @@ def main():
 
     register_hydra_plugin(HabitatChallengeConfigPlugin)
 
+
+
     overrides = args.overrides + [
-        "benchmark/nav/objectnav=" + os.path.basename(benchmark_config_path),
+        "benchmark/nav/" + args.task + "=" + os.path.basename(benchmark_config_path),
         "habitat/task/actions=" + args.action_space,
         "+pth_gpu_id=0",
         "+input_type=" + args.input_type,

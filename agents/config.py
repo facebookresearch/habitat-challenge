@@ -5,5 +5,5 @@ class HabitatChallengeConfigPlugin(SearchPathPlugin):
     def manipulate_search_path(self, search_path: ConfigSearchPath) -> None:
         search_path.append(
             provider="habitat_challenge",
-            path="file:///private/home/karmeshyadav/fair_habitat_challenge/habitat-challenge/configs",
+            path="file:///configs",
         )

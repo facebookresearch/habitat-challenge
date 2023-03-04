@@ -5,4 +5,5 @@ defaults:
 
 type: ObjectNav-v1
 split: val_mini
-data_path: data/datasets/objectnav/hm3d/v2/{split}/{split}.json.gz
+data_path: habitat-challenge-data/data/datasets/objectnav/hm3d/v2/{split}/{split}.json.gz
+scenes_dir: habitat-challenge-data/data/scene_datasets/
