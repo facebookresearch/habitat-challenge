@@ -277,7 +277,7 @@ Please cite the following bibtex when referring to the 2023 Navigation challenge
 ```
 @misc{habitatchallenge2023,
   title         =     Habitat Challenge 2023,
-  author        =     {Karmesh Yadav and Jacob Krantz and Ram Ramrakhya and Santhosh Kumar Ramakrishnan and Jimmy Yang and Austin Wang and John Turner and Aaron Gokaslan and Oleksandr Maksymets and Angel X Chang and Manolis Savva and Alexander Clegg and Devendra Singh Chaplot and Dhruv Batra},
+  author        =     {Karmesh Yadav and Jacob Krantz and Ram Ramrakhya and Santhosh Kumar Ramakrishnan and Jimmy Yang and Austin Wang and John Turner and Aaron Gokaslan and Vincent-Pierre Berges and Roozbeh Mootaghi and Oleksandr Maksymets and Angel X Chang and Manolis Savva and Alexander Clegg and Devendra Singh Chaplot and Dhruv Batra},
   howpublished  =     {\url{https://aihabitat.org/challenge/2023/}},
   year          =     {2023}
 }
