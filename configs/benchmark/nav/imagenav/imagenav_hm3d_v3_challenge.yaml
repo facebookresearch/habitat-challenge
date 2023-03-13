@@ -2,9 +2,9 @@
 
 defaults:
   - /habitat: habitat_config_base
-  - /habitat/task: instance_imagenav_v3_challenge
+  - /habitat/task: imagenav_v3_challenge
   - /habitat/simulator/agents@habitat.simulator.agents.main_agent: rgbd_agent
-  - /habitat/dataset/instance_imagenav: hm3d_v3_challenge
+  - /habitat/dataset/imagenav: hm3d_v3_challenge
   - _self_
 
 habitat:
