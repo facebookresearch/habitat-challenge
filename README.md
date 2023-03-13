@@ -10,16 +10,16 @@ This repository contains the starter code for the 2023 Habitat [1] challenge, de
 
 If you are looking for our 2022/2021/2020/2019 starter code, it’s available in the [`challenge-YEAR branch`](https://github.com/facebookresearch/habitat-challenge/tree/challenge-2022).
 
-This year, we are hosting a challenges on the ObjectNav and Instance ImageNav embodied navigation task. 
+This year, we are hosting a challenges on the ObjectNav and ImageNav embodied navigation task. 
 
-Task #1: ObjectNav focuses on egocentric object/scene recognition and a commonsense understanding of object semantics (where is a fireplace typically located in a house?).
+Task #1: ObjectNav focuses on egocentric object/scene recognition and a commonsense understanding of object semantics (where is a bed typically located in a house?).
 
-Task #2: Instance ImageNav focuses on visual reasoning and embodied instance disambiguation (is the particular chair I observe the same one depicted by the goal image?).
+Task #2: ImageNav focuses on visual reasoning and embodied instance disambiguation (is the particular chair I observe the same one depicted by the goal image?).
 
 ### New in 2023
 - We are instantiating ObjectNav on a new version of the `HM3D-Semantics` dataset called [HM3D-Semantics v0.2](https://aihabitat.org/datasets/hm3d-semantics/).
 - We are announcing the ImageNav track, also on the [HM3D-Semantics v0.2](https://aihabitat.org/datasets/hm3d-semantics/) scene dataset.
-- Considering the future deployment we are switching to a Stretch robot config with support of continuous action space and updating the dataset such that all episodes can be navigated without traversing between floors.
+- We are introducing several changes in the agent config for easier sim-to-real transfer. We are using the [HelloRobot Stretch](https://hello-robot.com/stretch-2) robot configuration with support of continuous action space and updating the dataset such that all episodes can be navigated without traversing between floors.
 
 
 ## Task: ObjectNav
@@ -29,7 +29,7 @@ In ObjectNav, an agent is initialized at a random starting position and orientat
 The agent is modeled after the Hello Stretch robot and equipped with an RGB-D camera and a (noiseless) GPS+Compass sensor. GPS+Compass sensor provides the agent’s current location and orientation information relative to the start of the episode. 
 
 ### Dataset
-The 2023 ObjectNav challenge uses 216 scenes from the [HM3D-Semantics v0.2](https://aihabitat.org/datasets/hm3d-semantics/) [2] dataset with train/val/test splits on 145/36/35. Following Chaplot et al. [3], we use 6 object goal categories: chair, couch, potted plant, bed, toilet and tv. Considering future deployment to a Stretch robot, all episodes can be navigated without traversing between floors.
+The 2023 ObjectNav challenge uses 216 scenes from the [HM3D-Semantics v0.2](https://aihabitat.org/datasets/hm3d-semantics/) [2] dataset with train/val/test splits on 145/36/35. Following Chaplot et al. [3], we use 6 object goal categories: chair, couch, potted plant, bed, toilet and tv. All episodes can be navigated without traversing between floors.
 
 ## Task: ImageNav
 
@@ -40,7 +40,7 @@ The goal camera is disentangled from the agent's camera; sampled parameters such
 Similar to ObjectNav, the agent is modeled after the Hello Stretch robot and equipped with an RGB-D camera and a (noiseless) GPS+Compass sensor.
 
 ### Dataset
-The 2023 ImageNav challenge uses 216 scenes from the [HM3D-Semantics v0.2](https://aihabitat.org/datasets/hm3d-semantics/)[2] dataset with train/val/test splits on 145/36/35. Following Krantz et al. [4], we sample goal images depicting object instances belonging to the same 6 goal categories used in the ObjectNav challenge: chair, couch, potted plant, bed, toilet, and tv. Considering future deployment to a Stretch robot, all episodes can be navigated without traversing between floors.
+The 2023 ImageNav challenge uses 216 scenes from the [HM3D-Semantics v0.2](https://aihabitat.org/datasets/hm3d-semantics/)[2] dataset with train/val/test splits on 145/36/35. Following Krantz et al. [4], we sample goal images depicting object instances belonging to the same 6 goal categories used in the ObjectNav challenge: chair, couch, potted plant, bed, toilet, and tv. All episodes can be navigated without traversing between floors.
 
 ## Evaluation
 Similar to 2022 Habitat Challenge, we measure performance along the same two axes as specified by Anderson et al.[4]:
@@ -48,7 +48,7 @@ Similar to 2022 Habitat Challenge, we measure performance along the same two axe
 
     Concretely, an episode is deemed successful if on calling the STOP action, the agent is within 1.0m Euclidean distance from any instance of the target object category AND the object *can be viewed by an oracle* from that stopping position by turning the agent or looking up/down. Notice: we do NOT require the agent to be actually viewing the object at the stopping location, simply that such oracle-visibility is possible without moving. Why? Because we want participants to focus on *navigation*, not object framing. In Embodied AI’s larger goal, the agent is navigating to an object instance to interact with it (say point at or manipulate an object). Oracle-visibility is our proxy for *‘the agent is close enough to interact with the object’*.
 
-- **SPL**: How efficient was the agent’s path compared to an optimal path? (Notice: optimal path = shortest path from the agent’s starting position to the *closest* instance of the target object category.)
+- **SPL**: How efficient was the agent’s path compared to an optimal path? (Notice: for ObjectNav, optimal path = shortest path from the agent’s starting position to the *closest* instance of the target object category.)
 
 After calling the STOP action, the agent is evaluated using the ‘Success weighted by Path Length’ (SPL) metric [4].
 
@@ -56,7 +56,7 @@ After calling the STOP action, the agent is evaluated using the ‘Success weigh
   <img src='res/img/spl.png' />
 </p>
 
-ObjectNav-SPL is defined analogous to PointNav-SPL. The only key difference is that the shortest path is computed to the object instance closest to the agent start location. Thus, if an agent spawns very close to *‘chair1’* but stops at a distant *‘chair2’*, it will achieve 100% success (because it found a *‘chair’*) but a fairly low SPL (because the agent path is much longer compared to the oracle path).
+ObjectNav-SPL is defined analogous to PointNav-SPL. The only key difference is that the shortest path is computed to the object instance closest to the agent start location. Thus, if an agent spawns very close to *‘chair1’* but stops at a distant *‘chair2’*, it will achieve 100% success (because it found a *‘chair’*) but a fairly low SPL (because the agent path is much longer compared to the oracle path). ImageNav-SPL is similar to ObjectNav-SPL except that there is exactly one correct object instance (shown in the goal image).
 
 We reserve the right to use additional metrics to choose winners in case of statistically insignificant SPL differences.
 
@@ -277,7 +277,7 @@ Please cite the following bibtex when referring to the 2023 Navigation challenge
 ```
 @misc{habitatchallenge2023,
   title         =     Habitat Challenge 2023,
-  author        =     {Karmesh Yadav and Jacob Krantz and Ram Ramrakhya and Santhosh Kumar Ramakrishnan and Jimmy Yang and Austin Wang and John Turner and Aaron Gokaslan and Oleksandr Maksymets and Angel X Chang and Manolis Savva and Devendra Singh Chaplot and Alexander Clegg and Dhruv Batra},
+  author        =     {Karmesh Yadav and Jacob Krantz and Ram Ramrakhya and Santhosh Kumar Ramakrishnan and Jimmy Yang and Austin Wang and John Turner and Aaron Gokaslan and Oleksandr Maksymets and Angel X Chang and Manolis Savva and Alexander Clegg and Devendra Singh Chaplot and Dhruv Batra},
   howpublished  =     {\url{https://aihabitat.org/challenge/2023/}},
   year          =     {2023}
 }
@@ -285,7 +285,7 @@ Please cite the following bibtex when referring to the 2023 Navigation challenge
 
 ## Acknowledgments
 
-The Habitat challenge would not have been possible without the infrastructure and support of [EvalAI](https://evalai.cloudcv.org/) team. We also thank the team behind [Habitat-Matterport3D](https://aihabitat.org/datasets/hm3d/) datasets.
+The Habitat challenge would not have been possible without the infrastructure and support of [EvalAI](https://evalai.cloudcv.org/) team. We also thank the team behind [Habitat-Matterport3D](https://aihabitat.org/datasets/hm3d/) and [HM3D-Semantics](https://aihabitat.org/datasets/hm3d-semantics/) datasets.
 
 ## References
 
