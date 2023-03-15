@@ -34,7 +34,7 @@ from habitat_baselines.utils.common import (
     batch_obs,
     get_num_actions,
     is_continuous_action_space,
-    get_action_space_info
+    get_action_space_info,
 )
 
 from config import HabitatChallengeConfigPlugin
@@ -63,47 +63,39 @@ class PPOAgent(Agent):
     def __init__(self, config: DictConfig) -> None:
         num_object_categories = 6
         image_size = config.habitat_baselines.rl.policy.obs_transforms.center_cropper
-        
+
         obs_space = {
-                "compass": spaces.Box(
-                    low=-np.pi,
-                    high=np.pi,
-                    shape=(1,),
-                    dtype=np.float32
-                ),
-                "gps": spaces.Box(
-                    low=np.finfo(np.float32).min,
-                    high=np.finfo(np.float32).max,
-                    shape=(2,),
-                    dtype=np.float32,
-                ),
-                "depth": spaces.Box(
-                    low=0,
-                    high=1,
-                    shape=(image_size.height, image_size.width, 1),
-                    dtype=np.float32,
-                ),
-                "rgb": spaces.Box(
-                    low=0,
-                    high=255,
-                    shape=(image_size.height, image_size.width, 3),
-                    dtype=np.uint8,
-                ),
-            }
+            "compass": spaces.Box(low=-np.pi, high=np.pi, shape=(1,), dtype=np.float32),
+            "gps": spaces.Box(
+                low=np.finfo(np.float32).min,
+                high=np.finfo(np.float32).max,
+                shape=(2,),
+                dtype=np.float32,
+            ),
+            "depth": spaces.Box(
+                low=0,
+                high=1,
+                shape=(image_size.height, image_size.width, 1),
+                dtype=np.float32,
+            ),
+            "rgb": spaces.Box(
+                low=0,
+                high=255,
+                shape=(image_size.height, image_size.width, 3),
+                dtype=np.uint8,
+            ),
+        }
 
         if config.habitat.task.goal_sensor_uuid == "objectgoal":
             obs_space["objectgoal"] = spaces.Box(
-                low=0,
-                high=num_object_categories-1,
-                shape=(1,),
-                dtype=np.int64
+                low=0, high=num_object_categories - 1, shape=(1,), dtype=np.int64
             )
         elif config.habitat.task.goal_sensor_uuid == "instance_imagegoal":
             obs_space["instance_imagegoal"] = spaces.Box(
                 low=0,
                 high=255,
                 shape=(image_size.height, image_size.width, 3),
-                dtype=np.uint8
+                dtype=np.uint8,
             )
         obs_space = spaces.Dict(obs_space)
 
@@ -136,10 +128,10 @@ class PPOAgent(Agent):
                             dtype=np.float32,
                         ),
                         "camera_pitch_velocity": spaces.Box(
-                        low=np.array([-1]),
-                        high=np.array([1]),
-                        dtype=np.float32,
-                    ),
+                            low=np.array([-1]),
+                            high=np.array([1]),
+                            dtype=np.float32,
+                        ),
                     }
                 )
                 self.continuous_actions_high.extend([1, 1])
@@ -195,7 +187,10 @@ class PPOAgent(Agent):
 
         policy = baseline_registry.get_policy(config.habitat_baselines.rl.policy.name)
         self.continuous_actions = (
-            True if config.habitat_baselines.rl.policy.action_distribution_type != 'categorical' else False
+            True
+            if config.habitat_baselines.rl.policy.action_distribution_type
+            != "categorical"
+            else False
         )
 
         if self.continuous_actions:
@@ -206,9 +201,7 @@ class PPOAgent(Agent):
                 dtype=np.float32,
             )
         else:
-            self.env_action_space = spaces.Discrete(
-                get_num_actions(self.action_space)
-            )
+            self.env_action_space = spaces.Discrete(get_num_actions(self.action_space))
 
         self.actor_critic = policy.from_config(
             config,
@@ -238,9 +231,7 @@ class PPOAgent(Agent):
         policy_action_space = self.actor_critic.get_policy_action_space(
             self.env_action_space
         )
-        self.policy_action_space, _ = get_action_space_info(
-            policy_action_space
-        )
+        self.policy_action_space, _ = get_action_space_info(policy_action_space)
 
         self.test_recurrent_hidden_states: Optional[torch.Tensor] = None
         self.not_done_masks: Optional[torch.Tensor] = None
@@ -255,7 +246,6 @@ class PPOAgent(Agent):
         )
         self.not_done_masks = torch.zeros(1, 1, device=self.device, dtype=torch.bool)
 
-        
         self.prev_actions = torch.zeros(
             1,
             *self.policy_action_space,
@@ -292,7 +282,7 @@ class PPOAgent(Agent):
                     self.action_space, None, act
                 )
             else:
-                step_action = {'action': action_data.env_actions[0].item()}
+                step_action = {"action": action_data.env_actions[0].item()}
 
         return step_action
 
@@ -308,7 +298,9 @@ def main():
         "--evaluation", type=str, required=True, choices=["local", "remote"]
     )
     parser.add_argument("--model-path", default="", type=str)
-    parser.add_argument("--task", required=True, type=str, choices=["objectnav", "instance_imagenav"])
+    parser.add_argument(
+        "--task", required=True, type=str, choices=["objectnav", "instance_imagenav"]
+    )
     parser.add_argument("--task-config", type=str, required=True)
     parser.add_argument(
         "--action_space",
@@ -317,7 +309,7 @@ def main():
         choices=[
             "velocity_controller",
             "waypoint_controller",
-            "discrete_waypoint_controller"
+            "discrete_waypoint_controller",
         ],
         help="Action space to use for the agent",
     )
@@ -333,8 +325,6 @@ def main():
 
     register_hydra_plugin(HabitatChallengeConfigPlugin)
 
-
-
     overrides = args.overrides + [
         "benchmark/nav/" + args.task + "=" + os.path.basename(benchmark_config_path),
         "habitat/task/actions=" + args.action_space,
@@ -348,7 +338,7 @@ def main():
         args.task_config,
         overrides,
     )
-    
+
     agent = PPOAgent(config)
     if args.evaluation == "local":
         challenge = habitat.Challenge(eval_remote=False, action_space=args.action_space)
