@@ -202,7 +202,7 @@ Note: only supports Linux; no Windows or MacOS.
     2023-03-01 16:35:02,244 distance_to_goal_reward: 0.0009365876515706381
     ```
     Note: this same command will be run to evaluate your agent for the leaderboard. **Please submit your docker for remote evaluation (below) only if it runs successfully on your local setup.** 
-1. If you want to try out one of the controllers we provide, change the `--action_space` in the dockerfile (`docker/{ObjectNav, ImageNav}_random_baseline.Dockerfile`) to use either `waypoint_controller` or `discrete_waypoint_controller`.
+1. If you want to try out one of the controllers we provide, change the `"--action_space"` in the dockerfile (`docker/{ObjectNav, ImageNav}_random_baseline.Dockerfile`) to use either `waypoint_controller` or `discrete_waypoint_controller`.
 
 ### Online submission
 
