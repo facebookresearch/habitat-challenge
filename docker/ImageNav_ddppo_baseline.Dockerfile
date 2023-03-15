@@ -4,7 +4,7 @@ ADD agents/habitat_baselines_agent.py agent.py
 ADD agents/config.py config.py
 ADD configs/ /configs/
 ADD scripts/submission.sh /submission.sh
-ADD demo.ckpt.pth
+ADD imagenav_baseline_habitat_navigation_challenge_2023.pth demo.ckpt.pth
 
 ENV AGENT_EVALUATION_TYPE remote
 ENV TRACK_CONFIG_FILE "/configs/benchmark/nav/imagenav/imagenav_hm3d_v3_challenge.yaml"
@@ -20,9 +20,10 @@ CMD [ \
     bash submission.sh \
     --model-path demo.ckpt.pth \
     --input-type rgbd \
-    --task objectnav \
+    --task imagenav \
     --action_space discrete_waypoint_controller \
     --task-config configs/ddppo_imagenav_v3_hm3d_stretch.yaml \
     habitat_baselines.rl.policy.action_distribution_type=categorical \
-    habitat_baselines.load_resume_state_config=True" \
+    habitat_baselines.load_resume_state_config=True \
+    habitat_baselines.rl.ddppo.backbone=resnet18" \
 ]
