@@ -120,7 +120,14 @@ Note: only supports Linux; no Windows or MacOS.
     ADD agents/agent.py /agent.py
     ADD submission.sh /submission.sh
     ```
-    Build your docker container using: `docker build . --file docker/{ObjectNav, ImageNav}_random_baseline.Dockerfile -t {objectnav, imagenav}_submission`. (Note: you may need `sudo` priviliges to run this command.)
+    Build your docker container using: `docker build . --file docker/{ObjectNav, ImageNav}_random_baseline.Dockerfile -t {objectnav, imagenav}_submission`.
+
+    Note #1: you may need `sudo` privileges to run this command.
+
+    Note #2: Please make sure that you keep your local version of `fairembodied/habitat-challenge:habitat_rearrangement_2022_base_docker` image up to date with the image we have hosted on [dockerhub](https://hub.docker.com/r/fairembodied/habitat-challenge/tags). This can be done by pruning all cached images, using:
+    ```
+    docker system prune -a
+    ```
 
     [Optional] Modify submission.sh file if your agent needs any custom modifications (e.g. command-line arguments). Otherwise, nothing to do. Default submission.sh is simply a call to `RandomAgent` agent in `agent.py`
 
