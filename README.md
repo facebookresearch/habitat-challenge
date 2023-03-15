@@ -145,7 +145,7 @@ Note: only supports Linux; no Windows or MacOS.
 
     Note #1: you may need `sudo` privileges to run this command.
 
-    Note #2: Please make sure that you keep your local version of `fairembodied/habitat-challenge:habitat_rearrangement_2022_base_docker` image up to date with the image we have hosted on [dockerhub](https://hub.docker.com/r/fairembodied/habitat-challenge/tags). This can be done by pruning all cached images, using:
+    Note #2: Please make sure that you keep your local version of `fairembodied/habitat-challenge:habitat_navigation_2023_base_docker` image up to date with the image we have hosted on [dockerhub](https://hub.docker.com/r/fairembodied/habitat-challenge/tags). This can be done by pruning all cached images, using:
     ```
     docker system prune -a
     ```

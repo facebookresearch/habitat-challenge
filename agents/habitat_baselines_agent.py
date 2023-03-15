@@ -298,7 +298,7 @@ def main():
     )
     parser.add_argument("--model-path", default="", type=str)
     parser.add_argument(
-        "--task", required=True, type=str, choices=["objectnav", "instance_imagenav"]
+        "--task", required=True, type=str, choices=["objectnav", "imagenav"]
     )
     parser.add_argument("--task-config", type=str, required=True)
     parser.add_argument(
