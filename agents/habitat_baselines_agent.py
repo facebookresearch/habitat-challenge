@@ -308,7 +308,7 @@ def main():
         "--evaluation", type=str, required=True, choices=["local", "remote"]
     )
     parser.add_argument("--model-path", default="", type=str)
-    parser.add_argument("--task", required=True, type=str, choices=["objectnav", "instance_imagenav"])
+    parser.add_argument("--task", required=True, type=str, choices=["objectnav", "imagenav"])
     parser.add_argument("--task-config", type=str, required=True)
     parser.add_argument(
         "--action_space",
