@@ -13,8 +13,9 @@ from typing import Dict, Optional
 import gym.spaces as spaces
 import numba
 import numpy as np
-from omegaconf import DictConfig
 import torch
+from config import HabitatChallengeConfigPlugin
+from omegaconf import DictConfig
 
 import habitat
 from habitat.config.default_structured_configs import register_hydra_plugin
@@ -32,12 +33,10 @@ from habitat_baselines.config.default import get_config
 from habitat_baselines.rl.ddppo.policy import PointNavResNetPolicy
 from habitat_baselines.utils.common import (
     batch_obs,
+    get_action_space_info,
     get_num_actions,
     is_continuous_action_space,
-    get_action_space_info,
 )
-
-from config import HabitatChallengeConfigPlugin
 
 random_generator = np.random.RandomState()
 

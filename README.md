@@ -94,6 +94,7 @@ For your convenience, please check our [Habitat Challenge video tutorial](https:
                 'action_args': {
                     "angular_velocity": np.random.rand(1),
                     "linear_velocity": np.random.rand(1),
+                    "camera_pitch_velocity": np.random.rand(1),
                     "velocity_stop": np.random.rand(1),
                 }
             }

@@ -3,13 +3,12 @@ import os
 
 import numpy
 import numpy as np
+from config import HabitatChallengeConfigPlugin
 from omegaconf import DictConfig
 
 import habitat
 from habitat.config.default_structured_configs import register_hydra_plugin
 from habitat_baselines.config.default import get_config
-
-from config import HabitatChallengeConfigPlugin
 
 
 class RandomAgent(habitat.Agent):
