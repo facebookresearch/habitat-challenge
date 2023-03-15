@@ -42,6 +42,26 @@ Similar to ObjectNav, the agent is modeled after the Hello Stretch robot and equ
 ### Dataset
 The 2023 ImageNav challenge uses 216 scenes from the [HM3D-Semantics v0.2](https://aihabitat.org/datasets/hm3d-semantics/)[2] dataset with train/val/test splits on 145/36/35. Following Krantz et al. [4], we sample goal images depicting object instances belonging to the same 6 goal categories used in the ObjectNav challenge: chair, couch, potted plant, bed, toilet, and tv. All episodes can be navigated without traversing between floors.
 
+### Action Space 
+To allow easier sim-to-real transfer of the policies from simulation to the Stretch Robot, we are changing the agent's action space from discrete space to continuous space. The agent now accepts the following actions:
+1. linear_velocity: Moves the agent forward or backward. Accepts values between [-1,1], scaled according to lin_vel_range defined in the VelocityControlActionConfig.
+1. angular_velocity: Moves the agent left or right. Accepts values between [-1,1], scaled according to ang_vel_range defined in the VelocityControlActionConfig.
+1. camera_pitch_velocity: Tilts the camera up or down. Accepts values between [-1,1], scaled according to ang_vel_range_camera_pitch defined in the VelocityControlActionConfig.
+1. velocity_stop: Action used for ending the episode. Accepts values between [-1,1]. Value greater than 0 ends the episode.
+
+While the agent accepts actions only in the continuous space, we are also providing the following set of controllers that will allow policy to predict actions in a more abstract action space:
+1. Waypoint Controller: The waypoint controller takes in the following inputs and calculates the velocity commands that are passed to the simulator:   
+    1. xyt_waypoint: Moves the agent to a waypoint (x, y) and turns the agent by t radians. Accepts values between [-1,1], scaled according to waypoint_lin_range and waypoint_ang_range defined in the WaypointControlActionConfig.
+    1. max_duration: The amount of seconds the waypoint controller should take steps in the simulator before asking the policy for the next waypoint. Accepts values between [0,1], scaled according to wait_duration_range defined in the WaypointControlActionConfig.
+    1. delta_camera_pitch_angle: np.random.rand(1),  Accepts values between [-1,1], scaled according to ang_vel_range from the WaypointControlActionConfig.
+    1. velocity_stop: Action used for ending the episode. Accepts values between [-1,1]. Value greater than 0 ends the episode.
+1. Discrete Waypoint Controller: This controller allows you to try out the policies trained with the discrete action space that was used in the older versions of the navigation tasks in Habitat. The controller accepts one of the following actions:
+    1. move_forward_waypoint: Moves the agent forward by 25 centimeters.
+    1. turn_left_waypoint: Turns the agent towards the left by 30 degrees.
+    1. turn_right_waypoint: Turns the agent towards the left by 30 degrees.
+    1. look_up_discrete_to_velocity: Tilts the camera upwards by 30 degrees, while respecting the maximum tilt angle defined by ang_range_camera_pitch in the VelocityControlActionConfig.
+    1. look_down_discrete_to_velocity: Tilts the camera downwards by 30 degrees, while respecting the minimum tilt angle defined by ang_range_camera_pitch in the VelocityControlActionConfig.
+
 ## Evaluation
 Similar to 2022 Habitat Challenge, we measure performance along the same two axes as specified by Anderson et al.[4]:
 - **Success**: Did the agent navigate to an instance of the goal object? (Notice: *any* instance, regardless of distance from starting location.)
@@ -94,6 +114,7 @@ For your convenience, please check our [Habitat Challenge video tutorial](https:
                 'action_args': {
                     "angular_velocity": np.random.rand(1),
                     "linear_velocity": np.random.rand(1),
+                    "camera_pitch_velocity": np.random.rand(1),
                     "velocity_stop": np.random.rand(1),
                 }
             }
@@ -124,7 +145,7 @@ Note: only supports Linux; no Windows or MacOS.
 
     Note #1: you may need `sudo` privileges to run this command.
 
-    Note #2: Please make sure that you keep your local version of `fairembodied/habitat-challenge:habitat_rearrangement_2022_base_docker` image up to date with the image we have hosted on [dockerhub](https://hub.docker.com/r/fairembodied/habitat-challenge/tags). This can be done by pruning all cached images, using:
+    Note #2: Please make sure that you keep your local version of `fairembodied/habitat-challenge:habitat_navigation_2023_base_docker` image up to date with the image we have hosted on [dockerhub](https://hub.docker.com/r/fairembodied/habitat-challenge/tags). This can be done by pruning all cached images, using:
     ```
     docker system prune -a
     ```
@@ -180,7 +201,8 @@ Note: only supports Linux; no Windows or MacOS.
     2023-03-01 16:35:02,244 collisions/is_collision: 0.0
     2023-03-01 16:35:02,244 distance_to_goal_reward: 0.0009365876515706381
     ```
-    Note: this same command will be run to evaluate your agent for the leaderboard. **Please submit your docker for remote evaluation (below) only if it runs successfully on your local setup.**
+    Note: this same command will be run to evaluate your agent for the leaderboard. **Please submit your docker for remote evaluation (below) only if it runs successfully on your local setup.** 
+1. If you want to try out one of the controllers we provide, change the `"--action_space"` in the dockerfile (`docker/{ObjectNav, ImageNav}_random_baseline.Dockerfile`) to use either `waypoint_controller` or `discrete_waypoint_controller`.
 
 ### Online submission
 
