@@ -294,10 +294,11 @@ We have added a config in `configs/ddppo_objectnav_v2_hm3d_stretch.yaml | config
         habitat_baselines.eval_ckpt_path_dir=$PATH_TO_CHECKPOINT \
         habitat.dataset.data_path.split=val
     ```
-    The weights used for our DD-PPO Objectnav baseline for the Habitat-2023 challenge can be downloaded with the following command:
+    The weights used for our DD-PPO Objectnav or Imagenav baseline for the Habitat-2023 challenge can be downloaded with the following command:
     ```bash
-    wget https://dl.fbaipublicfiles.com/habitat/data/baselines/v2/ddppo_objectnav_habitat2023_challenge_baseline_v1.pth
+    wget https://dl.fbaipublicfiles.com/habitat/data/baselines/v1/ddppo_{task}_habitat2023_challenge_baseline_v1.pth
     ```
+    where `$task={objectnav_v2, imagenav_v3}`.
 
 1. To submit your entry via EvalAI, you will need to build a docker file. We provide Dockerfiles ready to use with the DD-PPO baselines in `docker/{ObjectNav, ImageNav}_ddppo_baseline.Dockerfile`. For the sake of completeness, we describe how you can make your own Dockerfile below. If you just want to test the baseline code, feel free to skip this bullet because  ```ObjectNav_ddppo_baseline.Dockerfile``` is ready to use.
     1. You may want to modify the `{ObjectNav, ImageNav}_ddppo_baseline.Dockerfile` to include PyTorch or other libraries. To install pytorch, ifcfg and tensorboard, add the following command to the Docker file:
