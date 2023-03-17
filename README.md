@@ -239,7 +239,8 @@ We have added a config in `configs/ddppo_objectnav_v2_hm3d_stretch.yaml | config
 1. Download the HM3D scene dataset following the instructions [here](https://matterport.com/partners/facebook). After downloading extract the dataset to folder `habitat-lab/data/scene_datasets/hm3d_v0.2/` folder (this folder should contain the `.glb` files from HM3D). Note that the `habitat-lab` folder is the [habitat-lab](https://github.com/facebookresearch/habitat-lab/) repository folder. You could also just symlink to the path of the HM3D scenes downloaded in step-4 of local-evaluation under the `habitat-challenge/habitat-challenge-data/data/scene_datasets` folder. This can be done using `ln -s /path/to/habitat-challenge-data/data/scene_datasets /path/to/habitat-lab/data/scene_datasets/` (if on OSX or Linux).
 
 1. **ObjectNav**: Download the episodes dataset for HM3D ObjectNav from [link](https://dl.fbaipublicfiles.com/habitat/data/datasets/objectnav/hm3d/v2/objectnav_hm3d_v2.zip) and place it in the folder `habitat-challenge/habitat-challenge-data/data/datasets/objectnav/hm3d`. If placed correctly, you should have the train and val splits at `habitat-challenge/habitat-challenge-data/data/datasets/objectnav/hm3d/v2/train/` and `habitat-challenge/habitat-challenge-data/data/datasets/objectnav/hm3d/v2/val/` respectively.
-**ImageNav** Download the episodes dataset for HM3D InstanceImageNav from [link](https://dl.fbaipublicfiles.com/habitat/data/datasets/imagenav/hm3d/v3/instance_imagenav_hm3d_v3.zip) and place it in the folder `habitat-challenge/habitat-challenge-data/data/datasets/instance_imagenav/hm3d`. If placed correctly, you should have the train and val splits at `habitat-challenge/habitat-challenge-data/data/datasets/instance_imagenav/hm3d/v3/train/` and `habitat-challenge/habitat-challenge-data/data/datasets/instance_imagenav/hm3d/v3/val/` respectively.
+
+    **ImageNav** Download the episodes dataset for HM3D InstanceImageNav from [link](https://dl.fbaipublicfiles.com/habitat/data/datasets/imagenav/hm3d/v3/instance_imagenav_hm3d_v3.zip) and place it in the folder `habitat-challenge/habitat-challenge-data/data/datasets/instance_imagenav/hm3d`. If placed correctly, you should have the train and val splits at `habitat-challenge/habitat-challenge-data/data/datasets/instance_imagenav/hm3d/v3/train/` and `habitat-challenge/habitat-challenge-data/data/datasets/instance_imagenav/hm3d/v3/val/` respectively.
 
 1. An example on how to train DD-PPO model can be found in [habitat-lab/habitat-baselines/habitat_baselines/rl/ddppo](https://github.com/facebookresearch/habitat-lab/tree/main/habitat-baselines/habitat_baselines/rl/ddppo). See the corresponding README in habitat-lab for how to adjust the various hyperparameters, save locations, visual encoders and other features.
 
@@ -296,7 +297,7 @@ We have added a config in `configs/ddppo_objectnav_v2_hm3d_stretch.yaml | config
     ```
     The weights used for our DD-PPO Objectnav or Imagenav baseline for the Habitat-2023 challenge can be downloaded with the following command:
     ```bash
-    wget https://dl.fbaipublicfiles.com/habitat/data/baselines/v1/ddppo_{task}_habitat2023_challenge_baseline_v1.pth
+    wget https://dl.fbaipublicfiles.com/habitat/data/baselines/v1/{task}_baseline_habitat_navigation_challenge_2023.pth
     ```
     where `$task={objectnav_v2, imagenav_v3}`.
 
