@@ -5,5 +5,5 @@ defaults:
 
 type: InstanceImageNav-v1
 split: val_mini
-data_path: habitat-challenge-data/datasets/instance_imagenav/hm3d/v3/{split}/{split}.json.gz
+data_path: habitat-challenge-data/data/datasets/instance_imagenav/hm3d/v3/{split}/{split}.json.gz
 scenes_dir: habitat-challenge-data/data/scene_datasets/
