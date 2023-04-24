@@ -82,10 +82,9 @@ We reserve the right to use additional metrics to choose winners in case of stat
 
 ## Participation Guidelines
 
-Coming Soon!
-<!-- Participate in the contest by registering on the [EvalAI challenge page](https://eval.ai/web/challenges/challenge-page/1615/overview) and creating a team. Participants will upload docker containers with their agents that are evaluated on an AWS GPU-enabled instance. Before pushing the submissions for remote evaluation, participants should test the submission docker locally to ensure it is working. Instructions for training, local evaluation, and online submission are provided below.
+Participate in the contest by registering on the [EvalAI challenge page](https://eval.ai/web/challenges/challenge-page/1992/overview) and creating a team. Participants will upload docker containers with their agents that are evaluated on an AWS GPU-enabled instance. Before pushing the submissions for remote evaluation, participants should test the submission docker locally to ensure it is working. Instructions for training, local evaluation, and online submission are provided below.
 
-For your convenience, please check our [Habitat Challenge video tutorial](https://youtu.be/V7PXttmJ8EE?list=PLGywud_-HlCORC0c4uj97oppQrGiB6JNy) and [Colab step-by-step tutorial from previous year](https://colab.research.google.com/gist/mathfac/8c9b97d7afef36e377f17d587c903ede). -->
+For your convenience, please check our [Habitat Challenge video tutorial](https://youtu.be/V7PXttmJ8EE?list=PLGywud_-HlCORC0c4uj97oppQrGiB6JNy) and [Colab step-by-step tutorial from previous year](https://colab.research.google.com/gist/mathfac/8c9b97d7afef36e377f17d587c903ede).
 
 ### Local Evaluation
 
@@ -206,7 +205,7 @@ Note: only supports Linux; no Windows or MacOS.
 
 ### Online submission
 
-Follow instructions in the `submit` tab of the EvalAI challenge page (coming soon) to submit your docker image. Note that you will need a version of EvalAI `>= 1.2.3`. Pasting those instructions here for convenience:
+Follow instructions in the `submit` tab of the EvalAI challenge page to submit your docker image. Note that you will need a version of EvalAI `>= 1.2.3`. Pasting those instructions here for convenience:
 
 ```bash
 # Installing EvalAI Command Line Interface
